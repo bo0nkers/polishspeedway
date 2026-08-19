@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Polski Żużlowiec Simulator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@400;500;600;700;800&family=Roboto+Condensed:wght@600;700;800&display=swap" rel="stylesheet">
+  <meta name="theme-color" content="#173d3a">
+  <meta name="description" content="Polski Żużlowiec Simulator 2.00 — tekstowa gra żużlowa o drodze od szkółki do światowego żużla.">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app">
+  <header class="masthead">
+    <div class="brand-lockup">
+      <div class="brand-mark" aria-hidden="true">
+        <svg class="speedway-logo" viewBox="0 0 96 96" focusable="false">
+          <circle cx="48" cy="48" r="39" class="logo-wheel"/>
+          <circle cx="48" cy="48" r="8" class="logo-hub"/>
+          <path d="M29 58c7-15 18-23 34-24l8 9-15 2-9 18H31z" class="logo-bike"/>
+          <path d="M51 34l9-12m-5 12 13 2M43 47l-12-9m16 20 16 9" class="logo-frame"/>
+          <path d="M25 72 70 20" class="logo-accent"/>
+        </svg>
+      </div>
+      <div>
+        <p class="eyebrow">TEKSTOWA GRA ŻUŻLOWA</p>
+        <h1>POLSKI ŻUŻLOWIEC <span>SIMULATOR</span></h1>
+      </div>
+    </div>
+    <div class="header-actions"><span class="version-badge">WERSJA 2.00</span>
+      <button id="exportBtn" class="btn secondary hidden">EKSPORT ZAPISU</button>
+      <label class="btn secondary hidden" id="importLabel">IMPORT ZAPISU<input id="importInput" type="file" accept=".json"></label>
+      <button id="newBtn" class="btn secondary">NOWA KARIERA</button>
+    </div>
+  </header>
+
+  <main id="startScreen" class="start-wrap">
+    <section class="start-card">
+      <div class="start-hero">
+        <p class="eyebrow">NOWA KARIERA • POLSKI ŻUŻEL</p>
+        <h2>Twoja droga zaczyna się pod taśmą.</h2>
+        <p class="lead">Wybierz moment startu, ośrodek i styl jazdy. Potem zostaje już tylko walka o zwycięstwa.</p>
+        <div class="track-mark" aria-hidden="true"></div>
+      </div>
+
+      <form id="startForm" class="career-form">
+        <section class="form-section">
+          <div class="form-section-title"><span>01</span><h3>Zawodnik</h3></div>
+          <div class="identity-grid">
+            <div class="name-row">
+              <label>Imię i nazwisko<input id="name" required maxlength="40" placeholder="np. Jakub Nowak"></label>
+              <button id="randomNameBtn" class="btn outline" type="button">WYLOSUJ NAZWISKO</button>
+            </div>
+            <div class="number-row">
+              <label>Numer startowy
+                <input id="riderNumber" type="number" inputmode="numeric" min="1" max="999" step="1" placeholder="1–999">
+                <small>Puste pole oznacza automatyczne losowanie.</small>
+              </label>
+              <button id="randomNumberBtn" class="btn outline" type="button">WYLOSUJ NUMER</button>
+            </div>
+          </div>
+          <div class="form-grid">
+            <label>Region<select id="region">
+              <option>Dolnośląskie</option><option>Kujawsko-pomorskie</option><option>Lubelskie</option><option>Lubuskie</option>
+              <option>Łódzkie</option><option>Małopolskie</option><option>Mazowieckie</option><option>Opolskie</option>
+              <option selected>Podkarpackie</option><option>Podlaskie</option><option>Pomorskie</option><option>Śląskie</option>
+              <option>Świętokrzyskie</option><option>Warmińsko-mazurskie</option><option>Wielkopolskie</option><option>Zachodniopomorskie</option>
+            </select></label>
+            <label>Klub lub szkółka<select id="academyClub"></select></label>
+            <label>Archetyp<select id="archetype">
+              <option value="starter">Startowiec</option><option value="fighter">Walczak</option>
+              <option value="technician">Technik</option><option value="mechanic">Sprzętowiec</option>
+              <option value="talent">Naturalny talent</option>
+            </select></label>
+          </div>
+        </section>
+
+        <section class="form-section">
+          <div class="form-section-title"><span>02</span><h3>Poziom startowy</h3></div>
+          <input type="hidden" id="startPoint" value="academy">
+          <div class="choice-grid start-choice-grid" data-choice-for="startPoint">
+            <button class="choice-card" type="button" data-value="raw">
+              <strong>Szkółka od zera</strong><small>15 lat • OVR ok. 36–43 • najmniej pieniędzy, najdłuższa droga</small>
+            </button>
+            <button class="choice-card active" type="button" data-value="academy">
+              <strong>Zwykły adept</strong><small>15 lat • OVR ok. 40–48 • najbardziej naturalny początek</small>
+            </button>
+            <button class="choice-card" type="button" data-value="license">
+              <strong>Po licencji Ż</strong><small>16 lat • OVR ok. 46–54 • jesteś bliżej pierwszych zawodów</small>
+            </button>
+            <button class="choice-card" type="button" data-value="talent">
+              <strong>Talent szkółki</strong><small>16 lat • OVR ok. 53–61 • większe oczekiwania i zainteresowanie</small>
+            </button>
+            <button class="choice-card" type="button" data-value="reserve">
+              <strong>Rezerwowy junior</strong><small>17 lat • OVR ok. 49–57 • od razu trafiasz do kadry ligowej</small>
+            </button>
+          </div>
+          <p class="start-background-note">Początkowy poziom jest lekko losowany. Po rozpoczęciu kariery poznasz też historię zawodnika sprzed egzaminu licencyjnego.</p>
+        </section>
+
+        <section class="form-section compact-section">
+          <div class="form-section-title"><span>03</span><h3>Poziom trudności</h3></div>
+          <input type="hidden" id="difficulty" value="normal">
+          <div class="choice-grid difficulty-grid" data-choice-for="difficulty">
+            <button class="choice-card" type="button" data-value="easy"><strong>Łatwy</strong><small>Szybszy rozwój, łagodniejsze urazy i większa cierpliwość klubów</small></button>
+            <button class="choice-card active" type="button" data-value="normal"><strong>Normalny</strong><small>Standardowy balans kariery, kontuzji, finansów i presji wyniku</small></button>
+            <button class="choice-card" type="button" data-value="hard"><strong>Trudny</strong><small>Wolniejszy rozwój, większa presja i mniej wybaczające kluby</small></button>
+          </div>
+        </section>
+
+        <label class="guidance-toggle">
+          <input id="showGuidance" type="checkbox" checked>
+          <span><strong>Pokazuj komunikaty pomocnicze</strong><small>Raporty trenera, oceny rozwoju i ostrzeżenia dotyczące prowadzenia kariery.</small></span>
+        </label>
+
+        <button class="btn primary submit" type="submit">ZACZNIJ KARIERĘ</button>
+      </form>
+    </section>
+  </main>
+
+  <main id="gameScreen" class="layout hidden">
+    <aside class="profile card">
+      <div id="number" class="number" title="Numer startowy zawodnika — losowany na początku kariery">14</div>
+      <p id="regionView" class="eyebrow"></p>
+      <h2 id="nameView"></h2>
+      <p id="archetypeView" class="serif muted"></p>
+      <hr>
+      <div class="big-stats">
+        <div><span>OVERALL</span><b id="overallView" class="red"></b></div>
+        <div><span>WIEK</span><b id="ageView"></b></div>
+      </div>
+      <hr>
+      <div class="micro">
+        <div><span>Szansa na skład</span><b id="chanceView"></b></div>
+        <div><span>Profesjonalizm</span><b id="proView"></b></div>
+        <div><span>Lojalność</span><b id="loyaltyView"></b></div>
+        <div><span>Medialność</span><b id="mediaView"></b></div>
+        <div><span>Reputacja</span><b id="repView"></b></div>
+        <div><span>Morale</span><b id="moraleView"></b></div>
+        <div><span>Sprzęt</span><b id="equipmentView"></b></div>
+        <div><span>Budżet</span><b id="budgetView"></b></div>
+        <div><span>Ryzyko urazu</span><b id="riskView"></b></div>
+      </div>
+      <hr>
+      <div class="profile-block"><span>KLUB</span><strong id="clubView"></strong><small id="leagueView"></small></div>
+      <div class="profile-block"><span>STATUS</span><strong id="roleView"></strong></div>
+      <div class="profile-block"><span>KONTRAKT</span><strong id="contractView"></strong><small id="salaryView"></small></div>
+      <div class="profile-block"><span>REPREZENTACJA</span><strong id="nationalView"></strong><small id="nationalCapsView"></small></div>
+    </aside>
+
+    <section class="content">
+      <div class="dashboard-intro">
+        <div>
+          <p class="eyebrow">CENTRUM KARIERY</p>
+          <h2>Twój sezon. Twoje decyzje.</h2>
+        </div>
+        <div class="live-indicator"><span></span> SYMULACJA AKTYWNA</div>
+      </div>
+      <article class="card season">
+        <div class="season-head">
+          <div><p id="seasonLabel" class="eyebrow"></p><h2 id="seasonTitle"></h2></div>
+          <div class="value"><span>WARTOŚĆ</span><b id="valueView"></b></div>
+        </div>
+        <div class="stats">
+          <div><span>MECZE</span><b id="matchesView">0</b></div>
+          <div><span>BIEGI</span><b id="heatsView">0</b></div>
+          <div><span>PUNKTY</span><b id="pointsView">0+0</b></div>
+          <div><span>ŚREDNIA</span><b id="avgView">0,000</b></div>
+          <div><span>ZAROBEK</span><b id="earningsView">0 zł</b></div>
+        </div>
+        <section id="newsBox" class="news">
+          <p class="eyebrow">PRZED SEZONEM</p>
+          <h3>Wszystko przed tobą.</h3>
+          <p>Wyniki zależą od umiejętności, sprzętu, pozycji w zespole, morale i decyzji.</p>
+        </section>
+        <div id="resultBox" class="result hidden"></div>
+        <button id="playBtn" class="btn primary full">ROZEGRAJ SEZON</button>
+      </article>
+
+      <article class="card">
+        <div class="section-head">
+          <div><p class="eyebrow">PARAMETRY</p><h2>Twój zawodnik</h2></div>
+          <span class="pill"><b id="devPoints">0</b> PKT ROZWOJU</span>
+        </div>
+        <div id="skills" class="skills"></div>
+      </article>
+
+
+      <article class="card">
+        <div class="section-head">
+          <div><p class="eyebrow">ZAPLECZE</p><h2>Baza twojego teamu</h2></div>
+          <span class="pill">INWESTYCJE</span>
+        </div>
+        <div id="facilitiesList" class="facilities-list"></div>
+      </article>
+
+      <article class="card">
+        <div class="section-head">
+          <div><p class="eyebrow">ROZGRYWKI</p><h2 id="tableTitle">Tabela ligi</h2></div>
+          <span class="pill" id="teamFinish">—</span>
+        </div>
+        <div id="leagueTable" class="league-table"></div>
+      </article>
+
+
+      <article class="card">
+        <div class="section-head">
+          <div><p class="eyebrow">TURNIEJE</p><h2>DMPJ i zawody indywidualne</h2></div>
+          <span class="pill">SEZONOWE</span>
+        </div>
+        <div id="competitionList" class="competition-list"></div>
+      </article>
+
+
+      <article id="careerSummaryCard" class="card hidden">
+        <div class="section-head">
+          <div><p class="eyebrow">KONIEC KARIERY</p><h2>Podsumowanie</h2></div>
+          <button id="generateCareerGraphicBtn" class="btn summary-share-btn" type="button">WYGENERUJ GRAFIKĘ</button>
+        </div>
+        <div id="careerSummaryContent" class="career-summary-content"></div>
+      </article>
+
+      <article class="card">
+        <div class="section-head">
+          <div><p class="eyebrow">HISTORIA</p><h2>Twoja kariera</h2></div>
+          <span class="pill"><b id="careerPoints">0</b> PKT</span>
+        </div>
+        <div id="history" class="history"></div>
+      </article>
+    </section>
+  </main>
+</div>
+
+<div id="modal" class="modal hidden">
+  <div class="modal-card">
+    <p id="modalKicker" class="eyebrow">DECYZJA</p>
+    <h2 id="modalTitle"></h2>
+    <p id="modalText" class="modal-text"></p>
+    <div id="modalOptions" class="modal-options"></div>
+  </div>
+</div>
+<script src="app.js"></script>
+</body>
+</html>
