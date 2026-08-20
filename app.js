@@ -1913,6 +1913,15 @@ function selectedRiderNumber(){
  return Number.isInteger(number)&&number>=1&&number<=999?number:randomRiderNumber();
 }
 
+function showStartDisclaimer(){
+ showModal(
+  "WAŻNA INFORMACJA",
+  "Zanim rozpoczniesz karierę",
+  `<strong>Polski Żużlowiec Simulator jest niezależną, nieoficjalną grą symulacyjną stworzoną dla fanów żużla.</strong><br><br>Gra wykorzystuje elementy rzeczywistego świata sportu żużlowego, jednak przebieg kariery, wyniki, transfery, kontrakty, wydarzenia oraz kolejne sezony są elementami fikcyjnej symulacji.<br><br>Projekt nie jest oficjalnie powiązany z klubami, organizatorami rozgrywek, federacjami ani innymi podmiotami pojawiającymi się w grze.<br><br><strong>Miłej zabawy i powodzenia na żużlowych torach!</strong>`,
+  [{title:"ROZUMIEM — ZACZYNAM KARIERĘ",desc:"Przejdź do swojej żużlowej kariery.",action:()=>{closeModal();createPlayer()}}]
+ );
+}
+
 function createPlayer(){
  const start=$("startPoint").value,profile=START_PROFILES[start]||START_PROFILES.academy;
  const background=drawPreLicenseBackground(start);
@@ -7629,7 +7638,7 @@ $("riderNumber").addEventListener("input",()=>{
  const value=Number(input.value);
  input.setCustomValidity(Number.isInteger(value)&&value>=1&&value<=999?"":"Wpisz liczbę całkowitą od 1 do 999.");
 });
-$("startForm").onsubmit=e=>{e.preventDefault();createPlayer()};
+$("startForm").onsubmit=e=>{e.preventDefault();showStartDisclaimer()};
 $("playBtn").onclick=play;
 $("newBtn").onclick=()=>{if(confirm("Usunąć obecny zapis i rozpocząć nową karierę?")){localStorage.removeItem("pzs_v200");localStorage.removeItem("pzs_v1361");localStorage.removeItem("pzs_v136");localStorage.removeItem("pzs_v135");localStorage.removeItem("pzs_v134");localStorage.removeItem("pzs_v1331");localStorage.removeItem("pzs_v133");localStorage.removeItem("pzs_v132");localStorage.removeItem("pzs_v131");localStorage.removeItem("pzs_v1301");localStorage.removeItem("pzs_v130");localStorage.removeItem("pzs_v129");localStorage.removeItem("pzs_v128");localStorage.removeItem("pzs_v127");localStorage.removeItem("pzs_v126");localStorage.removeItem("pzs_v1252");localStorage.removeItem("pzs_v1251");localStorage.removeItem("pzs_v125");localStorage.removeItem("pzs_v124");localStorage.removeItem("pzs_v123");localStorage.removeItem("pzs_v122");localStorage.removeItem("pzs_v121");localStorage.removeItem("pzs_v120");localStorage.removeItem("pzs_v119");localStorage.removeItem("pzs_v118");localStorage.removeItem("pzs_v117");localStorage.removeItem("pzs_v116");localStorage.removeItem("pzs_v115");localStorage.removeItem("pzs_v114");localStorage.removeItem("pzs_v113");localStorage.removeItem("pzs_v112");localStorage.removeItem("pzs_v111");localStorage.removeItem("pzs_v110");localStorage.removeItem("pzs_v109");localStorage.removeItem("pzs_v108");localStorage.removeItem("pzs_v107");localStorage.removeItem("pzs_v106");localStorage.removeItem("pzs_v105");localStorage.removeItem("pzs_v104");localStorage.removeItem("pzs_v103");localStorage.removeItem("pzs_v102");localStorage.removeItem("pzs_v101");localStorage.removeItem("pzs_v100");localStorage.removeItem("pzs_v305");localStorage.removeItem("pzs_v304");localStorage.removeItem("pzs_v303");localStorage.removeItem("pzs_v302");localStorage.removeItem("pzs_v301");localStorage.removeItem("pzs_final30");localStorage.removeItem("pzs_v30");localStorage.removeItem("pzs_v29");localStorage.removeItem("pzs_v28");localStorage.removeItem("pzs_v27");localStorage.removeItem("pzs_v26");localStorage.removeItem("pzs_v25");localStorage.removeItem("pzs_v24");localStorage.removeItem("pzs_v23");localStorage.removeItem("pzs_v22");localStorage.removeItem("pzs_v2");location.reload()}};
 $("exportBtn").onclick=()=>{const blob=new Blob([JSON.stringify(S,null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=`kariera-${S.name.replace(/\s+/g,"-").toLowerCase()}.json`;a.click();URL.revokeObjectURL(a.href)};

@@ -648,3 +648,49 @@ button,.btn,.option,.choice-card{touch-action:manipulation;-webkit-tap-highlight
  letter-spacing:inherit;
 }
 .achievement-copy strong .achievement-title-detail{margin-top:.12em}
+
+/* Wersja 2.00 — informacja o projekcie i dobrowolne wsparcie po zakończeniu kariery */
+.career-support{
+  display:flex;
+  justify-content:center;
+  margin-top:22px;
+  padding-top:20px;
+  border-top:1px solid var(--line);
+}
+.career-support-link{
+  display:block;
+  width:min(100%,420px);
+  border-radius:8px;
+  overflow:hidden;
+  box-shadow:0 8px 22px rgba(23,61,58,.14);
+  transition:transform .16s ease,box-shadow .16s ease;
+}
+.career-support-link:hover{
+  transform:translateY(-2px);
+  box-shadow:0 11px 26px rgba(23,61,58,.20);
+}
+.career-support-link:focus-visible{
+  outline:3px solid var(--cyan);
+  outline-offset:3px;
+}
+.career-support-link img{
+  display:block;
+  width:100%;
+  height:auto;
+}
+.legal-footer{
+  width:min(1180px,calc(100% - 36px));
+  margin:0 auto;
+  padding:10px 0 26px;
+  color:#7a8492;
+  font-size:10.5px;
+  line-height:1.55;
+  text-align:center;
+}
+.legal-footer p{margin:0 auto;max-width:1080px}
+.legal-footer strong{color:#66717f}
+@media (max-width:600px){
+  .career-support{margin-top:16px;padding-top:16px}
+  .career-support-link{width:min(100%,360px)}
+  .legal-footer{width:calc(100% - 24px);font-size:9.5px;line-height:1.5;padding-bottom:18px}
+}
