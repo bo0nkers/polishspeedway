@@ -11,7 +11,7 @@ const LEAGUES=[
   ["Stelmet Falubaz Zielona Góra",79],["FOGO Unia Leszno",82],["KRONO-PLAST Włókniarz Częstochowa",76],["GEZET Stal Gorzów",77]
  ]},
  {id:2,name:"Metalkas 2. Ekstraliga",level:2,teams:[
-  ["Abramczyk Polonia Bydgoszcz",75],["Cellfast Wilki Krosno",70],["INNPRO ROW Rybnik",72],["Dakar Development Stal Rzeszów",68],
+  ["Abramczyk Polonia Bydgoszcz",75],["Cellfast Wilki Krosno",74],["INNPRO ROW Rybnik",72],["Dakar Development Stal Rzeszów",68],
   ["Hunters PSŻ Poznań",67],["H. Skrzydlewska Orzeł Łódź",65],["Polonia Piła",63],["Moonfin Magnus Ostrów Wielkopolski",64]
  ]},
  {id:3,name:"Krajowa Liga Żużlowa",level:3,teams:[
@@ -196,9 +196,9 @@ const REGION_CLUBS={
 const FOREIGN_POLISH_LEAGUE_CLUBS=new Set(["Landshut Devils","Lokomotiv Daugavpils","MSC Wölfe Wittstock","AMK Zlatá Přilba Pardubice"]);
 function isForeignPolishLeagueClub(name){return FOREIGN_POLISH_LEAGUE_CLUBS.has(clubBaseName(name))}
 const EXPANSION_CLUBS=[
- {name:"Jaskółki Tarnów",city:"Tarnów",strength:52,type:"reaktywacja"},
+ {name:"Unia Tarnów",city:"Tarnów",strength:52,type:"reaktywacja"},
  {name:"Rawicz Speedway",city:"Rawicz",strength:48,type:"reaktywacja"},
- {name:"Wicher Machowa",city:"Machowa",strength:43,type:"reaktywacja"},
+ {name:"Victoria Machowa",city:"Machowa",strength:43,type:"reaktywacja"},
  {name:"Silesia Katowice",city:"Katowice",strength:46,type:"nowa sekcja"},
  {name:"Warszawski Klub Żużlowy",city:"Warszawa",strength:50,type:"nowa sekcja"},
  {name:"Gryfy Szczecin",city:"Szczecin",strength:44,type:"nowa sekcja"},
@@ -1917,7 +1917,7 @@ function showStartDisclaimer(){
  showModal(
   "WAŻNA INFORMACJA",
   "Zanim rozpoczniesz karierę",
-  `<strong>Polski Żużlowiec Simulator jest niezależną, nieoficjalną grą symulacyjną stworzoną dla fanów żużla.</strong><br><br>Gra wykorzystuje elementy rzeczywistego świata sportu żużlowego, jednak przebieg kariery, wyniki, transfery, kontrakty, wydarzenia oraz kolejne sezony są elementami fikcyjnej symulacji.<br><br>Projekt nie jest oficjalnie powiązany z klubami, organizatorami rozgrywek, federacjami ani innymi podmiotami pojawiającymi się w grze.<br><br><strong>Miłej zabawy i powodzenia na żużlowych torach!</strong>`,
+  `<strong>Polish Speedway Simulator jest niezależną, nieoficjalną grą symulacyjną stworzoną dla fanów żużla.</strong><br><br>Gra wykorzystuje elementy rzeczywistego świata sportu żużlowego, jednak przebieg kariery, wyniki, transfery, kontrakty, wydarzenia oraz kolejne sezony są elementami fikcyjnej symulacji.<br><br>Projekt nie jest oficjalnie powiązany z klubami, organizatorami rozgrywek, federacjami ani innymi podmiotami pojawiającymi się w grze.<br><br><strong>Miłej zabawy i powodzenia na żużlowych torach!</strong>`,
   [{title:"ROZUMIEM — ZACZYNAM KARIERĘ",desc:"Przejdź do swojej żużlowej kariery.",action:()=>{closeModal();createPlayer()}}]
  );
 }
@@ -1957,11 +1957,13 @@ function createPlayer(){
  $("newsBox").innerHTML=`<p class="eyebrow">PRZED LICENCJĄ</p><h3>${background.title.toUpperCase()}</h3><p>${background.text}</p><p><b>Zaplecze:</b> ${support.title}. Budżet początkowy: ${money(S.budget)}.</p>${openingReport?`<div class="guidance-report"><span>RAPORT SZKÓŁKI</span><p>${openingReport.text}</p></div>`:""}`;
  save();
 }
-function save(){localStorage.setItem("pzs_v200",JSON.stringify(S))}
+function save(){localStorage.setItem("pss_v100",JSON.stringify(S))}
 function load(){
  try{
-  const newest=localStorage.getItem("pzs_v200");
+  const newest=localStorage.getItem("pss_v100");
+  const previousBrand=localStorage.getItem("pzs_v200");
   if(newest)return JSON.parse(newest);
+  if(previousBrand){localStorage.setItem("pss_v100",previousBrand); return JSON.parse(previousBrand);}
   const v1361=localStorage.getItem("pzs_v1361");
   if(v1361)return JSON.parse(v1361);
   const v136=localStorage.getItem("pzs_v136");
@@ -2586,7 +2588,7 @@ function animateRollerWithBrake(stripEl,startOffset,finalOffset,duration,done){
  stripEl.style.transition="none";
  stripEl.style.transform=`translate3d(${-startOffset}px,0,0)`;
 
- // 2.00 — jedna gładka krzywa prędkości.
+ // 1.00 — jedna gładka krzywa prędkości.
  // Szybki start, a potem od razu naturalne, długie hamowanie:
  // bez ponownego przyspieszania, bez "progów" między fazami
  // i z bardzo wolnym ogonem tuż przed zatrzymaniem.
@@ -7056,7 +7058,7 @@ function drawCareerGraphicHeader(ctx,title,subtitle){
  ctx.fillStyle="#f4f0e7";ctx.fillRect(0,0,1080,1350);
  ctx.fillStyle="#173d3a";ctx.fillRect(0,0,1080,220);
  ctx.fillStyle="#4ca7a0";ctx.fillRect(0,212,1080,8);
- canvasText(ctx,"POLSKI ŻUŻLOWIEC SIMULATOR",64,72,{font:"700 27px Arial",color:"#a8dfe2"});
+ canvasText(ctx,"POLISH SPEEDWAY SIMULATOR",64,72,{font:"700 27px Arial",color:"#a8dfe2"});
  canvasText(ctx,title,64,142,{font:"800 55px Arial",color:"#ffffff",maxWidth:900});
  canvasText(ctx,subtitle,64,190,{font:"600 25px Arial",color:"#e9a33a",maxWidth:900});
 }
@@ -7097,7 +7099,7 @@ function generateCareerSummaryGraphic(){
  canvasRoundRect(ctx,55,1160,970,120,16,"#173d3a");
  canvasText(ctx,"TYP KARIERY",85,1203,{font:"700 18px Arial",color:"#a8dfe2"});
  canvasText(ctx,classifyCareerPath(),85,1250,{font:"800 35px Arial",color:"#ffffff"});
- canvasText(ctx,"#PolskiŻużlowiecSimulator",995,1250,{font:"700 20px Arial",color:"#e9a33a",align:"right"});
+ canvasText(ctx,"#PolishSpeedwaySimulator",995,1250,{font:"700 20px Arial",color:"#e9a33a",align:"right"});
  downloadCanvas(canvas,`kariera-${S.name.toLowerCase().replace(/[^a-z0-9ąćęłńóśźż]+/gi,"-")}.png`);
 }
 function generateSeasonHistoryGraphics(){
@@ -7128,7 +7130,7 @@ function generateSeasonHistoryGraphics(){
     canvasText(ctx,leagueSeasonLabel(season),columns[7],y,{font:"700 18px Arial",maxWidth:115});
     y+=82;
    });
-   canvasText(ctx,"POLSKI ŻUŻLOWIEC SIMULATOR",55,1300,{font:"700 18px Arial",color:"#6e7773"});
+   canvasText(ctx,"POLISH SPEEDWAY SIMULATOR",55,1300,{font:"700 18px Arial",color:"#6e7773"});
    downloadCanvas(canvas,`historia-${S.name.toLowerCase().replace(/[^a-z0-9ąćęłńóśźż]+/gi,"-")}-${pageIndex+1}.png`);
    setTimeout(resolve,350);
   }));
@@ -7640,7 +7642,7 @@ $("riderNumber").addEventListener("input",()=>{
 });
 $("startForm").onsubmit=e=>{e.preventDefault();showStartDisclaimer()};
 $("playBtn").onclick=play;
-$("newBtn").onclick=()=>{if(confirm("Usunąć obecny zapis i rozpocząć nową karierę?")){localStorage.removeItem("pzs_v200");localStorage.removeItem("pzs_v1361");localStorage.removeItem("pzs_v136");localStorage.removeItem("pzs_v135");localStorage.removeItem("pzs_v134");localStorage.removeItem("pzs_v1331");localStorage.removeItem("pzs_v133");localStorage.removeItem("pzs_v132");localStorage.removeItem("pzs_v131");localStorage.removeItem("pzs_v1301");localStorage.removeItem("pzs_v130");localStorage.removeItem("pzs_v129");localStorage.removeItem("pzs_v128");localStorage.removeItem("pzs_v127");localStorage.removeItem("pzs_v126");localStorage.removeItem("pzs_v1252");localStorage.removeItem("pzs_v1251");localStorage.removeItem("pzs_v125");localStorage.removeItem("pzs_v124");localStorage.removeItem("pzs_v123");localStorage.removeItem("pzs_v122");localStorage.removeItem("pzs_v121");localStorage.removeItem("pzs_v120");localStorage.removeItem("pzs_v119");localStorage.removeItem("pzs_v118");localStorage.removeItem("pzs_v117");localStorage.removeItem("pzs_v116");localStorage.removeItem("pzs_v115");localStorage.removeItem("pzs_v114");localStorage.removeItem("pzs_v113");localStorage.removeItem("pzs_v112");localStorage.removeItem("pzs_v111");localStorage.removeItem("pzs_v110");localStorage.removeItem("pzs_v109");localStorage.removeItem("pzs_v108");localStorage.removeItem("pzs_v107");localStorage.removeItem("pzs_v106");localStorage.removeItem("pzs_v105");localStorage.removeItem("pzs_v104");localStorage.removeItem("pzs_v103");localStorage.removeItem("pzs_v102");localStorage.removeItem("pzs_v101");localStorage.removeItem("pzs_v100");localStorage.removeItem("pzs_v305");localStorage.removeItem("pzs_v304");localStorage.removeItem("pzs_v303");localStorage.removeItem("pzs_v302");localStorage.removeItem("pzs_v301");localStorage.removeItem("pzs_final30");localStorage.removeItem("pzs_v30");localStorage.removeItem("pzs_v29");localStorage.removeItem("pzs_v28");localStorage.removeItem("pzs_v27");localStorage.removeItem("pzs_v26");localStorage.removeItem("pzs_v25");localStorage.removeItem("pzs_v24");localStorage.removeItem("pzs_v23");localStorage.removeItem("pzs_v22");localStorage.removeItem("pzs_v2");location.reload()}};
+$("newBtn").onclick=()=>{if(confirm("Usunąć obecny zapis i rozpocząć nową karierę?")){localStorage.removeItem("pss_v100");localStorage.removeItem("pzs_v200");localStorage.removeItem("pzs_v1361");localStorage.removeItem("pzs_v136");localStorage.removeItem("pzs_v135");localStorage.removeItem("pzs_v134");localStorage.removeItem("pzs_v1331");localStorage.removeItem("pzs_v133");localStorage.removeItem("pzs_v132");localStorage.removeItem("pzs_v131");localStorage.removeItem("pzs_v1301");localStorage.removeItem("pzs_v130");localStorage.removeItem("pzs_v129");localStorage.removeItem("pzs_v128");localStorage.removeItem("pzs_v127");localStorage.removeItem("pzs_v126");localStorage.removeItem("pzs_v1252");localStorage.removeItem("pzs_v1251");localStorage.removeItem("pzs_v125");localStorage.removeItem("pzs_v124");localStorage.removeItem("pzs_v123");localStorage.removeItem("pzs_v122");localStorage.removeItem("pzs_v121");localStorage.removeItem("pzs_v120");localStorage.removeItem("pzs_v119");localStorage.removeItem("pzs_v118");localStorage.removeItem("pzs_v117");localStorage.removeItem("pzs_v116");localStorage.removeItem("pzs_v115");localStorage.removeItem("pzs_v114");localStorage.removeItem("pzs_v113");localStorage.removeItem("pzs_v112");localStorage.removeItem("pzs_v111");localStorage.removeItem("pzs_v110");localStorage.removeItem("pzs_v109");localStorage.removeItem("pzs_v108");localStorage.removeItem("pzs_v107");localStorage.removeItem("pzs_v106");localStorage.removeItem("pzs_v105");localStorage.removeItem("pzs_v104");localStorage.removeItem("pzs_v103");localStorage.removeItem("pzs_v102");localStorage.removeItem("pzs_v101");localStorage.removeItem("pzs_v100");localStorage.removeItem("pzs_v305");localStorage.removeItem("pzs_v304");localStorage.removeItem("pzs_v303");localStorage.removeItem("pzs_v302");localStorage.removeItem("pzs_v301");localStorage.removeItem("pzs_final30");localStorage.removeItem("pzs_v30");localStorage.removeItem("pzs_v29");localStorage.removeItem("pzs_v28");localStorage.removeItem("pzs_v27");localStorage.removeItem("pzs_v26");localStorage.removeItem("pzs_v25");localStorage.removeItem("pzs_v24");localStorage.removeItem("pzs_v23");localStorage.removeItem("pzs_v22");localStorage.removeItem("pzs_v2");location.reload()}};
 $("exportBtn").onclick=()=>{const blob=new Blob([JSON.stringify(S,null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=`kariera-${S.name.replace(/\s+/g,"-").toLowerCase()}.json`;a.click();URL.revokeObjectURL(a.href)};
 $("importInput").onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{S=JSON.parse(r.result);S.seasonFlowActive=false;S.preseasonCompletedYear=null;S.budgetManagementCompletedYear=null;normalize();save();render()}catch{alert("Nieprawidłowy plik zapisu.")}};r.readAsText(f)};
 const saved=load();if(saved){S=saved;S.seasonFlowActive=false;normalize();repairLegacyStuckSeason();repairMaxedMetaSave();save();render()}

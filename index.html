@@ -3,24 +3,26 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Polski Żużlowiec Simulator</title>
+  <title>Polish Speedway Simulator</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@400;500;600;700;800&family=Roboto+Condensed:wght@600;700;800&display=swap" rel="stylesheet">
   <meta name="theme-color" content="#173d3a">
-  <meta name="description" content="Polski Żużlowiec Simulator 2.00 — tekstowa gra żużlowa o drodze od szkółki do światowego żużla.">
-
+  <link rel="icon" type="image/png" href="speedway-emblem.png">
+  <meta name="description" content="Polish Speedway Simulator 1.00 — tekstowa gra żużlowa o drodze od szkółki do światowego żużla.">
   <meta property="og:type" content="website">
-  <meta property="og:title" content="Polski Żużlowiec Simulator">
+  <meta property="og:title" content="Polish Speedway Simulator">
   <meta property="og:description" content="Tekstowy symulator kariery polskiego żużlowca — od szkółki aż po walkę o największe trofea.">
-  <meta property="og:url" content="https://polskizuzlowiec.vercel.app/">
-  <meta property="og:image" content="https://polskizuzlowiec.vercel.app/social-preview.jpeg">
-
+  <meta property="og:url" content="https://polishspeedway.vercel.app/">
+  <meta property="og:image" content="https://polishspeedway.vercel.app/social-preview.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Polish Speedway Simulator — tekstowa gra żużlowa">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Polski Żużlowiec Simulator">
+  <meta name="twitter:title" content="Polish Speedway Simulator">
   <meta name="twitter:description" content="Tekstowy symulator kariery polskiego żużlowca — od szkółki aż po walkę o największe trofea.">
-  <meta name="twitter:image" content="https://polskizuzlowiec.vercel.app/social-preview.jpeg">
-
+  <meta name="twitter:image" content="https://polishspeedway.vercel.app/social-preview.jpg">
+  <meta name="twitter:image:alt" content="Polish Speedway Simulator — tekstowa gra żużlowa">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -28,20 +30,14 @@
   <header class="masthead">
     <div class="brand-lockup">
       <div class="brand-mark" aria-hidden="true">
-        <svg class="speedway-logo" viewBox="0 0 96 96" focusable="false">
-          <circle cx="48" cy="48" r="39" class="logo-wheel"/>
-          <circle cx="48" cy="48" r="8" class="logo-hub"/>
-          <path d="M29 58c7-15 18-23 34-24l8 9-15 2-9 18H31z" class="logo-bike"/>
-          <path d="M51 34l9-12m-5 12 13 2M43 47l-12-9m16 20 16 9" class="logo-frame"/>
-          <path d="M25 72 70 20" class="logo-accent"/>
-        </svg>
+        <img class="speedway-logo" src="speedway-emblem.png" alt="">
       </div>
       <div>
         <p class="eyebrow">TEKSTOWA GRA ŻUŻLOWA</p>
-        <h1>POLSKI ŻUŻLOWIEC <span>SIMULATOR</span></h1>
+        <h1>POLISH SPEEDWAY <span>SIMULATOR</span></h1>
       </div>
     </div>
-    <div class="header-actions"><span class="version-badge">WERSJA 2.00</span>
+    <div class="header-actions"><span class="version-badge">WERSJA 1.00</span>
       <button id="exportBtn" class="btn secondary hidden">EKSPORT ZAPISU</button>
       <label class="btn secondary hidden" id="importLabel">IMPORT ZAPISU<input id="importInput" type="file" accept=".json"></label>
       <button id="newBtn" class="btn secondary">NOWA KARIERA</button>
@@ -233,8 +229,8 @@
         </div>
         <div id="careerSummaryContent" class="career-summary-content"></div>
         <div class="career-support">
-          <a class="career-support-link" href="https://www.naffy.io/piotr-bak-qwihy/postaw-kawe" target="_blank" rel="noopener noreferrer" aria-label="Postaw kawę i wesprzyj rozwój Polskiego Żużlowca Simulatora">
-            <img src="postaw-kawe.jpeg" alt="Postaw kawę — wesprzyj rozwój Polskiego Żużlowca Simulatora">
+          <a class="career-support-link" href="https://www.naffy.io/piotr-bak-qwihy/postaw-kawe" target="_blank" rel="noopener noreferrer" aria-label="Postaw kawę i wesprzyj rozwój Polish Speedway Simulator">
+            <img src="postaw-kawe.jpeg" alt="Postaw kawę — wesprzyj rozwój Polish Speedway Simulator">
           </a>
         </div>
       </article>
@@ -251,7 +247,7 @@
 </div>
 
 <footer class="legal-footer" aria-label="Informacja o charakterze projektu">
-  <p><strong>Polski Żużlowiec Simulator</strong> jest niezależnym, nieoficjalnym projektem stworzonym dla fanów sportu żużlowego. Gra wykorzystuje elementy inspirowane rzeczywistym światem żużla, w tym nazwy klubów, rozgrywek, miejsc, instytucji i osób, jednak nie stanowi oficjalnego produktu żadnego z tych podmiotów i nie jest przez nie sponsorowana ani autoryzowana. Gra ma charakter symulacyjny, a przebieg kariery, wyniki, transfery, kontrakty, wydarzenia, zmiany nazw, relacje pomiędzy podmiotami oraz kolejne sezony są elementami fikcyjnej symulacji i nie powinny być traktowane jako informacje o rzeczywistych zdarzeniach, decyzjach lub relacjach. Wszystkie wykorzystane nazwy służą wyłącznie budowaniu świata przedstawionego gry. Polski Żużlowiec Simulator nie jest również powiązany z twórcami innych gier i symulatorów sportowych.</p>
+  <p><strong>Polish Speedway Simulator</strong> jest niezależnym, nieoficjalnym projektem stworzonym dla fanów sportu żużlowego. Gra wykorzystuje elementy inspirowane rzeczywistym światem żużla, w tym nazwy klubów, rozgrywek, miejsc, instytucji i osób, jednak nie stanowi oficjalnego produktu żadnego z tych podmiotów i nie jest przez nie sponsorowana ani autoryzowana. Gra ma charakter symulacyjny, a przebieg kariery, wyniki, transfery, kontrakty, wydarzenia, zmiany nazw, relacje pomiędzy podmiotami oraz kolejne sezony są elementami fikcyjnej symulacji i nie powinny być traktowane jako informacje o rzeczywistych zdarzeniach, decyzjach lub relacjach. Wszystkie wykorzystane nazwy służą wyłącznie budowaniu świata przedstawionego gry. Polish Speedway Simulator nie jest również powiązany z twórcami innych gier i symulatorów sportowych.</p>
 </footer>
 
 <div id="modal" class="modal hidden">
