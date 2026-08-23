@@ -4977,15 +4977,46 @@ function completeSGPRound(rows,{playerLCQPlace=null,playerFinalPlace=null,fixedL
  }]));
  return {regular,direct,lcqGroups,lcqOrders,lcqWinners,finalists,finalOrder,classification,meta};
 }
-function eliteRoundRows(riders,key,{playerHeatPoints=null,playerRatingOverride=null,token=null}={}){
- const ratings=riders.map(r=>r.id==="player"&&Number.isFinite(playerRatingOverride)?playerRatingOverride:(r.rating+(r.seasonForm||0)));
- const fieldMean=ratings.reduce((s,x)=>s+x,0)/Math.max(1,ratings.length);
- return riders.map((r,i)=>{
-  const rating=ratings[i];
-  const base=r.id==="player"&&Number.isFinite(playerHeatPoints)
-   ?playerHeatPoints
-   :simulateEliteFiveRideScore(rating,fieldMean);
-  return {rider:r,base,tiebreak:rating+Math.random()};
+function fiveRideResultsForTotal(total){
+ const target=clamp(Math.round(Number(total)||0),0,15),points=[];let remaining=target;
+ for(let i=0;i<5;i++){
+  const slotsLeft=4-i,min=Math.max(0,remaining-slotsLeft*3),max=Math.min(3,remaining);
+  const value=rand(min,max);points.push(value);remaining-=value;
+ }
+ for(let i=points.length-1;i>0;i--){const j=rand(0,i);[points[i],points[j]]=[points[j],points[i]]}
+ return points.map(value=>({points:value,place:4-value}));
+}
+function eliteRoundRows(riders,key,{playerHeatPoints=null,playerRideResults=null,playerRatingOverride=null,token=null,heatVariance=13}={}){
+ if(riders.length!==16)throw new Error(`${key}: faza zasadnicza wymaga dokładnie 16 zawodników.`);
+ const player=riders.find(r=>r.id==="player");
+ if(!player)throw new Error(`${key}: brak zawodnika gracza w stawce.`);
+ const ordered=[player,...riders.filter(r=>r.id!=="player")];
+ const rated=ordered.map(r=>({
+  ...r,
+  rating:r.id==="player"&&Number.isFinite(playerRatingOverride)
+   ?playerRatingOverride
+   :r.rating+(r.seasonForm||0)
+ }));
+ const forcedResults=Array.isArray(playerRideResults)&&playerRideResults.length
+  ?playerRideResults
+  :Number.isFinite(playerHeatPoints)?fiveRideResultsForTotal(playerHeatPoints):null;
+ const tournament=simulateClassic16Tournament({
+  playerRating:rated[0].rating,
+  pool:rated.slice(1).map(r=>({id:r.id,name:r.name,rating:r.rating})),
+  key,
+  playerRideResults:forcedResults,
+  heatVariance
+ });
+ const statsById=new Map(tournament.table.map((st,index)=>[st.id,{...st,rank:index+1}]));
+ return ordered.map(r=>{
+  const st=statsById.get(r.id);
+  if(!st)throw new Error(`${key}: brak wyniku zawodnika ${r.id}.`);
+  return {
+   rider:r,
+   base:st.points,
+   tiebreak:1000-st.rank,
+   regularStats:{wins:st.wins,seconds:st.seconds,thirds:st.thirds,zeros:st.zeros,rides:st.rides}
+  };
  });
 }
 function seasonsOnTrack(city){
@@ -5615,7 +5646,7 @@ function playInteractiveIMPWildcardRound(basePph,event,done){
    {id:"player",name:S.name,rating:power},
    ...pool.map((r,i)=>({id:`r${i}`,name:`Rywal ${i+1}`,rating:r.rating}))
   ];
-  const rows=eliteRoundRows(riders,"IMP",{playerHeatPoints:state.points,playerRatingOverride:power});
+  const rows=eliteRoundRows(riders,"IMP",{playerHeatPoints:state.points,playerRideResults:state.results,playerRatingOverride:power});
   playInteractiveImpSecPostHeats({
    key:"IMP",label:"IMP",rows,playerRatingBonus:bonus,
    contextNote:"Jedziesz na własnym torze z dziką kartą gospodarza.",dayToken:state.eventToken
@@ -6083,7 +6114,7 @@ function playInteractiveIMP(basePph,done){
  },state=>{
   const playerRating=clamp(basePower+state.dayModifier*.72,48,99);
   const roundRiders=[...riders,wildcard].map(r=>r.id==="player"?{...r,rating:playerRating}:r);
-  const rows=eliteRoundRows(roundRiders,key,{playerHeatPoints:state.points,playerRatingOverride:playerRating});
+  const rows=eliteRoundRows(roundRiders,key,{playerHeatPoints:state.points,playerRideResults:state.results,playerRatingOverride:playerRating});
   playInteractiveImpSecPostHeats({key,label:"IMP",rows,dayToken:state.eventToken},resolved=>{
    for(const rider of riders){
     const m=resolved.meta.get(rider.id);if(!m)continue;
@@ -6169,7 +6200,7 @@ function playInteractiveSEC(basePph,done){
   prefix:`Przed rundą masz ${start} pkt i zajmujesz około ${before.place}. miejsca. ${importance} `
  },state=>{
   const playerRating=clamp(basePower+state.dayModifier*.72,48,99),roundRiders=riders.map(r=>r.id==="player"?{...r,rating:playerRating}:r);
-  const rows=eliteRoundRows(roundRiders,key,{playerHeatPoints:state.points,playerRatingOverride:playerRating});
+  const rows=eliteRoundRows(roundRiders,key,{playerHeatPoints:state.points,playerRideResults:state.results,playerRatingOverride:playerRating});
   playInteractiveImpSecPostHeats({key,label:"SEC",rows,dayToken:state.eventToken},resolved=>{
    addResolvedRound(targetRound,rows,resolved);
 
@@ -6205,7 +6236,7 @@ function playInteractiveSGP(basePph,done){
   rivalPool:season.opponents
  },state=>{
   const playerRating=clamp(season.player.rating+state.dayModifier*.72,48,99),roundRiders=riders.map(r=>r.id==="player"?{...r,rating:playerRating}:r);
-  const rows=eliteRoundRows(roundRiders,key,{playerHeatPoints:state.points,playerRatingOverride:playerRating});
+  const rows=eliteRoundRows(roundRiders,key,{playerHeatPoints:state.points,playerRideResults:state.results,playerRatingOverride:playerRating});
   playInteractiveSGPPostHeats({rows,dayToken:state.eventToken},resolved=>{
    for(const rider of riders){
     const m=resolved.meta.get(rider.id);if(!m)continue;
@@ -6269,7 +6300,7 @@ function simulateInternationalWildcardRound(event,basePph){
 function playInternationalWildcardRound(event,basePph,done){
  const isSGP=event.series==="SGP",key=isSGP?"Speedway Grand Prix":"SEC",pool=buildCompetitionField(key,15),bonus=localInternationalWildcardBonus(event),base=competitionPower(basePph,key,{includeDay:false,extra:-1});
  playFiveInteractiveTournamentHeats({key,label:`${isSGP?"SGP":"SEC"} — dzika karta w ${event.hostCity}`,prefix:`Jedziesz przed własną publicznością. `,rivalPool:pool,playerRatingBonus:bonus,contextNote:"Znajomość domowego toru daje niewielki bonus do efektywnej siły, ale nie zmienia nominalnego OVR."},state=>{
-  const power=clamp(base+state.dayModifier*.72+bonus,48,99),riders=[{id:"player",name:S.name,rating:power},...pool.map((r,i)=>({id:`r${i}`,name:`Rywal ${i+1}`,rating:r.rating}))],rows=eliteRoundRows(riders,key,{playerHeatPoints:state.points,playerRatingOverride:power});
+  const power=clamp(base+state.dayModifier*.72+bonus,48,99),riders=[{id:"player",name:S.name,rating:power},...pool.map((r,i)=>({id:`r${i}`,name:`Rywal ${i+1}`,rating:r.rating}))],rows=eliteRoundRows(riders,key,{playerHeatPoints:state.points,playerRideResults:state.results,playerRatingOverride:power});
   if(isSGP)playInteractiveSGPPostHeats({rows,playerRatingBonus:bonus,dayToken:state.eventToken},resolved=>{
    const m=resolved.meta.get("player"),place=m.place,ra=place<=3?[{round:event.round,place,host:event.hostCity,key:"SGP"}]:[];if(place<=3)applyRoundAchievementBonuses("SGP",[{round:event.round,place,host:event.hostCity}],[event.hostCity]);
    done({name:`Speedway Grand Prix — dzika karta (${event.hostCity})`,key:"SGP Wild Card",stage:`runda ${event.round}`,result:place===1?"zwycięstwo w rundzie SGP":`${place}. miejsce w rundzie SGP`,points:m.points,place,roundPlace:place,hostCity:event.hostCity,roundAchievements:ra,healthExposureHeats:5});
@@ -7144,6 +7175,18 @@ function showCareerGraphicOptions(){
  ]);
 }
 
+function showCareerEndSupportPopup(){
+ const card=$("careerSummaryCard");
+ showModal(
+  "KONIEC KARIERY",
+  "Rozegrałeś całą karierę!",
+  `Sprawdź swoje sukcesy, statystyki i pełną historię sezon po sezonie. A jeśli Polish Speedway Simulator dał ci trochę frajdy i przed kolejną rozgrywką chcesz wesprzeć dalszy rozwój projektu — możesz postawić symboliczną kawę. ☕`,
+  [
+   {title:"Zobacz podsumowanie kariery",desc:"Przejdź do sukcesów, statystyk i historii wszystkich sezonów.",action:()=>{closeModal();card?.scrollIntoView?.({behavior:"smooth",block:"start"})}},
+   {title:"Postaw kawę! ☕",desc:"Dobrowolnie wesprzyj rozwój Polish Speedway Simulator.",action:()=>{window.open("https://www.naffy.io/piotr-bak-qwihy/postaw-kawe","_blank","noopener,noreferrer");closeModal();card?.scrollIntoView?.({behavior:"smooth",block:"start"})}}
+  ]
+ );
+}
 function endCareer(reason="Decyzja zawodnika"){
  clearSeasonWatchdog();
  S.seasonFlowActive=false;
@@ -7153,7 +7196,7 @@ function endCareer(reason="Decyzja zawodnika"){
  card.classList.remove("hidden");content.innerHTML=careerSummaryHtml();
  $("resultBox").classList.add("hidden");
  render();
- card.scrollIntoView?.({behavior:"smooth",block:"start"});
+ showCareerEndSupportPopup();
 }
 
 function postSeasonHealthGate(next){
