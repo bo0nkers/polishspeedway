@@ -520,7 +520,7 @@ const LEAGUE_RIDER_RANGES={
  2:{min:64,mode:73,max:88},
  3:{min:52,mode:62,max:78}
 };
-const SGP_PLACE_POINTS=[20,18,16,14,12,10,9,8,7,6,5,4,3,2,1,0];
+const SGP_PLACE_POINTS=[20,18,16,14,12,11,10,9,8,7,6,5,4,3,2,1];
 
 
 const INTERNATIONAL_QUALIFIER_TRACKS={
@@ -746,52 +746,151 @@ function careerDnaRange(startProfile){
 function createCareerDNA(startProfile="academy"){
  const [min,mode,max]=careerDnaRange(startProfile),potential=Math.round(triangular(min,mode,max)),roll=Math.random();
  let curveType,peakAge,peakWidth,declineRate,growthAdjust=0;
- if(roll<.055){curveType="phenom";peakAge=rand(24,28);peakWidth=rand(3,5);declineRate=.90+Math.random()*.12;growthAdjust=.08}
- else if(roll<.18){curveType="early";peakAge=rand(23,27);peakWidth=rand(3,5);declineRate=.94+Math.random()*.13;growthAdjust=.05}
- else if(roll<.27){curveType="late";peakAge=rand(33,36);peakWidth=rand(2,4);declineRate=.95+Math.random()*.12;growthAdjust=-.06}
- else if(roll<.49){curveType="underachiever";peakAge=rand(26,31);peakWidth=rand(2,4);declineRate=1.00+Math.random()*.12;growthAdjust=-.05}
- else if(roll<.72){curveType="steady";peakAge=rand(28,32);peakWidth=rand(3,5);declineRate=.94+Math.random()*.12}
- else{curveType="classic";peakAge=rand(27,32);peakWidth=rand(3,5);declineRate=.94+Math.random()*.12}
- const lateBloom=curveType==="late",earlyPeak=curveType==="early"||curveType==="phenom",exceptionalLongevity=Math.random()<.045;
- const growthRate=Math.round((triangular(.82,1.02,1.22)+growthAdjust)*100)/100;
- const consistency=Math.round(triangular(.58,.79,.96)*100)/100,pressure=Math.round(triangular(.60,.82,1.06)*100)/100,durability=Math.round(triangular(.58,.84,1.08)*100)/100,adaptability=Math.round(triangular(.60,.82,1.08)*100)/100;
- const stagnationAge=curveType==="early"?rand(24,29):lateBloom?rand(25,29):rand(21,28),breakoutChance=lateBloom?.20:curveType==="underachiever"?.08:Math.round(triangular(.05,.10,.17)*100)/100;
- const jr=Math.random(),juniorGift=curveType==="phenom"?Math.max(1.20,jr<.35?1.34:1.24):jr<.02?1.26:jr<.08?1.15:jr<.28?1.07:jr<.84?1:.93,juniorPhenomenon=juniorGift>=1.24;
+ // 1.01: większość żużlowców osiąga naturalny szczyt między 27. a 34. rokiem życia,
+ // ale nadal istnieją rzadcy fenomeni, późni rozkwitający i bardzo długowieczni zawodnicy.
+ if(roll<.03){curveType="phenom";peakAge=rand(21,25);peakWidth=rand(2,4);declineRate=.98+Math.random()*.16;growthAdjust=.12}
+ else if(roll<.10){curveType="early";peakAge=rand(24,27);peakWidth=rand(3,5);declineRate=.98+Math.random()*.16;growthAdjust=.07}
+ else if(roll<.18){curveType="boomBust";peakAge=rand(25,30);peakWidth=rand(2,4);declineRate=1.08+Math.random()*.20;growthAdjust=.10}
+ else if(roll<.32){curveType="volatile";peakAge=rand(27,33);peakWidth=rand(3,5);declineRate=.98+Math.random()*.18;growthAdjust=.01}
+ else if(roll<.45){curveType="underachiever";peakAge=rand(27,34);peakWidth=rand(3,5);declineRate=1.00+Math.random()*.16;growthAdjust=-.06}
+ else if(roll<.63){curveType="steady";peakAge=rand(29,34);peakWidth=rand(4,7);declineRate=.91+Math.random()*.13}
+ else if(roll<.82){curveType="classic";peakAge=rand(27,33);peakWidth=rand(4,6);declineRate=.94+Math.random()*.14}
+ else if(roll<.93){curveType="late";peakAge=rand(34,38);peakWidth=rand(3,6);declineRate=.91+Math.random()*.13;growthAdjust=-.07}
+ else{curveType="resurgence";peakAge=rand(29,34);peakWidth=rand(4,6);declineRate=.90+Math.random()*.12;growthAdjust=-.01}
+ const lateBloom=curveType==="late",earlyPeak=["early","phenom","boomBust"].includes(curveType),exceptionalLongevity=Math.random()<(curveType==="resurgence"?.22:.075);
+ const growthRate=Math.round((triangular(.80,1.00,1.22)+growthAdjust)*100)/100;
+ const consistency=Math.round(triangular(curveType==="volatile"?.42:.58,curveType==="volatile"?.66:.79,.96)*100)/100,
+       pressure=Math.round(triangular(.60,.82,1.06)*100)/100,
+       durability=Math.round(triangular(.60,.86,1.10)*100)/100,
+       adaptability=Math.round(triangular(.60,.82,1.08)*100)/100;
+ const stagnationAge=curveType==="early"?rand(24,29):lateBloom?rand(25,31):rand(22,31);
+ const breakoutChance=lateBloom?.18:curveType==="underachiever"?.07:curveType==="volatile"?.13:Math.round(triangular(.04,.08,.14)*100)/100;
+ const jr=Math.random(),juniorGift=curveType==="phenom"?Math.max(1.24,jr<.35?1.38:1.27):jr<.015?1.28:jr<.06?1.16:jr<.22?1.07:jr<.84?1:.94,juniorPhenomenon=juniorGift>=1.24;
  const capOffsets={};for(const key of Object.keys(SKILLS))capOffsets[key]=rand(-5,5);
- return {potential,growthRate,peakAge,peakWidth,declineRate,curveType,consistency,pressure,durability,adaptability,stagnationAge,lateBloom,earlyPeak,exceptionalLongevity,juniorGift,juniorPhenomenon,breakoutChance,capOffsets,momentum:0,decisionQuality:0,lastBreakoutYear:null,careerType:null};
+ return {
+  potential,growthRate,peakAge,peakWidth,declineRate,curveType,consistency,pressure,durability,adaptability,
+  stagnationAge,lateBloom,earlyPeak,exceptionalLongevity,juniorGift,juniorPhenomenon,breakoutChance,capOffsets,
+  momentum:0,decisionQuality:0,lastBreakoutYear:null,careerType:null,
+  phaseYear:null,phaseState:null,phaseAnnouncedYear:null,trajectoryOffsets:{},majorInjuryShock:null,modelVersion:2
+ };
 }
 function careerDNA(){
  if(!S.careerDNA)S.careerDNA=createCareerDNA(S.startProfile||"academy");
- if(!S.careerDNA.curveType)S.careerDNA.curveType=S.careerDNA.juniorPhenomenon?"phenom":S.careerDNA.lateBloom?"late":S.careerDNA.earlyPeak?"early":"classic";
- if(!S.careerDNA.peakWidth)S.careerDNA.peakWidth=rand(5,8);
- if(!S.careerDNA.declineRate)S.careerDNA.declineRate=.95;
+ const dna=S.careerDNA;
+ if(!dna.curveType)dna.curveType=dna.juniorPhenomenon?"phenom":dna.lateBloom?"late":dna.earlyPeak?"early":"classic";
+ if(!dna.modelVersion){
+  if(["classic","steady","underachiever"].includes(dna.curveType))dna.peakAge=clamp(dna.peakAge||31,27,34);
+  else if(dna.curveType==="late")dna.peakAge=clamp(dna.peakAge||35,33,38);
+  dna.modelVersion=2;
+ }
+ if(!dna.peakWidth)dna.peakWidth=rand(4,6);
+ if(!dna.declineRate)dna.declineRate=.96;
+ if(!dna.trajectoryOffsets)dna.trajectoryOffsets={};
+ if(dna.phaseYear===undefined)dna.phaseYear=null;
+ if(dna.phaseState===undefined)dna.phaseState=null;
+ if(dna.phaseAnnouncedYear===undefined)dna.phaseAnnouncedYear=null;
  if(S.startAge===undefined)S.startAge=Math.max(15,S.age-(S.careerStats?.seasons?.length||0));
  if(S.startOverall===undefined)S.startOverall=S.careerStats?.seasons?.[0]?.overallValue||overall();
  if(S.sgpQualified===true&&!S.sgpQualifiedYear)S.sgpQualifiedYear=S.year;
  if(S.sgpQualifiedYear===undefined)S.sgpQualifiedYear=null;
  if(S.sgpQualificationReason===undefined)S.sgpQualificationReason=null;
- return S.careerDNA;
+ return dna;
+}
+const CAREER_PHASE_DEFS={
+ normal:{growth:1,target:0,decay:0,label:"normalny rytm rozwoju",history:"Rozwój przebiega bez wyraźnego przełomu ani kryzysu."},
+ surge:{growth:1.34,target:1.6,decay:-.25,label:"mocny impuls",history:"Trening i jazda zaczynają składać się w całość. Przez pewien czas rozwijasz się szybciej niż zwykle."},
+ breakthrough:{growth:1.72,target:3.2,decay:-.45,label:"przełom",history:"Coś wyraźnie kliknęło. Sztab widzi wyjątkowy okres rozwojowy i znacznie szybsze przyswajanie nowych elementów."},
+ stagnation:{growth:.48,target:-1.2,decay:.25,label:"stagnacja",history:"Rozwój wyhamował. Nawet dobre przygotowanie nie daje teraz tak szybkich efektów jak wcześniej."},
+ slump:{growth:.38,target:-2.4,decay:.85,label:"dołek",history:"Wpadasz w sportowy dołek. Część parametrów może się cofnąć, zanim odzyskasz wcześniejszy rytm."},
+ secondWind:{growth:1.48,target:2.5,decay:-.40,label:"druga młodość",history:"Łapiesz drugą młodość. Doświadczenie, motywacja i dobre przygotowanie znów wyraźnie pchają cię do przodu."},
+ recovery:{growth:.62,target:-.8,decay:.35,label:"odbudowa po urazie",history:"Po poważnym urazie organizm potrzebuje czasu. Rozwój jest ograniczony, ale odzyskanie wcześniejszego poziomu pozostaje możliwe."}
+};
+function weightedCareerPhase(options){
+ const total=options.reduce((sum,x)=>sum+x.w,0);let r=Math.random()*total;
+ for(const option of options){r-=option.w;if(r<=0)return option.type}
+ return "normal";
+}
+function careerPhaseState(){
+ const dna=careerDNA();
+ if(dna.phaseYear===S.year&&dna.phaseState)return dna.phaseState;
+ if(dna.phaseState?.remaining>1){
+  dna.phaseState={...dna.phaseState,remaining:dna.phaseState.remaining-1};
+  dna.phaseYear=S.year;
+  return dna.phaseState;
+ }
+ // Uraz może wymusić fazę odbudowy w kolejnym sezonie.
+ if(dna.majorInjuryShock&&dna.majorInjuryShock.untilYear>=S.year){
+  dna.phaseState={type:"recovery",remaining:Math.max(1,dna.majorInjuryShock.untilYear-S.year+1),...CAREER_PHASE_DEFS.recovery};
+  dna.phaseYear=S.year;
+  return dna.phaseState;
+ }
+ const age=S.age,type=dna.curveType;
+ let breakthrough=.006,surge=.045,stagnation=.055,slump=.018,secondWind=0;
+ if(type==="phenom"){breakthrough+=age<=23?.028:.004;surge+=.030}
+ if(type==="early"){breakthrough+=age<=26?.015:0;slump+=age>=29?.022:0}
+ if(type==="boomBust"){breakthrough+=age<=27?.025:.004;surge+=.020;slump+=age>=dna.peakAge?.045:.010}
+ if(type==="volatile"){breakthrough+=.008;surge+=.025;stagnation+=.025;slump+=.025}
+ if(type==="underachiever"){stagnation+=.040;slump+=.012;breakthrough-=.003}
+ if(type==="late"){stagnation+=age<28?.030:0;breakthrough+=age>=29?.018:0;surge+=age>=29?.020:0}
+ if(type==="resurgence")secondWind+=age>=33?.065:0;
+ if(age>=32)secondWind+=.005+(dna.exceptionalLongevity?.010:0);
+ if(age>=38&&!dna.exceptionalLongevity){breakthrough*=.45;surge*=.60;slump+=.020}
+ const options=[
+  {type:"breakthrough",w:Math.max(.004,breakthrough)},
+  {type:"surge",w:Math.max(.01,surge)},
+  {type:"stagnation",w:stagnation},
+  {type:"slump",w:slump},
+  {type:"secondWind",w:Math.max(0,secondWind)}
+ ];
+ const specialTotal=options.reduce((sum,x)=>sum+x.w,0);
+ options.push({type:"normal",w:Math.max(.30,1-specialTotal)});
+ const chosen=weightedCareerPhase(options),def=CAREER_PHASE_DEFS[chosen]||CAREER_PHASE_DEFS.normal;
+ const remaining=chosen==="normal"?1:chosen==="breakthrough"?rand(1,2):chosen==="secondWind"?rand(1,2):chosen==="stagnation"?rand(1,3):chosen==="slump"?rand(1,2):rand(1,2);
+ dna.phaseState={type:chosen,remaining,...def};dna.phaseYear=S.year;
+ return dna.phaseState;
+}
+function announceCareerPhase(){
+ const dna=careerDNA(),phase=careerPhaseState();
+ if(dna.phaseAnnouncedYear===S.year||phase.type==="normal")return phase;
+ dna.phaseAnnouncedYear=S.year;
+ addHistory("Faza rozwoju",phase.history);
+ return phase;
+}
+function careerTrajectoryOffset(){
+ const dna=careerDNA();
+ if(dna.trajectoryOffsets[S.year]===undefined){
+  const volatile=dna.curveType==="volatile"||dna.curveType==="boomBust";
+  const spread=volatile?2.4:1.4;
+  let offset=(Math.random()+Math.random()+Math.random()-1.5)*spread;
+  if(dna.curveType==="underachiever")offset-=.35;
+  dna.trajectoryOffsets[S.year]=Math.round(offset*10)/10;
+ }
+ return dna.trajectoryOffsets[S.year];
 }
 function careerCurveTargetOverall(){
- const dna=careerDNA(),age=S.age;
+ const dna=careerDNA(),age=S.age,phase=careerPhaseState();
  const startAge=S.startAge??Math.max(15,age-(S.careerStats?.seasons?.length||0));
  const startOverall=S.startOverall??S.careerStats?.seasons?.[0]?.overallValue??overall();
- const peak=dna.peakAge||30,potential=dna.potential||84,plateau=Math.max(1,Math.min(3,(dna.peakWidth||4)-1));
+ const peak=dna.peakAge||31,potential=dna.potential||84,plateau=Math.max(2,Math.min(6,dna.peakWidth||4));
  let target;
  if(age<=peak){
   const years=Math.max(5,peak-startAge),progress=clamp((age-startAge)/years,0,1);
-  const exponent=dna.curveType==="late"?1.34:dna.curveType==="underachiever"?1.24:1.12;
+  const exponent=dna.curveType==="late"?1.42:dna.curveType==="underachiever"?1.30:dna.curveType==="phenom"?.88:dna.curveType==="boomBust"?.94:1.13;
   target=startOverall+(potential-startOverall)*(1-Math.pow(1-progress,exponent));
  }else{
   const after=age-peak,plateauYears=Math.min(after,plateau),declineYears=Math.max(0,after-plateau);
-  const lateAgePressure=age>=38?(age-37)*.22:0;
-  target=potential-plateauYears*.22-declineYears*(1.12*(dna.declineRate||1))-Math.max(0,declineYears-3)*.64-lateAgePressure;
+  const lateAgePressure=age>=39?(age-38)*.16:0;
+  const declineBase=dna.exceptionalLongevity?.56:1;
+  target=potential-plateauYears*.10-declineYears*(.82*(dna.declineRate||1)*declineBase)-Math.max(0,declineYears-4)*.40*declineBase-lateAgePressure*declineBase;
  }
- if(dna.curveType==="underachiever")target-=age<peak?1.5:1;
- if(dna.curveType==="phenom")target+=1;
- if(dna.exceptionalLongevity&&age>=37)target+=1.35;
- target+=clamp((dna.decisionQuality||0)*.10,-4.5,5.5)+clamp((S.professionalism-50)*.022,-1.3,1.3);
- return clamp(target,46,99);
+ if(dna.curveType==="underachiever")target-=age<peak?1.8:1.2;
+ if(dna.curveType==="phenom")target+=age<=27?1.2:.4;
+ if(dna.curveType==="boomBust"&&age>peak+1)target-=Math.min(4,(age-peak-1)*.55);
+ if(dna.curveType==="resurgence"&&age>=34)target+=1.0;
+ if(dna.exceptionalLongevity&&age>=37)target+=1.8;
+ target+=Number(phase.target||0)+careerTrajectoryOffset();
+ target+=clamp((dna.decisionQuality||0)*.085,-4,5)+clamp((S.professionalism-50)*.020,-1.2,1.2);
+ return clamp(target,44,99);
 }
 function eliteSkillGrowthMultiplier(value){
  if(value<80)return 1;
@@ -856,7 +955,21 @@ function skillSoftCap(key){
  // W interfejsie próg nigdy nie wygląda jak "limit 62", gdy zawodnik ma już 65.
  return Math.max(skillSoftTarget(key),Math.round(S.skills[key]||0));
 }
-function ageGrowthCurve(){const dna=careerDNA(),age=S.age,peak=dna.peakAge||31,after=age-peak;if(age>=48)return dna.exceptionalLongevity?.03:.006;if(age>=45)return dna.exceptionalLongevity?.06:.014;if(after>=8)return dna.exceptionalLongevity?.10:.018;if(after>=5)return dna.exceptionalLongevity?.18:.045;if(after>=3)return .09;if(after>=1)return .24;if(after>=-1)return .48;if(dna.lateBloom&&age<23)return .82;if(age<19)return 1.28;if(age<23)return 1.18;if(age<27)return 1.08;return 1;}
+function ageGrowthCurve(){
+ const dna=careerDNA(),age=S.age,peak=dna.peakAge||31,after=age-peak;
+ if(age>=48)return dna.exceptionalLongevity?.08:.012;
+ if(age>=45)return dna.exceptionalLongevity?.16:.028;
+ if(after>=9)return dna.exceptionalLongevity?.22:.035;
+ if(after>=6)return dna.exceptionalLongevity?.34:.075;
+ if(after>=3)return dna.exceptionalLongevity?.48:.16;
+ if(after>=1)return .40;
+ if(after>=-2)return .74;
+ if(dna.lateBloom&&age<24)return .78;
+ if(age<19)return 1.20;
+ if(age<23)return 1.12;
+ if(age<27)return 1.06;
+ return 1;
+}
 function careerDecisionFactor(){
  const dna=careerDNA();
  const riding=Math.min(1,(S.season?.heats||0)/45);
@@ -900,12 +1013,13 @@ function competitionAgeAdjustment(){
 }
 
 function careerPerformanceModifier({important=false}={}){
- const dna=careerDNA();
+ const dna=careerDNA(),phase=careerPhaseState();
  const volatility=rand(-careerVolatility(),careerVolatility())/100;
  const pressure=important?(dna.pressure-.82)*.32:0;
  const momentum=clamp(dna.momentum||0,-12,12)/100;
  const adaptation=S.lastTransferYear===S.year-1?(dna.adaptability-.82)*.24:0;
- return volatility+pressure+momentum+adaptation+agePerformanceAdjustment();
+ const phaseForm=phase.type==="breakthrough"?.055:phase.type==="surge"?.028:phase.type==="secondWind"?.035:phase.type==="slump"?-.050:phase.type==="stagnation"?-.018:phase.type==="recovery"?-.028:0;
+ return volatility+pressure+momentum+adaptation+phaseForm+agePerformanceAdjustment();
 }
 function injuryDnaMultiplier(){
  const dna=careerDNA();
@@ -1001,6 +1115,8 @@ function appendGuidanceToSeasonSummary(){
 function careerDevelopmentHint(){
  const dna=careerDNA();
  if(S.age>=(dna.peakAge||32)+3)return careerCurveReport();
+ if(dna.curveType==="resurgence")return "Sztab widzi profil, który może długo utrzymywać poziom, a nawet złapać późniejszą drugą młodość.";
+ if(dna.curveType==="volatile"||dna.curveType==="boomBust")return "Masz potencjał do gwałtownych skoków, ale rozwój może przebiegać falami zamiast po prostej linii.";
  if(dna.lateBloom)return "Sztab widzi rezerwy, ale ostrzega, że rozwój może wymagać cierpliwości.";
  if(dna.earlyPeak)return "Trenerzy widzą szybkie tempo nauki, ale ważne będzie uniknięcie wczesnej stagnacji.";
  if(dna.growthRate>1.12)return "Szybko przyswajasz nowe elementy, o ile regularnie startujesz.";
@@ -1009,12 +1125,14 @@ function careerDevelopmentHint(){
  return "Sztab ocenia profil jako zrównoważony; regularna jazda będzie kluczowa.";
 }
 function updateCareerTrajectory({pph=0,matches=0,heats=0,injured=false}={}){
- const dna=careerDNA();
+ const dna=careerDNA(),phase=careerPhaseState();
  const regularity=Math.min(1,heats/50);
  const performance=(pph-1.35)*4;
  const decisions=(S.professionalism-50)/18+(S.morale-50)/30+regularity*3;
  dna.decisionQuality=clamp((dna.decisionQuality||0)*.72+decisions+performance-(injured?1.5:0),-25,35);
  dna.momentum=clamp((dna.momentum||0)*.55+(pph-1.45)*5+(matches>=8?1.5:-1)-(injured?2:0),-12,12);
+ if(phase.type==="breakthrough")dna.momentum=clamp(dna.momentum+3,-12,12);
+ if(phase.type==="slump")dna.momentum=clamp(dna.momentum-3,-12,12);
  if(dna.lateBloom&&S.age>=dna.stagnationAge&&S.age<=dna.peakAge+1&&dna.lastBreakoutYear!==S.year){
   const chance=dna.breakoutChance*(.65+careerDecisionFactor()*.45);
   if(Math.random()<chance){
@@ -1577,33 +1695,32 @@ function healthRetirementChance(age=S.age){
 }
 function careerDecline(){
  ensureHealthStats();
- const dna=careerDNA(),age=S.age,peak=dna.peakAge||30,after=age-peak;
- if(after<=1)return;
+ const dna=careerDNA(),phase=careerPhaseState(),age=S.age,peak=dna.peakAge||31,after=age-peak;
+ if(after<=1&&phase.type!=="slump")return;
  const physical=["starts","distance","fitness","overtaking"],technical=["corner","technique","setup","mental"];
- const plateau=Math.max(1,Math.min(3,(dna.peakWidth||4)-1)),beyond=Math.max(0,after-plateau);
+ const plateau=Math.max(3,Math.min(7,dna.peakWidth||5)),beyond=Math.max(0,after-plateau);
  const healthBurden=Math.min(2,Math.floor((S.healthStats.seriousInjuries||0)/2));
- let pa=after<=plateau?(Math.random()<.48?1:0):beyond<=2?1:beyond<=4?2:3;
- let ta=beyond<=2?0:beyond<=5?1:2;
- if(age>=36&&beyond>0)pa+=1;
- if(age>=38&&beyond>0&&Math.random()<.72)pa+=1;
- if(age>=40){pa+=1;ta+=1}
- if(age>=43){pa+=1;ta+=1}
+ let pa=0,ta=0;
+ if(after>1&&after<=plateau){pa=Math.random()<(dna.exceptionalLongevity?.14:.28)?1:0}
+ else if(beyond>0){pa=beyond<=2?1:beyond<=5?2:3;ta=beyond<=3?0:beyond<=6?1:2}
+ if(age>=38&&beyond>0&&Math.random()<.48)pa+=1;
+ if(age>=41){pa+=1;ta+=Math.random()<.55?1:0}
+ if(age>=44){pa+=1;ta+=1}
  pa+=healthBurden;
+ if(phase.type==="slump"){pa+=1;ta+=Math.random()<.58?1:0}
+ if(phase.type==="stagnation"&&Math.random()<.28)pa+=1;
+ if(["breakthrough","secondWind"].includes(phase.type)){pa=Math.max(0,pa-1);ta=Math.max(0,ta-1)}
  if(dna.exceptionalLongevity){pa=Math.max(0,pa-1);ta=Math.max(0,ta-1)}
  const recoveryProtection=facilityLevel("recovery")>=3?1:0;
  let protection=clamp(Math.floor((S.professionalism+S.skills.fitness+dna.durability*22)/152),0,1)+recoveryProtection;
- // Nawet idealny profesjonalizm nie może całkowicie anulować starzenia po 39 r.ż.
- if(age>=39)protection=Math.min(protection,1);
- pa=Math.max(age>=41&&beyond>0?1:0,pa-protection);
+ if(age>=40)protection=Math.min(protection,1);
+ pa=Math.max(age>=43&&beyond>0?1:0,pa-protection);
  for(let i=0;i<pa;i++){const key=pick(physical.filter(k=>S.skills[k]>42));if(key)S.skills[key]-=1}
- for(let i=0;i<ta;i++){const key=pick(technical.filter(k=>S.skills[k]>45));if(key&&Math.random()<.78)S.skills[key]-=1}
- if(age>=peak+2&&Math.random()<.48){const key=pick(Object.keys(S.skills).filter(k=>S.skills[k]>48));if(key)S.skills[key]-=1}
- if(age>=39&&Math.random()<.50)S.equipment=Math.max(40,S.equipment-1);
- if(age>=40)S.devPoints=Math.max(0,S.devPoints-Math.min(S.devPoints,Math.max(1,Math.floor((age-37)/2))));
- if(pa+ta>0){
-  S.injuryRisk+=age>=40?2:1;
-  if(after===plateau+1||age===40)addHistory("Schodzenie ze szczytu","Utrzymanie najwyższego poziomu staje się coraz trudniejsze. Doświadczenie nadal pomaga, ale forma fizyczna zaczyna naturalnie spadać.");
- }
+ for(let i=0;i<ta;i++){const key=pick(technical.filter(k=>S.skills[k]>45));if(key&&Math.random()<.72)S.skills[key]-=1}
+ if(phase.type==="slump"&&Math.random()<.55){const key=pick(Object.keys(S.skills).filter(k=>S.skills[k]>48));if(key)S.skills[key]-=1}
+ if(age>=40&&Math.random()<.38)S.equipment=Math.max(40,S.equipment-1);
+ if(age>=42)S.devPoints=Math.max(0,S.devPoints-Math.min(S.devPoints,Math.max(1,Math.floor((age-39)/2))));
+ if(pa+ta>0){S.injuryRisk+=age>=40?2:1;if(after===plateau+1||age===40)addHistory("Schodzenie ze szczytu","Utrzymanie najwyższego poziomu staje się coraz trudniejsze. Doświadczenie nadal pomaga, ale forma fizyczna zaczyna naturalnie spadać.")}
 }
 function generatedRider(level,seed=0,leagueName=S.league){
  const first=RIDER_FIRST_NAMES[(rand(0,RIDER_FIRST_NAMES.length-1)+seed)%RIDER_FIRST_NAMES.length];
@@ -1809,6 +1926,8 @@ function normalize(){
  if(!S.eventMemory)S.eventMemory={seen:{},lastYear:{}};
  if(!S.rivalConflicts)S.rivalConflicts=0;
  if(!S.careerDNA)S.careerDNA=createCareerDNA(S.startProfile||"academy");
+ careerDNA();
+ if(!S.eventSkillGrowth)S.eventSkillGrowth={career:{},seasonYear:S.year,season:{}};
  if(!S.preLicenseBackground)S.preLicenseBackground={id:"legacy",title:"Dotychczasowa ścieżka",text:"Kariera rozpoczęta w starszej wersji gry — historia sprzed licencji nie była wtedy zapisywana."};
  if(S.club&&S.club!=="Szkółka regionalna")S.club=canonicalClubName(S.club);
  if(S.academyClub)S.academyClub=canonicalClubName(S.academyClub);
@@ -1957,13 +2076,15 @@ function createPlayer(){
  $("newsBox").innerHTML=`<p class="eyebrow">PRZED LICENCJĄ</p><h3>${background.title.toUpperCase()}</h3><p>${background.text}</p><p><b>Zaplecze:</b> ${support.title}. Budżet początkowy: ${money(S.budget)}.</p>${openingReport?`<div class="guidance-report"><span>RAPORT SZKÓŁKI</span><p>${openingReport.text}</p></div>`:""}`;
  save();
 }
-function save(){localStorage.setItem("pss_v100",JSON.stringify(S))}
+function save(){localStorage.setItem("pss_v101",JSON.stringify(S))}
 function load(){
  try{
-  const newest=localStorage.getItem("pss_v100");
+  const newest=localStorage.getItem("pss_v101");
+  const previousVersion=localStorage.getItem("pss_v100");
   const previousBrand=localStorage.getItem("pzs_v200");
   if(newest)return JSON.parse(newest);
-  if(previousBrand){localStorage.setItem("pss_v100",previousBrand); return JSON.parse(previousBrand);}
+  if(previousVersion){localStorage.setItem("pss_v101",previousVersion); return JSON.parse(previousVersion);}
+  if(previousBrand){localStorage.setItem("pss_v101",previousBrand); return JSON.parse(previousBrand);}
   const v1361=localStorage.getItem("pzs_v1361");
   if(v1361)return JSON.parse(v1361);
   const v136=localStorage.getItem("pzs_v136");
@@ -2162,7 +2283,8 @@ function growthChanceForSkill(value,key=null){
  const ceilingFactor=capDistance>=8?1:capDistance>=3?.62:capDistance>=0?.27:.06;
  const breakout=dna.lastBreakoutYear===S.year?1.45:1;
  const juniorMultiplier=S.age<=21?(dna.juniorGift||1):1;
- return clamp(base*dna.growthRate*ageGrowthCurve()*careerDecisionFactor()*ceilingFactor*breakout*juniorMultiplier*eliteSkillGrowthMultiplier(value)*curvePressureOnGrowth(),.001,.98);
+ const phase=careerPhaseState();
+ return clamp(base*dna.growthRate*ageGrowthCurve()*careerDecisionFactor()*ceilingFactor*breakout*juniorMultiplier*eliteSkillGrowthMultiplier(value)*curvePressureOnGrowth()*(phase.growth||1),.001,.985);
 }
 function tryNaturalGrowth(key,amount=1){
  let gained=0;
@@ -2352,11 +2474,43 @@ function repairMaxedMetaSave(){
  normalize();
 }
 
+function ensureEventSkillGrowth(){
+ S.eventSkillGrowth??={career:{},seasonYear:S.year,season:{}};
+ if(S.eventSkillGrowth.seasonYear!==S.year){S.eventSkillGrowth.seasonYear=S.year;S.eventSkillGrowth.season={}}
+ for(const key of Object.keys(S.skills)){S.eventSkillGrowth.career[key]??=0;S.eventSkillGrowth.season[key]??=0}
+ return S.eventSkillGrowth;
+}
+function diversifiedEventSkillTarget(preferred=null){
+ const tracker=ensureEventSkillGrowth(),keys=Object.keys(S.skills);
+ const minGrowth=Math.min(...keys.map(k=>tracker.career[k]||0));
+ const pool=keys.filter(k=>(tracker.career[k]||0)<=minGrowth+3);
+ if(preferred&&pool.includes(preferred)&&Math.random()<.58)return preferred;
+ return pick(pool.length?pool:keys);
+}
+function applyEventSkillBoost(preferred,amount){
+ const tracker=ensureEventSkillGrowth(),changes={};
+ if(amount<=0){S.skills[preferred]+=amount;changes[preferred]=(changes[preferred]||0)+amount;return changes}
+ const keys=Object.keys(S.skills);
+ for(let i=0;i<amount;i++){
+  const average=keys.reduce((sum,k)=>sum+(tracker.career[k]||0),0)/keys.length;
+  const excess=(tracker.career[preferred]||0)-average;
+  const highSkill=(S.skills[preferred]||0)>=90;
+  let keepChance=excess<=2?.92:excess<=5?.68:excess<=8?.44:.25;
+  if(highSkill)keepChance*=.68;
+  const target=Math.random()<keepChance?preferred:diversifiedEventSkillTarget(preferred);
+  S.skills[target]+=1;tracker.career[target]=(tracker.career[target]||0)+1;tracker.season[target]=(tracker.season[target]||0)+1;
+  changes[target]=(changes[target]||0)+1;
+ }
+ return changes;
+}
+function mergeSkillChanges(target,source){for(const [k,v] of Object.entries(source||{}))target[k]=(target[k]||0)+v;return target}
 function applyEffect(e){
- if(e.skill)S.skills[e.skill[0]]+=e.skill[1];
- if(e.randomSkill){const k=pick(Object.keys(S.skills));S.skills[k]+=e.randomSkill;e._randomSkillName=SKILLS[k]}
+ const skillChanges={};
+ if(e.skill)mergeSkillChanges(skillChanges,applyEventSkillBoost(e.skill[0],e.skill[1]));
+ if(e.randomSkill){const preferred=diversifiedEventSkillTarget();mergeSkillChanges(skillChanges,applyEventSkillBoost(preferred,e.randomSkill))}
+ e._appliedSkillChanges=skillChanges;
  Object.entries(e).forEach(([k,v])=>{
-  if(["skill","randomSkill","salaryMult","_randomSkillName","rivalConflict"].includes(k))return;
+  if(["skill","randomSkill","salaryMult","_randomSkillName","_appliedSkillChanges","rivalConflict"].includes(k))return;
   if(typeof S[k]!=="number")return;
   if(META_STATS.has(k))applyMetaDelta(k,v);
   else if(k==="equipment")applyEquipmentDelta(v);
@@ -2369,10 +2523,15 @@ function applyEffect(e){
 function effectDescription(e){
  const labels={professionalism:"profesjonalizm",loyalty:"lojalność",media:"medialność",reputation:"reputacja",morale:"morale",equipment:"sprzęt",clubRelation:"relacja z klubem",chance:"szansa na skład",injuryRisk:"ryzyko urazu",budget:"budżet"};
  const parts=[];
- if(e.skill)parts.push(`${SKILLS[e.skill[0]]} ${e.skill[1]>=0?"+":""}${e.skill[1]}`);
- if(e.randomSkill)parts.push(`${e._randomSkillName||"losowa umiejętność"} +${e.randomSkill}`);
+ const applied=e._appliedSkillChanges||{};
+ if(Object.keys(applied).length){
+  for(const [key,value] of Object.entries(applied))if(value)parts.push(`${SKILLS[key]} ${value>=0?"+":""}${value}`);
+ }else{
+  if(e.skill)parts.push(`${SKILLS[e.skill[0]]} ${e.skill[1]>=0?"+":""}${e.skill[1]}`);
+  if(e.randomSkill)parts.push(`${e._randomSkillName||"losowa umiejętność"} +${e.randomSkill}`);
+ }
  Object.entries(e).forEach(([k,v])=>{
-  if(["skill","randomSkill","salaryMult","_randomSkillName","rivalConflict"].includes(k)||!labels[k])return;
+  if(["skill","randomSkill","salaryMult","_randomSkillName","_appliedSkillChanges","rivalConflict"].includes(k)||!labels[k])return;
   if(k==="budget")parts.push(`${labels[k]} ${v>=0?"+":""}${money(v)}`);
   else if(k==="injuryRisk"||k==="chance")parts.push(`${labels[k]} ${v>=0?"+":""}${v} p.p.`);
   else parts.push(`${labels[k]} ${v>=0?"+":""}${v}`);
@@ -2588,7 +2747,7 @@ function animateRollerWithBrake(stripEl,startOffset,finalOffset,duration,done){
  stripEl.style.transition="none";
  stripEl.style.transform=`translate3d(${-startOffset}px,0,0)`;
 
- // 1.00 — jedna gładka krzywa prędkości.
+ // 1.01 — jedna gładka krzywa prędkości (bez zmian względem 1.00).
  // Szybki start, a potem od razu naturalne, długie hamowanie:
  // bez ponownego przyspieszania, bez "progów" między fazami
  // i z bardzo wolnym ogonem tuż przed zatrzymaniem.
@@ -2838,6 +2997,10 @@ function rotateLeagueSystem(playerTable,playerPlayoffs){
  const barrageResult=resolveBarrage(barrageE,barrageM);
  const barrageWinner=barrageResult.winner;
  const barrageLoser=barrageResult.loser;
+ const foreignM2EAhead=name=>mOrder.filter((club,index)=>index<mOrder.indexOf(name)&&isForeignPolishLeagueClub(club));
+ const directArchive=archive[clubBaseName(directUpM)];
+ if(directArchive){directArchive.promotionRoute="direct";directArchive.foreignAhead=foreignM2EAhead(directUpM).map(name=>({name,position:mOrder.indexOf(name)+1}))}
+ if(barrageWinner===barrageM){const a=archive[clubBaseName(barrageM)];if(a){a.promotionRoute="barrage";a.foreignAhead=foreignM2EAhead(barrageM).map(name=>({name,position:mOrder.indexOf(name)+1}))}}
 
  let nextE=eOrder.filter(x=>x!==directDownE&&x!==barrageE);
  nextE.push(directUpM,barrageWinner);
@@ -2885,11 +3048,11 @@ function rotateLeagueSystem(playerTable,playerPlayoffs){
  const barrageText=barrageWinner===barrageM
   ?`${barrageM} wygrywa baraż z ${barrageE} i awansuje do PGE Ekstraligi.`
   :`${barrageE} broni miejsca w PGE Ekstralidze w barażu z ${barrageM}.`;
- const foreignLeader=isForeignPolishLeagueClub(mOrder[0])?mOrder[0]:null;
- const successionText=foreignLeader?`${foreignLeader} kończy M2E na 1. miejscu, ale jako klub zagraniczny nie może awansować do PGE Ekstraligi. Obowiązuje sukcesja miejsc. `:"";
+ const foreignBlocked=mOrder.filter((name,index)=>isForeignPolishLeagueClub(name)&&index<=Math.max(mOrder.indexOf(directUpM),mOrder.indexOf(barrageM)));
+ const successionText=foreignBlocked.length?`${foreignBlocked.map(name=>`${mOrder.indexOf(name)+1}. miejsce zajął klub zagraniczny ${name} — bez prawa awansu do PGE Ekstraligi`).join("; ")}. Obowiązuje sukcesja miejsc. `:"";
  addHistory("Rotacja lig",
   `${successionText}${directUpM} awansuje bezpośrednio do PGE Ekstraligi, ${directDownE} spada do M2E. ${barrageText} ${directUpK} awansuje do M2E, a ${directDownM} spada do KLŻ.`);
- return {directUpM,directDownE,barrageE,barrageM,barrageWinner,barrageLoser,barrageTie:barrageResult.tie,directUpK,directDownM,foreignLeader};
+ return {directUpM,directDownE,barrageE,barrageM,barrageWinner,barrageLoser,barrageTie:barrageResult.tie,directUpK,directDownM,foreignBlocked};
 }
 function worldClubEvent(next){
  if(S.year<S.nextWorldEventYear){next();return}
@@ -3270,9 +3433,11 @@ const MODERATE_INJURIES=[
 const SERIOUS_INJURIES=[
  {name:"złamanie obojczyka",weeks:[5,10],severity:2,skills:["fitness"],loss:[0,1]},
  {name:"złamanie nogi",weeks:[10,20],severity:4,skills:["fitness","starts"],loss:[1,2]},
- {name:"poważny uraz barku",weeks:[8,16],severity:3,skills:["technique","fitness"],loss:[0,2]},
- {name:"uraz kręgosłupa",weeks:[14,30],severity:5,skills:["fitness","mental"],loss:[1,3]},
- {name:"wielonarządowe obrażenia po ciężkim upadku",weeks:[18,36],severity:5,skills:["fitness","distance","mental"],loss:[1,3]}
+ {name:"poważny uraz barku",weeks:[8,16],severity:3,skills:["technique","fitness"],loss:[0,2]}
+];
+const CATASTROPHIC_INJURIES=[
+ {name:"poważny uraz kręgosłupa",weeks:[16,32],severity:6,skills:["fitness","mental","distance"],loss:[2,4],potentialLoss:[1,3]},
+ {name:"wielonarządowe obrażenia po bardzo ciężkim upadku",weeks:[22,40],severity:7,skills:["fitness","distance","mental","technique"],loss:[2,4],potentialLoss:[2,4]}
 ];
 function ensureHealthStats(){
  S.healthStats??={injuries:0,seriousInjuries:0,weeksMissed:0,leagueMatchesMissed:0,individualEventsMissed:0,history:[]};
@@ -3298,8 +3463,9 @@ function racingInjuryFromExposure(heats,{context="sezon",maxInjuries=1}={}){
  const injuries=[];
  for(let i=0;i<count;i++){
   const r=Math.random();let data;
-  if(r<.028){const x=pick(SERIOUS_INJURIES);data=applySeriousInjury(x,injuryTreatmentOptions(x)[1])}
-  else if(r<.24){const x=pick(MODERATE_INJURIES);data=recordInjury(x.name,rand(x.weeks[0],x.weeks[1]),"umiarkowany")}
+  if(r<.001){const x=pick(CATASTROPHIC_INJURIES);data=applySeriousInjury(x,injuryTreatmentOptions(x)[1])}
+  else if(r<.007){const x=pick(SERIOUS_INJURIES);data=applySeriousInjury(x,injuryTreatmentOptions(x)[1])}
+  else if(r<.23){const x=pick(MODERATE_INJURIES);data=recordInjury(x.name,rand(x.weeks[0],x.weeks[1]),"umiarkowany")}
   else{const x=pick(MINOR_INJURIES);data=recordInjury(x.name,rand(x.weeks[0],x.weeks[1]),"drobny")}
   injuries.push(data);addHistory("Uraz po upadku",`${context}: ${data.name}${data.weeks?` — ${data.weeks} tyg. przerwy`:" — bez opuszczania startów"}.`);
  }
@@ -3334,16 +3500,21 @@ function applySeriousInjury(injury,treatment){
  S.healthStats.injuries++;S.careerStats.injuries=S.healthStats.injuries;S.healthStats.seriousInjuries++;S.healthStats.weeksMissed+=weeks;S.healthStats.leagueMatchesMissed+=matchesMissed;S.healthStats.individualEventsMissed+=eventsMissed;
  const losses=[];
  for(const key of injury.skills){if(Math.random()<treatment.skill*Math.max(.45,1-rec*.16)){const loss=rand(injury.loss[0],injury.loss[1]);if(loss){S.skills[key]=Math.max(40,S.skills[key]-loss);losses.push(`${SKILLS[key]} -${loss}`)}}}
- const data={year:S.year,name:injury.name,weeks,matchesMissed,eventsMissed,treatment:treatment.title,losses};S.healthStats.history.push(data);S.injuryAbsence=data;
- addHistory("Poważna kontuzja",`${injury.name}. ${weeks} tygodni przerwy; opuszczone mecze: ${matchesMissed}, imprezy indywidualne: ${eventsMissed}. Leczenie: ${treatment.title}.${losses.length?` Skutki: ${losses.join(", ")}.`:""}`);
+ let potentialLoss=0;
+ if(injury.potentialLoss){potentialLoss=rand(injury.potentialLoss[0],injury.potentialLoss[1]);careerDNA().potential=clamp(careerDNA().potential-potentialLoss,60,99);careerDNA().majorInjuryShock={untilYear:S.year+rand(1,2),severity:"bardzo ciężka"};}
+ else if(injury.severity>=4&&Math.random()<.24){potentialLoss=1;careerDNA().potential=clamp(careerDNA().potential-1,60,99);careerDNA().majorInjuryShock={untilYear:S.year+1,severity:"ciężka"};}
+ const data={year:S.year,name:injury.name,weeks,matchesMissed,eventsMissed,treatment:treatment.title,losses,potentialLoss,severity:injury.potentialLoss?"bardzo ciężki":"ciężki"};S.healthStats.history.push(data);S.injuryAbsence=data;
+ addHistory(injury.potentialLoss?"Bardzo ciężka kontuzja":"Poważna kontuzja",`${injury.name}. ${weeks} tygodni przerwy; opuszczone mecze: ${matchesMissed}, imprezy indywidualne: ${eventsMissed}. Leczenie: ${treatment.title}.${losses.length?` Skutki: ${losses.join(", ")}.`:""}${potentialLoss?` Potencjał kariery spada o ${potentialLoss}.`:""}`);
  return data;
 }
 function maybeSeriousCareerInjuryEvent(next){
  ensureHealthStats();
- const rec=facilityLevel("recovery"),chance=clamp(.90*(S.age>=36?1.25:S.age>=31?1.08:1)*(1+S.injuryRisk/180)*(1-rec*.13),.35,2.1);
+ const rec=facilityLevel("recovery"),previousMajor=S.healthStats.seriousInjuries||0;
+ const chance=clamp(.18*(S.age>=38?1.28:S.age>=33?1.10:1)*(1+S.injuryRisk/220)*(1-rec*.14)*(previousMajor?0.72:1),.12,.48);
  if(Math.random()*100>=chance){next();return}
- const injury=pick(SERIOUS_INJURIES),options=injuryTreatmentOptions(injury);
- showModal("POWAŻNY WYPADEK",injury.name,"Ciężki wypadek może wyciąć dużą część sezonu. Wybierz sposób leczenia.",options.map(opt=>({title:opt.title,desc:`Koszt: ${money(opt.cost)}. Wybór wpłynie na czas przerwy i ryzyko trwałych skutków.`,action:()=>{closeModal();applySeriousInjury(injury,opt);normalize();save();render();next()}})));
+ const catastrophic=Math.random()<.05;
+ const injury=pick(catastrophic?CATASTROPHIC_INJURIES:SERIOUS_INJURIES),options=injuryTreatmentOptions(injury);
+ showModal(catastrophic?"BARDZO CIĘŻKI WYPADEK":"POWAŻNY WYPADEK",injury.name,catastrophic?"To wyjątkowo ciężki uraz, który może wpłynąć nie tylko na ten sezon, ale również na dalszy rozwój kariery.":"Ciężki wypadek może wyciąć dużą część sezonu. Wybierz sposób leczenia.",options.map(opt=>({title:opt.title,desc:`Koszt: ${money(opt.cost)}. Wybór wpłynie na czas przerwy i ryzyko trwałych skutków.`,action:()=>{closeModal();applySeriousInjury(injury,opt);normalize();save();render();next()}})));
 }
 function currentInjuryAvailability(){return !S.injuryAbsence||S.injuryAbsence.year!==S.year?1:clamp(1-S.injuryAbsence.weeks/40,.08,.92)}
 
@@ -3357,12 +3528,16 @@ function raceIncident(mode,{allowInjury=true}={}){
  if(r<defectChance+fallChance){
   if(!allowInjury)return {type:"fall",text:"Upadasz, ale kończy się bez urazu. 0 punktów.",serious:false};
   const ir=Math.random();
-  if(ir<Math.max(.04,.09-rec*.012)){
+  if(ir<.001){
+   const injury=pick(CATASTROPHIC_INJURIES),data=applySeriousInjury(injury,injuryTreatmentOptions(injury)[1]);
+   return {type:"fall",text:`Bardzo ciężki upadek: ${injury.name}. ${data.weeks} tygodni przerwy.`,serious:true};
+  }
+  if(ir<Math.max(.010,.018-rec*.003)){
    const injury=pick(SERIOUS_INJURIES),data=applySeriousInjury(injury,injuryTreatmentOptions(injury)[1]);
    return {type:"fall",text:`Ciężki upadek: ${injury.name}. ${data.weeks} tygodni przerwy.`,serious:true};
   }
-  if(ir<.30){const x=pick(MODERATE_INJURIES),d=recordInjury(x.name,rand(x.weeks[0],x.weeks[1]),"umiarkowany");return {type:"fall",text:`Upadek: ${x.name}. ${d.weeks} tyg. przerwy.`,serious:false}}
-  if(ir<.67){const x=pick(MINOR_INJURIES),d=recordInjury(x.name,rand(x.weeks[0],x.weeks[1]),"drobny");return {type:"fall",text:`Upadek: ${x.name}. ${d.weeks?d.weeks+" tyg. przerwy.":"Bez przerwy w startach."}`,serious:false}}
+  if(ir<.27){const x=pick(MODERATE_INJURIES),d=recordInjury(x.name,rand(x.weeks[0],x.weeks[1]),"umiarkowany");return {type:"fall",text:`Upadek: ${x.name}. ${d.weeks} tyg. przerwy.`,serious:false}}
+  if(ir<.66){const x=pick(MINOR_INJURIES),d=recordInjury(x.name,rand(x.weeks[0],x.weeks[1]),"drobny");return {type:"fall",text:`Upadek: ${x.name}. ${d.weeks?d.weeks+" tyg. przerwy.":"Bez przerwy w startach."}`,serious:false}}
   return {type:"fall",text:"Upadasz, ale obywa się bez urazu. 0 punktów.",serious:false};
  }
  return null;
@@ -5576,7 +5751,12 @@ function showIMPQualificationStage(stage,event,basePph,done){
   const openResult=()=>showModal(isChallenge?"IMP CHALLENGE":"ELIMINACJE IMP",advanced?(isChallenge?"Awans do IMP!":"Awans do IMP Challenge"):"Bez awansu",ensureSentence(text),[
    {title:advanced?(isChallenge?"Przejdź dalej":"Przejdź do IMP Challenge"):"Kontynuuj",desc:advanced?(isChallenge?"Miejsce w stałej stawce IMP jest twoje.":"Czeka cię ostatni etap kwalifikacji."):"Na tym kończy się tegoroczna ścieżka kwalifikacyjna.",action:()=>{closeModal();done({advanced,...result,city,spots})}}
   ]);
-  if(advanced&&!isChallenge)showAchievementCelebration("AWANS DO IMP CHALLENGE",`${result.place}. miejsce w eliminacjach IMP`,`${result.points} pkt w ${cityLocative(city)}.`,openResult);else openResult();
+  if(advanced){
+   const celebration=isChallenge
+    ?{kind:"AWANS DO IMP",title:"Indywidualne Mistrzostwa Polski",subtitle:`${result.place}. miejsce w IMP Challenge w ${cityLocative(city)}. ${result.points} pkt.`}
+    :{kind:"AWANS DO IMP CHALLENGE",title:`${result.place}. miejsce w eliminacjach IMP`,subtitle:`${result.points} pkt w ${cityLocative(city)}.`};
+   showAchievementCelebration(celebration.kind,celebration.title,celebration.subtitle,openResult);
+  }else openResult();
  };
  const play=()=>{closeModal();playFiveInteractiveTournamentHeats({key:"IMP",label,prefix:`${prefix} `,rivalPool:pool,onStatus:s=>s.heat?`Masz ${s.points} pkt.`:""},state=>{
   const base=competitionPower(basePph,"IMP",{includeDay:false,extra:isChallenge?0:1}),power=elitePlayerRoundRating(base,"IMP",state.eventToken),t=simulateClassic16Tournament({playerRating:power,pool,key:`IMP:${stage}`,playerRideResults:state.results,heatVariance:isChallenge?14:16});
@@ -5595,7 +5775,7 @@ function playIMPQualificationPath(event,basePph,done){
    if(!challenge.advanced){done({qualified:false});return}
    S.impQualifiedYear=S.year;
    const reason=`${challenge.place}. miejsce w IMP Challenge w ${cityLocative(event.challengeCity)} po awansie z eliminacji w ${cityLocative(event.eliminationCity)}.`;
-   done({qualified:true,reason});
+   done({qualified:true,reason,celebrationShown:true});
   });
  });
 }
@@ -6322,7 +6502,7 @@ function playMajorCompetitionQueue(basePph,next){
   if(event.key==="IMP Qualification"){
    playIMPQualificationPath(event,basePph,out=>{
     if(out?.qualified){
-     queue.unshift({key:"IMP",name:"Indywidualne Mistrzostwa Polski",qualificationReason:out.reason});
+     queue.unshift({key:"IMP",name:"Indywidualne Mistrzostwa Polski",qualificationReason:out.reason,qualificationCelebrationShown:!!out.celebrationShown});
     }
     proceed();
    });
@@ -6370,7 +6550,7 @@ function playMajorCompetitionQueue(basePph,next){
     }}
    ]);
   };
-  const q=qualificationCelebration(event);
+  const q=event.qualificationCelebrationShown?null:qualificationCelebration(event);
   if(q)showAchievementCelebration(q.kind,q.title,q.subtitle,openPrompt);
   else openPrompt();
  };
@@ -6679,6 +6859,7 @@ function simulateSeason(){
   return;
  }
  const l=leagueByName(S.league);
+ announceCareerPhase();
  if(!l){
   throw new Error(`Nie znaleziono ligi „${S.league}” dla klubu „${S.club}”.`);
  }
@@ -6768,12 +6949,18 @@ function simulateSeason(){
   const ridingDevelopment=Math.min(4,Math.floor(heats/18));
   const juniorFactor=S.age<=21?careerDNA().juniorGift:1;
   const devBase=Math.round(matches/7+ridingDevelopment+(S.age<22?2.5:1)+S.professionalism/55);
-  const dev=Math.max(0,Math.round(devBase*difficultyGrowthMultiplier()*careerDNA().growthRate*juniorFactor));S.devPoints+=dev;
-  const dnaNow=careerDNA(),prePeak=S.age<=dnaNow.peakAge,trajectoryGap=careerCurveTargetOverall()-overall();
+  const phaseNow=careerPhaseState();
+  const devPhase=phaseNow.type==="breakthrough"?1.55:phaseNow.type==="surge"?1.25:phaseNow.type==="secondWind"?1.30:phaseNow.type==="stagnation"?.62:phaseNow.type==="slump"?.48:phaseNow.type==="recovery"?.70:1;
+  const dev=Math.max(0,Math.round(devBase*difficultyGrowthMultiplier()*careerDNA().growthRate*juniorFactor*devPhase));S.devPoints+=dev;
+  if(phaseNow.type==="breakthrough")S.devPoints+=rand(1,3);
+  else if(phaseNow.type==="secondWind")S.devPoints+=rand(1,2);
+  const dnaNow=careerDNA(),prePeak=S.age<=dnaNow.peakAge+1,trajectoryGap=careerCurveTargetOverall()-overall();
   const catchup=prePeak&&trajectoryGap>=8&&heats>=24?2:prePeak&&trajectoryGap>=4&&heats>=18?1:0;
-  const postPeakPenalty=S.age>dnaNow.peakAge?Math.min(2,Math.ceil((S.age-dnaNow.peakAge)/3)):0;
-  const autoAttempts=Math.max(0,(S.age<22?rand(1,3)+(heats>=35?1:0):S.age<30?rand(0,2):rand(0,1))+Math.floor(heats/35)+catchup-postPeakPenalty+(S.age<=21&&dnaNow.juniorPhenomenon&&Math.random()<.55?1:0));
+  const postPeakPenalty=S.age>dnaNow.peakAge+2?Math.min(2,Math.floor((S.age-dnaNow.peakAge-1)/4)):0;
+  const phaseAttempts=phaseNow.type==="breakthrough"?rand(2,4):phaseNow.type==="surge"?rand(1,2):phaseNow.type==="secondWind"?rand(1,3):phaseNow.type==="stagnation"?-1:phaseNow.type==="slump"?-2:0;
+  const autoAttempts=Math.max(0,(S.age<22?rand(1,3)+(heats>=35?1:0):S.age<30?rand(0,2):rand(0,1))+Math.floor(heats/35)+catchup-postPeakPenalty+phaseAttempts+(S.age<=21&&dnaNow.juniorPhenomenon&&Math.random()<.55?1:0));
   for(let i=0;i<autoAttempts;i++){const k=pick(Object.keys(S.skills));tryNaturalGrowth(k,pph>=2.15?2:1)}
+  if(phaseNow.type==="slump"&&Math.random()<.65){const keys=Object.keys(S.skills).filter(k=>S.skills[k]>45);for(let i=0;i<rand(1,2);i++){const k=pick(keys);if(k)S.skills[k]-=1}}
   S.careerPoints+=Math.round(points+bonus+wins*2+(pph>=2?20:0));
   updateCareerTrajectory({pph,matches,heats,injured});
   S.careerStats.bestOverall=Math.max(S.careerStats.bestOverall||0,overall());
@@ -7244,15 +7431,13 @@ function retirementDecision(next){
 }
 
 function lateCareerHighPressure(){
- const dna=careerDNA(),after=S.age-(dna.peakAge||30),plateau=Math.max(2,Math.min(5,dna.peakWidth||4));
- if(after<=plateau||dna.exceptionalLongevity)return;
+ const dna=careerDNA(),phase=careerPhaseState(),after=S.age-(dna.peakAge||31),plateau=Math.max(3,Math.min(7,dna.peakWidth||5));
+ if(after<=plateau||dna.exceptionalLongevity||["breakthrough","secondWind"].includes(phase.type))return;
  const best=S.careerStats?.bestOverall||0;
- if(overall()<best)return;
+ if(overall()<best-1)return;
  const keys=["fitness","distance","starts","overtaking"].filter(k=>S.skills[k]>45);
- const attempts=after>=plateau+5?2:1;
- for(let i=0;i<attempts;i++){
-  const key=pick(keys);if(key&&Math.random()<.72)S.skills[key]-=1;
- }
+ const attempts=after>=plateau+6?2:1;
+ for(let i=0;i<attempts;i++){const key=pick(keys);if(key&&Math.random()<(phase.type==="slump"?.82:.58))S.skills[key]-=1}
 }
 function finishSeason(contractResolved=true){
  clearSeasonWatchdog();clearSeasonFlowStage();
@@ -7322,7 +7507,12 @@ function previousSeasonClubInfo(club,league){
   const previousLeague=archive.league;
   const place=archive.position;
   if(currentLevel<previousLevel){
-   return {status:`Beniaminek — ${place}. miejsce w ${leagueLocative(previousLeague)}, awans do ${leagueGenitive(league)}`,place,previousLeague};
+   const route=archive.promotionRoute==="barrage"?" po zwycięskim barażu":archive.promotionRoute==="direct"?" bezpośrednio":"";
+   const foreignAhead=Array.isArray(archive.foreignAhead)?archive.foreignAhead:[];
+   const foreignNote=foreignAhead.length
+    ?` (${foreignAhead.map(x=>`${x.position}. miejsce zajął klub zagraniczny${x.name?` ${x.name}`:""} — bez prawa awansu`).join("; ")})`
+    :"";
+   return {status:`Beniaminek — ${place}. miejsce w ${leagueLocative(previousLeague)}, awans${route} do ${leagueGenitive(league)}${foreignNote}`,place,previousLeague};
   }
   if(currentLevel>previousLevel){
    return {status:`Spadkowicz z ${leagueGenitive(previousLeague)} — ${place}. miejsce w poprzednim sezonie`,place,previousLeague};
@@ -7685,7 +7875,7 @@ $("riderNumber").addEventListener("input",()=>{
 });
 $("startForm").onsubmit=e=>{e.preventDefault();showStartDisclaimer()};
 $("playBtn").onclick=play;
-$("newBtn").onclick=()=>{if(confirm("Usunąć obecny zapis i rozpocząć nową karierę?")){localStorage.removeItem("pss_v100");localStorage.removeItem("pzs_v200");localStorage.removeItem("pzs_v1361");localStorage.removeItem("pzs_v136");localStorage.removeItem("pzs_v135");localStorage.removeItem("pzs_v134");localStorage.removeItem("pzs_v1331");localStorage.removeItem("pzs_v133");localStorage.removeItem("pzs_v132");localStorage.removeItem("pzs_v131");localStorage.removeItem("pzs_v1301");localStorage.removeItem("pzs_v130");localStorage.removeItem("pzs_v129");localStorage.removeItem("pzs_v128");localStorage.removeItem("pzs_v127");localStorage.removeItem("pzs_v126");localStorage.removeItem("pzs_v1252");localStorage.removeItem("pzs_v1251");localStorage.removeItem("pzs_v125");localStorage.removeItem("pzs_v124");localStorage.removeItem("pzs_v123");localStorage.removeItem("pzs_v122");localStorage.removeItem("pzs_v121");localStorage.removeItem("pzs_v120");localStorage.removeItem("pzs_v119");localStorage.removeItem("pzs_v118");localStorage.removeItem("pzs_v117");localStorage.removeItem("pzs_v116");localStorage.removeItem("pzs_v115");localStorage.removeItem("pzs_v114");localStorage.removeItem("pzs_v113");localStorage.removeItem("pzs_v112");localStorage.removeItem("pzs_v111");localStorage.removeItem("pzs_v110");localStorage.removeItem("pzs_v109");localStorage.removeItem("pzs_v108");localStorage.removeItem("pzs_v107");localStorage.removeItem("pzs_v106");localStorage.removeItem("pzs_v105");localStorage.removeItem("pzs_v104");localStorage.removeItem("pzs_v103");localStorage.removeItem("pzs_v102");localStorage.removeItem("pzs_v101");localStorage.removeItem("pzs_v100");localStorage.removeItem("pzs_v305");localStorage.removeItem("pzs_v304");localStorage.removeItem("pzs_v303");localStorage.removeItem("pzs_v302");localStorage.removeItem("pzs_v301");localStorage.removeItem("pzs_final30");localStorage.removeItem("pzs_v30");localStorage.removeItem("pzs_v29");localStorage.removeItem("pzs_v28");localStorage.removeItem("pzs_v27");localStorage.removeItem("pzs_v26");localStorage.removeItem("pzs_v25");localStorage.removeItem("pzs_v24");localStorage.removeItem("pzs_v23");localStorage.removeItem("pzs_v22");localStorage.removeItem("pzs_v2");location.reload()}};
+$("newBtn").onclick=()=>{if(confirm("Usunąć obecny zapis i rozpocząć nową karierę?")){localStorage.removeItem("pss_v101");localStorage.removeItem("pss_v100");localStorage.removeItem("pzs_v200");localStorage.removeItem("pzs_v1361");localStorage.removeItem("pzs_v136");localStorage.removeItem("pzs_v135");localStorage.removeItem("pzs_v134");localStorage.removeItem("pzs_v1331");localStorage.removeItem("pzs_v133");localStorage.removeItem("pzs_v132");localStorage.removeItem("pzs_v131");localStorage.removeItem("pzs_v1301");localStorage.removeItem("pzs_v130");localStorage.removeItem("pzs_v129");localStorage.removeItem("pzs_v128");localStorage.removeItem("pzs_v127");localStorage.removeItem("pzs_v126");localStorage.removeItem("pzs_v1252");localStorage.removeItem("pzs_v1251");localStorage.removeItem("pzs_v125");localStorage.removeItem("pzs_v124");localStorage.removeItem("pzs_v123");localStorage.removeItem("pzs_v122");localStorage.removeItem("pzs_v121");localStorage.removeItem("pzs_v120");localStorage.removeItem("pzs_v119");localStorage.removeItem("pzs_v118");localStorage.removeItem("pzs_v117");localStorage.removeItem("pzs_v116");localStorage.removeItem("pzs_v115");localStorage.removeItem("pzs_v114");localStorage.removeItem("pzs_v113");localStorage.removeItem("pzs_v112");localStorage.removeItem("pzs_v111");localStorage.removeItem("pzs_v110");localStorage.removeItem("pzs_v109");localStorage.removeItem("pzs_v108");localStorage.removeItem("pzs_v107");localStorage.removeItem("pzs_v106");localStorage.removeItem("pzs_v105");localStorage.removeItem("pzs_v104");localStorage.removeItem("pzs_v103");localStorage.removeItem("pzs_v102");localStorage.removeItem("pzs_v101");localStorage.removeItem("pzs_v100");localStorage.removeItem("pzs_v305");localStorage.removeItem("pzs_v304");localStorage.removeItem("pzs_v303");localStorage.removeItem("pzs_v302");localStorage.removeItem("pzs_v301");localStorage.removeItem("pzs_final30");localStorage.removeItem("pzs_v30");localStorage.removeItem("pzs_v29");localStorage.removeItem("pzs_v28");localStorage.removeItem("pzs_v27");localStorage.removeItem("pzs_v26");localStorage.removeItem("pzs_v25");localStorage.removeItem("pzs_v24");localStorage.removeItem("pzs_v23");localStorage.removeItem("pzs_v22");localStorage.removeItem("pzs_v2");location.reload()}};
 $("exportBtn").onclick=()=>{const blob=new Blob([JSON.stringify(S,null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=`kariera-${S.name.replace(/\s+/g,"-").toLowerCase()}.json`;a.click();URL.revokeObjectURL(a.href)};
 $("importInput").onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{S=JSON.parse(r.result);S.seasonFlowActive=false;S.preseasonCompletedYear=null;S.budgetManagementCompletedYear=null;normalize();save();render()}catch{alert("Nieprawidłowy plik zapisu.")}};r.readAsText(f)};
 const saved=load();if(saved){S=saved;S.seasonFlowActive=false;normalize();repairLegacyStuckSeason();repairMaxedMetaSave();save();render()}

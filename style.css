@@ -128,7 +128,7 @@ body::before{
  .identity-grid{grid-template-columns:1fr}
 }
 
-/* Wydanie 1.00 */
+/* Wydanie 1.01 */
 .number::after{content:none!important}
 
 .heat-classification{
