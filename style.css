@@ -694,3 +694,52 @@ button,.btn,.option,.choice-card{touch-action:manipulation;-webkit-tap-highlight
   .career-support-link{width:min(100%,360px)}
   .legal-footer{width:calc(100% - 24px);font-size:9.5px;line-height:1.5;padding-bottom:18px}
 }
+
+
+/* =========================================================
+   Wydanie 1.02 — podsumowanie mobile i ekran końca kariery
+   ========================================================= */
+.race-prep-note{display:block;margin:.45rem 0;color:var(--muted,#667);font-size:.92em}
+.career-end-actions{
+ display:grid;
+ grid-template-columns:minmax(180px,.72fr) minmax(280px,1.28fr);
+ gap:14px;
+ align-items:stretch;
+ margin-top:22px;
+ padding-top:20px;
+ border-top:1px solid var(--line);
+ border-radius:8px;
+ transition:box-shadow .25s ease,background .25s ease;
+}
+.career-end-actions-highlight{background:rgba(229,154,47,.08);box-shadow:0 0 0 8px rgba(229,154,47,.08)}
+.career-restart-btn{width:100%;height:100%;min-height:74px;font-size:.92rem}
+.career-end-actions .career-support-link{width:100%;max-width:none;height:100%}
+.career-end-actions .career-support-link img{width:100%;height:100%;object-fit:cover;min-height:74px}
+
+@media (max-width:680px){
+ .career-summary-overview .career-summary-grid,.career-summary-section .career-summary-grid{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:4px!important}
+ .career-summary-grid>div{padding:6px 4px!important;min-width:0!important}
+ .career-summary-grid>div span{font-size:8px!important;line-height:1.05!important}
+ .career-summary-grid>div b{font-size:11px!important;line-height:1.05!important}
+ .career-season-table-wrap{overflow:visible!important;width:100%!important}
+ .career-season-table{display:table!important;width:100%!important;min-width:0!important;table-layout:fixed!important;border-collapse:collapse!important;font-size:8px!important}
+ .career-season-table thead{display:table-header-group!important}
+ .career-season-table tbody{display:table-row-group!important}
+ .career-season-table tr{display:table-row!important}
+ .career-season-table th,.career-season-table td{display:table-cell!important;padding:4px 2px!important;white-space:normal!important;word-break:normal!important;overflow-wrap:anywhere!important;vertical-align:middle!important;line-height:1.08!important}
+ .career-season-table td:before,.career-season-table td::before{display:none!important;content:none!important}
+ .career-season-table th:nth-child(1),.career-season-table td:nth-child(1){width:10%!important}
+ .career-season-table th:nth-child(2),.career-season-table td:nth-child(2){width:7%!important}
+ .career-season-table th:nth-child(3),.career-season-table td:nth-child(3){width:7%!important}
+ .career-season-table th:nth-child(4),.career-season-table td:nth-child(4){width:22%!important}
+ .career-season-table th:nth-child(5),.career-season-table td:nth-child(5){width:20%!important}
+ .career-season-table th:nth-child(6),.career-season-table td:nth-child(6){width:8%!important}
+ .career-season-table th:nth-child(7),.career-season-table td:nth-child(7){width:10%!important}
+ .career-season-table th:nth-child(8),.career-season-table td:nth-child(8){width:16%!important}
+ .championship-summary-row{padding:6px 7px!important;gap:2px!important}
+ .championship-summary-row strong{font-size:10px!important}
+ .championship-summary-row span,.championship-summary-row small{font-size:8px!important;line-height:1.15!important}
+ .career-end-actions{grid-template-columns:1fr;gap:9px;margin-top:16px;padding-top:16px}
+ .career-restart-btn{min-height:54px}
+ .career-end-actions .career-support-link img{min-height:0;height:auto;object-fit:contain}
+}
