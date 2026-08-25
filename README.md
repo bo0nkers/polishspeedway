@@ -1,27 +1,51 @@
 # Polish Speedway Simulator
 
-## Wersja 1.02.1
+## Wersja 1.02
 
-Poprawkowe wydanie bazujące na przebudowanej wersji 1.02. Zachowuje nowy model progresji kariery, interaktywne biegi, finanse turniejowe i pozostałe mechanizmy 1.02, a naprawia błędy ujawnione podczas kolejnych pełnych karier testowych.
+Pełne wydanie 1.02 z przebudowanym modelem progresji kariery, poprawkami interaktywnych biegów i finansów oraz nowym systemem pomocy dla początkujących. Bazą techniczną jest ostatnia poprawiona gałąź 1.02.1, dlatego zachowana została kompatybilność z jej zapisami.
 
-### Najważniejsze poprawki 1.02.1
+### Tutorial i przewodnik
 
-- **DMŚJ nie jest cyklem.** Drużynowe Mistrzostwa Świata Juniorów są traktowane jako impreza reprezentacyjna z ewentualnymi eliminacjami i finałem. Nie pojawia się już fikcyjne „10/10” czy „12/12 rund”, liczba podiów w cyklu ani premia za klasyfikację końcową cyklu.
-- Naprawiono klasyfikację nazw zawodów: konkretne imprezy juniorskie i drużynowe są rozpoznawane przed ogólnym określeniem „Mistrzostwa Świata”. Dzięki temu **DMŚJ nie może zostać pomylone z SGP**.
-- **Obniżono gratyfikacje DMŚJ** do poziomu juniorskiej imprezy reprezentacyjnej. Przykładowo srebro przy pięciu startach daje około 22 tys. zł przed ewentualnym niewielkim bonusem sponsora, a nie setki tysięcy złotych.
-- Dodano twardą listę cykli finansowych: tylko **SGP, SEC, IMP i SGP2** mogą korzystać z rozliczenia sezonowego X/Y rund, podiów, zwycięstw i premii końcowej.
-- Na końcu kariery ponownie pojawia się **automatyczny pop-up z dwiema opcjami: „Nowa kariera” i „Postaw kawę”**. Te same dwa wybory pozostają również na stałym ekranie podsumowania kariery.
-- Na desktopie delikatnie zwiększono rozmiar tekstu przycisku **„Nowa kariera”** przy końcowym podsumowaniu.
-- Usunięto wyraźny **bias podpowiedzi mentora w stronę krawężnika**. Techniczny tor lub wymagający pierwszy łuk nie są już automatycznie utożsamiane z jazdą po wewnętrznej, a wybór linii mocniej zależy od realnych cech zawodnika i aktualnego stanu toru.
-- Neutralne motywy `balanced`, `safe` i podobne nie wpadają już automatycznie w krawężnik jako domyślny fallback. Linia wewnętrzna i szeroka są wybierane kontekstowo dla danej fazy biegu.
-- Poprawiono **narrację przy układzie 5:1**. Jeśli po pierwszym łuku gracz jedzie drugi za partnerem i drużyna ma podwójne prowadzenie, gra nie mówi już, że „start nie układa się po twojej myśli”.
-- Ograniczono powtarzanie tej samej informacji o pozycji i układzie biegu w nagłówku, opisie i kolejnym zdaniu.
-- Na rynku transferowym rola zawodnika jest mocniej powiązana z **prognozą jazdy**. Oferta pozostania może nadal wynikać z lojalności i dobrej relacji z klubem, ale prognoza rzędu kilku procent nie powinna być opisana jako pewna rola „Podstawowego zawodnika”.
-- Zachowano przebudowany model progresji z 1.02: częste kariery mają naturalny układ **rozwój → peak / plateau → regres**, ale nadal możliwe są późny rozkwit, wcześniejszy szczyt, długa stabilizacja, odbudowa, druga młodość i wyjątkowa długowieczność.
+- Dodano stały przycisk **PRZEWODNIK** w górnym menu.
+- Przewodnik ma rozdziały dotyczące: początku kariery, OVR i umiejętności, punktów rozwoju, trajektorii kariery, ligi, finansów, teamu, transferów, biegów interaktywnych, turniejów, reprezentacji oraz zdrowia.
+- Dodano opcjonalną **Karierę z tutorialem**: pięcioetapowy onboarding przy rozpoczęciu nowej kariery.
+- Dodano jednorazowe, kontekstowe wskazówki przy pierwszym zetknięciu z wybranymi systemami.
+- Podpowiedzi można wyłączyć oraz uruchomić tutorial ponownie z poziomu Przewodnika.
+- Tutorial tłumaczy mechaniki i konsekwencje, ale nie ujawnia ukrytych wzorów ani jednej „optymalnej” strategii.
+
+### Punkty rozwoju — poprawiony interfejs
+
+- Przycisk rozwoju pokazuje teraz jednoznacznie **`+1 • koszt PR`**.
+- Np. `+1 • 11 PR` oznacza, że wydajesz 11 punktów rozwoju i podnosisz umiejętność dokładnie o 1.
+- Gdy kolejny punkt przekracza aktualny naturalny próg cechy i koszt jest podwyższony, przycisk jest delikatnie oznaczony na czerwono.
+- Przewodnik zawiera tabelę bazowych kosztów oraz wyjaśnienie miękkiego progu, wieku i naturalnego rozwoju.
+
+### Team i wydawanie pieniędzy
+
+- Usunięto obowiązkowy sezonowy modal „Jak wykorzystujesz zgromadzony kapitał?”.
+- Rozwój teamu jest teraz **stałą sekcją dostępną z centrum kariery**.
+- Zakupy nie działają jako „albo–albo”: można kupić kilka różnych usług w sezonie albo nie kupować nic.
+- We wczesnej karierze wyświetlane są głównie relatywnie tanie usługi jednorazowe, zamiast inwestycji za kilkaset tysięcy złotych.
+- Duże, stałe inwestycje w bazę odblokowują się wraz z poziomem sportowym, reputacją i skalą finansów.
+- Brak zakupu nie jest osobną decyzją i nie powoduje kary.
+
+### Zachowane poprawki 1.02 / 1.02.1
+
+- Naturalniejsze trajektorie: częsty układ **rozwój → peak / plateau → regres**, ale nadal możliwe są wcześniejszy peak, późny rozkwit, druga młodość, odbudowa i wyjątkowa długowieczność.
+- Wynik ruletki w biegu nie jest ujawniany przed końcem animacji.
+- Sukces decyzji oznacza sportowe powodzenie konkretnego zamiaru; ograniczono paradoksy typu „niepowodzenie → najlepszy rezultat”.
+- Start ma osobną logikę od dalszych faz biegu.
+- Wyjątkowy sukces jest mniejszym podzbiorem całej puli powodzenia.
+- Poprawiono ciągłość pozycji w biegu, narrację 5:1, zgodność mentora z dostępnymi decyzjami i nadmierny bias w stronę krawężnika.
+- DMŚJ jest imprezą reprezentacyjną, a nie fikcyjnym wielorundowym cyklem; usunięto absurdalne premie finansowe.
+- Tylko SGP, SEC, SGP2 i wielorundowy IMP korzystają z pełnego rozliczenia cyklu.
+- Dodano Speedway of Nations w formacie trzyosobowej kadry i siedmiu reprezentacji w finale.
+- Zachowano gratyfikacje finansowe za zawody pozaligowe oraz późniejsze rozliczenia cykli.
+- Na końcu kariery pozostają stałe przyciski „Nowa kariera” i „Postaw kawę” oraz automatyczny pop-up z obiema opcjami.
 
 ### Zapis gry
 
-Wersja 1.02.1 używa klucza `pss_v1021` i automatycznie migruje zapis z `pss_v102`, `pss_v101` oraz starszych obsługiwanych wersji.
+Dla zachowania kompatybilności z ostatnią poprawioną gałęzią 1.02 gra nadal używa wewnętrznego klucza zapisu `pss_v1021` i migruje starsze zapisy 1.02 / 1.01 oraz obsługiwane historyczne wersje.
 
 ### Pliki wydania
 
@@ -34,11 +58,11 @@ Do publikacji potrzebne są:
 - `social-preview.jpg`
 - `speedway-emblem.png`
 
-Trzy pliki graficzne nie zostały zmienione. Przy aktualizacji istniejącego deploymentu wystarczy pozostawić je na serwerze i podmienić `index.html`, `style.css`, `app.js` oraz opcjonalnie `README.md`.
+Trzy pliki graficzne nie zostały zmienione i nie są dołączane ponownie do tej paczki roboczej. Przy aktualizacji obecnego deploymentu należy pozostawić je na serwerze i podmienić `index.html`, `style.css`, `app.js` oraz opcjonalnie `README.md`.
 
 ### Publikacja
 
-Gra jest statyczna i nie wymaga procesu buildowania. Może być publikowana m.in. na Vercel, GitHub Pages, Netlify lub Cloudflare Pages.
+Gra jest statyczna i nie wymaga procesu buildowania. Może być publikowana bezpośrednio na Vercel, GitHub Pages, Netlify lub Cloudflare Pages.
 
 ## Adres projektu
 

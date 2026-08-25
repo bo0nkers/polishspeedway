@@ -9,7 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@400;500;600;700;800&family=Roboto+Condensed:wght@600;700;800&display=swap" rel="stylesheet">
   <meta name="theme-color" content="#173d3a">
   <link rel="icon" type="image/png" href="speedway-emblem.png">
-  <meta name="description" content="Polish Speedway Simulator 1.02.1 — tekstowa gra żużlowa o drodze od szkółki do światowego żużla.">
+  <meta name="description" content="Polish Speedway Simulator 1.02 — tekstowa gra żużlowa o drodze od szkółki do światowego żużla.">
   <meta property="og:type" content="website">
   <meta property="og:title" content="Polish Speedway Simulator">
   <meta property="og:description" content="Tekstowy symulator kariery polskiego żużlowca — od szkółki aż po walkę o największe trofea.">
@@ -37,7 +37,8 @@
         <h1>POLISH SPEEDWAY <span>SIMULATOR</span></h1>
       </div>
     </div>
-    <div class="header-actions"><span class="version-badge">WERSJA 1.02.1</span>
+    <div class="header-actions"><span class="version-badge">WERSJA 1.02</span>
+      <button id="guideBtn" class="btn secondary" type="button">PRZEWODNIK</button>
       <button id="exportBtn" class="btn secondary hidden">EKSPORT ZAPISU</button>
       <label class="btn secondary hidden" id="importLabel">IMPORT ZAPISU<input id="importInput" type="file" accept=".json"></label>
       <button id="newBtn" class="btn secondary">NOWA KARIERA</button>
@@ -118,10 +119,16 @@
           </div>
         </section>
 
-        <label class="guidance-toggle">
-          <input id="showGuidance" type="checkbox" checked>
-          <span><strong>Pokazuj komunikaty pomocnicze</strong><small>Raporty trenera, oceny rozwoju i ostrzeżenia dotyczące prowadzenia kariery.</small></span>
-        </label>
+        <div class="guidance-options">
+          <label class="guidance-toggle">
+            <input id="tutorialMode" type="checkbox" checked>
+            <span><strong>Kariera z tutorialem</strong><small>Krótki startowy samouczek i kontekstowe wskazówki przy pierwszym kontakcie z ważnymi mechanikami. Tutorial można pominąć lub uruchomić ponownie z Przewodnika.</small></span>
+          </label>
+          <label class="guidance-toggle">
+            <input id="showGuidance" type="checkbox" checked>
+            <span><strong>Pokazuj raporty sztabu</strong><small>Raporty trenera, oceny rozwoju i ostrzeżenia dotyczące prowadzenia kariery.</small></span>
+          </label>
+        </div>
 
         <button class="btn primary submit" type="submit">ZACZNIJ KARIERĘ</button>
       </form>
@@ -190,7 +197,10 @@
       <article class="card">
         <div class="section-head">
           <div><p class="eyebrow">PARAMETRY</p><h2>Twój zawodnik</h2></div>
-          <span class="pill"><b id="devPoints">0</b> PKT ROZWOJU</span>
+          <div class="section-head-tools">
+            <button id="devHelpBtn" class="section-help-btn" type="button" title="Jak działają punkty rozwoju?" aria-label="Jak działają punkty rozwoju?">?</button>
+            <span class="pill"><b id="devPoints">0</b> PKT ROZWOJU</span>
+          </div>
         </div>
         <div id="skills" class="skills"></div>
       </article>
@@ -202,6 +212,10 @@
           <span class="pill">INWESTYCJE</span>
         </div>
         <div id="facilitiesList" class="facilities-list"></div>
+        <div id="teamMarketPanel" class="team-market-panel">
+          <div><strong>Team i usługi</strong><small id="teamMarketHint">Dostępne opcje zależą od etapu kariery, pozycji sportowej i finansów.</small></div>
+          <button id="teamMarketBtn" class="btn outline" type="button">ZARZĄDZAJ TEAMEM</button>
+        </div>
       </article>
 
       <article class="card">
@@ -250,6 +264,34 @@
 <footer class="legal-footer" aria-label="Informacja o charakterze projektu">
   <p><strong>Polish Speedway Simulator</strong> jest niezależnym, nieoficjalnym projektem stworzonym dla fanów sportu żużlowego. Gra wykorzystuje elementy inspirowane rzeczywistym światem żużla, w tym nazwy klubów, rozgrywek, miejsc, instytucji i osób, jednak nie stanowi oficjalnego produktu żadnego z tych podmiotów i nie jest przez nie sponsorowana ani autoryzowana. Gra ma charakter symulacyjny, a przebieg kariery, wyniki, transfery, kontrakty, wydarzenia, zmiany nazw, relacje pomiędzy podmiotami oraz kolejne sezony są elementami fikcyjnej symulacji i nie powinny być traktowane jako informacje o rzeczywistych zdarzeniach, decyzjach lub relacjach. Wszystkie wykorzystane nazwy służą wyłącznie budowaniu świata przedstawionego gry. Polish Speedway Simulator nie jest również powiązany z twórcami innych gier i symulatorów sportowych.</p>
 </footer>
+
+<div id="guideModal" class="guide-modal hidden" role="dialog" aria-modal="true" aria-labelledby="guideTitle">
+  <div class="guide-card">
+    <div class="guide-topbar">
+      <div><p class="eyebrow">POMOC</p><h2 id="guideTitle">Przewodnik po grze</h2></div>
+      <button id="guideCloseBtn" class="guide-close" type="button" aria-label="Zamknij przewodnik">×</button>
+    </div>
+    <div class="guide-layout">
+      <aside class="guide-sidebar">
+        <label class="guide-search-label">Szukaj w przewodniku<input id="guideSearch" type="search" placeholder="np. punkty rozwoju"></label>
+        <nav id="guideNav" class="guide-nav" aria-label="Rozdziały przewodnika"></nav>
+      </aside>
+      <section id="guideContent" class="guide-content"></section>
+    </div>
+    <div class="guide-footer">
+      <label class="guide-tip-toggle"><input id="tutorialTipsToggle" type="checkbox" checked><span>Podpowiedzi kontekstowe</span></label>
+      <button id="restartTutorialBtn" class="btn outline" type="button">URUCHOM TUTORIAL PONOWNIE</button>
+    </div>
+  </div>
+</div>
+
+<div id="tutorialTip" class="tutorial-tip hidden" role="status" aria-live="polite">
+  <button id="tutorialTipClose" class="tutorial-tip-close" type="button" aria-label="Zamknij wskazówkę">×</button>
+  <p class="eyebrow">WSKAZÓWKA</p>
+  <strong id="tutorialTipTitle"></strong>
+  <p id="tutorialTipText"></p>
+  <button id="tutorialTipMore" class="tutorial-tip-more" type="button">Dowiedz się więcej</button>
+</div>
 
 <div id="modal" class="modal hidden">
   <div class="modal-card">

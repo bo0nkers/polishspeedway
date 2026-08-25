@@ -9591,3 +9591,275 @@ const saved=load();if(saved){S=saved;S.seasonFlowActive=false;normalize();repair
   return {name:"Indywidualne Mistrzostwa Polski",key:"IMP",stage:"3 rundy",result:capitalizeFirstText(result),points:player.total,place,details:rounds,roundData:player.rounds,roundAchievements,healthExposureHeats:15};
  };
 })();
+
+
+// ============================================================================
+// POLISH SPEEDWAY SIMULATOR 1.02 — TUTORIAL / GUIDE / TEAM MARKET PATCH
+// 25.08.2026
+// - layered tutorial + permanent guide
+// - explicit development-point cost UI
+// - red soft-threshold warning
+// - permanent, non-exclusive team/services market
+// - no forced preseason investment modal
+// ============================================================================
+(() => {
+ const TUTORIAL_PREF_KEY="pss_tutorial_enabled";
+ const GUIDE_CHAPTERS=[
+  {id:"start",title:"Pierwsze kroki",html:`
+   <h3>Pierwsze kroki</h3>
+   <p>Polish Speedway Simulator prowadzi jednego zawodnika od szkółki lub początku kariery ligowej aż do jej zakończenia. Nie ma jednego poprawnego sposobu gry: możesz rozwijać się wolniej, zmieniać ligi, walczyć o regularne starty albo ryzykować wejście na wyższy poziom.</p>
+   <div class="guide-callout"><b>Najważniejsze na początku:</b> regularna jazda jest bardzo cenna. Sam prestiż ligi nie zastąpi biegów, treningu i odpowiedniego miejsca w składzie.</div>
+   <h4>Co robić w sezonie?</h4><ul><li>obserwuj szansę na skład i rolę w klubie,</li><li>wydawaj punkty rozwoju tylko tam, gdzie naprawdę chcesz kształtować profil zawodnika,</li><li>pilnuj sprzętu, morale, zdrowia i budżetu,</li><li>czytaj oferty transferowe pod kątem realnej prognozy jazdy, a nie tylko nazwy ligi.</li></ul>`},
+  {id:"ovr",title:"OVR i umiejętności",html:`
+   <h3>OVR i umiejętności</h3>
+   <p>OVR jest syntetyczną oceną aktualnego poziomu zawodnika. Nie zastępuje konkretnych umiejętności: dwóch zawodników z podobnym OVR może jeździć zupełnie inaczej.</p>
+   <p>Na wynik wpływają m.in. start, pierwszy łuk, jazda na dystansie, technika, kondycja, ustawienia sprzętu, psychika i wyprzedzanie. Sprzęt jest osobnym elementem przygotowania.</p>
+   <div class="guide-callout">OVR nie gwarantuje dobrego wyniku każdego dnia. Forma dnia, tor, ustawienia, rywale, zmęczenie i przebieg biegu również mają znaczenie.</div>`},
+  {id:"development",title:"Punkty rozwoju",html:`
+   <h3>Punkty rozwoju</h3>
+   <p><b>Liczba na przycisku jest kosztem, a nie wielkością przyrostu.</b> Każde ręczne rozwinięcie podnosi wybraną umiejętność dokładnie o <b>+1</b>.</p>
+   <p><span class="guide-example">+1 • 11 PR</span> oznacza: wydajesz 11 punktów rozwoju, a dana cecha rośnie np. z 63 do 64.</p>
+   <h4>Standardowy koszt kolejnego punktu</h4>
+   <table class="guide-cost-table"><thead><tr><th>Aktualna wartość cechy</th><th>Podstawowy koszt +1</th></tr></thead><tbody>
+    <tr><td>do 60</td><td>1 PR</td></tr><tr><td>61–75</td><td>2 PR</td></tr><tr><td>76–85</td><td>3 PR</td></tr><tr><td>86–90</td><td>5 PR</td></tr><tr><td>91–94</td><td>8 PR</td></tr><tr><td>95</td><td>12 PR</td></tr><tr><td>96</td><td>18 PR</td></tr><tr><td>97</td><td>28 PR</td></tr><tr><td>98 → 99</td><td>44 PR</td></tr>
+   </tbody></table>
+   <h4>Naturalny próg</h4>
+   <p>Każda cecha ma dynamiczny, miękki próg wynikający z profilu i aktualnej fazy kariery. To <b>nie jest twardy limit</b>. Możesz rozwijać cechę dalej, ale kolejny punkt kosztuje więcej.</p>
+   <div class="guide-callout warning"><b>Czerwone oznaczenie przycisku</b> informuje, że kolejny punkt znajduje się już ponad naturalnym progiem i płacisz podwyższony koszt.</div>
+   <p>Z wiekiem i kilka lat po indywidualnym szczycie kariery ręczny rozwój również może stawać się droższy. Niezależnie od ręcznych wydatków umiejętności mogą rosnąć naturalnie dzięki regularnej jeździe, treningowi, jakości rywali, wydarzeniom rozwojowym i dobremu otoczeniu.</p>`},
+  {id:"career",title:"Rozwój kariery",html:`
+   <h3>Rozwój kariery</h3>
+   <p>Kariera nie ma z góry ustalonego jednego wykresu. Często pojawia się wzrost, później peak lub plateau i stopniowy regres, ale możliwe są wcześniejsze szczyty, późny rozkwit, długie plateau, odbudowa i krótka druga młodość.</p>
+   <p>Jakość rywali ma znaczenie. Regularne biegi przeciw mocniejszej stawce mogą być bardziej rozwojowe niż podobna liczba biegów przeciw dużo słabszym zawodnikom. Jednocześnie siedzenie na ławce w najwyższej lidze nie musi być lepsze od regularnej jazdy poziom niżej.</p>`},
+  {id:"season",title:"Sezon i liga",html:`
+   <h3>Sezon i liga</h3>
+   <p>W lidze znaczenie mają OVR, rola w zespole, realna konkurencja w składzie, forma i wyniki. Liczba biegów w sezonie nie jest stała — zależy od tego, jak często trafiasz do składu i jaką rolę pełnisz.</p>
+   <div class="guide-callout">Prognoza jazdy na rynku transferowym jest ważnym sygnałem. Bardzo niski procent oznacza realne ryzyko spędzenia dużej części sezonu poza składem.</div>`},
+  {id:"finances",title:"Finanse",html:`
+   <h3>Finanse</h3>
+   <p>Podstawą finansów pozostaje kontrakt ligowy. Pozaligowe turnieje, cykle i reprezentacja również mogą dawać gratyfikacje zależne od prestiżu, etapu i wyniku.</p>
+   <p>W cyklach wielorundowych pełne rozliczenie finansowe pojawia się dopiero w późniejszym podsumowaniu: udział w rundach, podia, zwycięstwa, suma nagród rundowych i premia za klasyfikację końcową.</p>
+   <p>Duża nadwyżka pieniędzy może być przeznaczana na usługi i rozwój teamu. Brak zakupu jest zawsze dopuszczalny — gra nie wymusza wydawania środków.</p>`},
+  {id:"team",title:"Team i usługi",html:`
+   <h3>Team i usługi</h3>
+   <p>Sekcja teamu jest stałym rynkiem, a nie jednorazowym wydarzeniem „albo–albo”. Możesz kupić kilka różnych usług w jednym sezonie, jeśli masz środki, albo nie kupować nic.</p>
+   <p>We wczesnej karierze dostępne są głównie podstawowe i relatywnie tanie usługi: dodatkowy trening, analiza wideo, serwis ustawień czy fizjoterapia. Duże inwestycje w stałą bazę odblokowują się dopiero wraz z poziomem sportowym, reputacją i realną skalą finansów.</p>
+   <div class="guide-callout">Inwestycje pomagają, ale nie są przyciskiem „kup OVR”. Korzyści są ograniczone, często pośrednie i podlegają malejącym efektom.</div>`},
+  {id:"transfers",title:"Kontrakty i transfery",html:`
+   <h3>Kontrakty i transfery</h3>
+   <p>Oferta klubu nie zależy wyłącznie od OVR. Znaczenie mają także forma, średnia, reputacja, relacja z klubem i lojalność. Dotychczasowy klub może chcieć zatrzymać zawodnika, którego dobrze zna.</p>
+   <p>Oddzielaj jednak samą ofertę od roli. Jeśli prognoza jazdy jest niska, nawet atrakcyjny kontrakt w mocnej lidze może oznaczać niewiele realnych biegów.</p>`},
+  {id:"races",title:"Biegi interaktywne",html:`
+   <h3>Biegi interaktywne</h3>
+   <p>Procent przy decyzji oznacza realną szansę powodzenia <b>konkretnego zamiaru</b>. Jeśli wybierasz atak i wypada sukces, atak ma sportowo się udać. Jeśli wybierasz obronę i wypada sukces, pozycja zostaje obroniona.</p>
+   <p>Szanse są zależne od sytuacji: twoich umiejętności i OVR, rywali, pozycji, toru, formy dnia, ustawień, sprzętu, zmęczenia i charakteru decyzji.</p>
+   <div class="guide-callout"><b>Wyjątkowy sukces</b> jest rzadkim podzbiorem całej puli powodzenia. Nie powinien być częstszy od zwykłego sukcesu.</div>
+   <p>Pozycje w kolejnych fazach biegu są kontynuacją wcześniejszego przebiegu. Duży nagły zwrot powinien wynikać z jasno opisanego błędu, kontaktu, defektu albo innego incydentu.</p>`},
+  {id:"competitions",title:"Turnieje",html:`
+   <h3>Turnieje</h3>
+   <p>Poza ligą możesz trafiać do zawodów juniorskich, krajowych, europejskich i światowych. Część to pojedyncze turnieje lub eliminacje + finał, a część to cykle wielorundowe.</p>
+   <p>Do sezonowego „rozliczenia cyklu” należą wyłącznie jawnie oznaczone cykle, takie jak SGP, SEC, SGP2 oraz wielorundowy IMP. Imprezy drużynowe juniorów nie są sztucznie przeliczane jako kilkunastorundowy cykl.</p>`},
+  {id:"national",title:"Reprezentacja",html:`
+   <h3>Reprezentacja</h3>
+   <p>Powołania zależą od poziomu sportowego, bieżącej formy, średniej i reputacji. W kalendarzu mogą pojawiać się m.in. imprezy juniorskie, Drużynowe Mistrzostwa Europy, Drużynowy Puchar Świata oraz Speedway of Nations.</p>
+   <p>W Speedway of Nations powoływana jest trzyosobowa kadra. W finale startuje siedem reprezentacji, więc zawodnik podstawowej pary może rozegrać sześć biegów — po jednym przeciw każdemu rywalowi.</p>`},
+  {id:"health",title:"Zdrowie i zmęczenie",html:`
+   <h3>Zdrowie i zmęczenie</h3>
+   <p>Duża liczba biegów, treningów i turniejów może kumulować zmęczenie. Regeneracja pomaga utrzymać świeżość, ale nie zamienia Kondycji w automatyczne 99.</p>
+   <p>Kontuzje mają różną skalę. Ciężkie i karierę zmieniające przypadki są dużo rzadsze niż drobne urazy. Niektóre urazy mogą wpływać nie tylko na chwilowy OVR, ale też na późniejszy styl i trajektorię rozwoju.</p>`}
+ ];
+ const GUIDE_INDEX=Object.fromEntries(GUIDE_CHAPTERS.map(x=>[x.id,x]));
+
+ function tutorialPreference(){
+  if(S&&typeof S.tutorialEnabled==="boolean")return S.tutorialEnabled;
+  const stored=localStorage.getItem(TUTORIAL_PREF_KEY);return stored===null?true:stored!=="0";
+ }
+ function setTutorialPreference(value){
+  localStorage.setItem(TUTORIAL_PREF_KEY,value?"1":"0");
+  if(S){S.tutorialEnabled=!!value;S.tutorialState??={seen:[],completed:false};save()}
+  const startToggle=document.getElementById("tutorialMode");if(startToggle)startToggle.checked=!!value;
+  const footerToggle=document.getElementById("tutorialTipsToggle");if(footerToggle)footerToggle.checked=!!value;
+ }
+ function ensureTutorialState(){
+  if(!S)return null;
+  S.tutorialState??={seen:[],completed:false};S.tutorialState.seen??=[];
+  if(typeof S.tutorialEnabled!=="boolean")S.tutorialEnabled=tutorialPreference();
+  return S.tutorialState;
+ }
+ function tutorialSeen(key){const st=ensureTutorialState();return !!st?.seen?.includes(key)}
+ function markTutorialSeen(key){const st=ensureTutorialState();if(st&&!st.seen.includes(key)){st.seen.push(key);save()}}
+
+ let activeGuideId="start";
+ function renderGuideNav(query=""){
+  const nav=document.getElementById("guideNav");if(!nav)return;
+  const q=String(query||"").trim().toLocaleLowerCase("pl");
+  nav.innerHTML="";
+  GUIDE_CHAPTERS.forEach(ch=>{
+   const plain=(ch.title+" "+ch.html.replace(/<[^>]+>/g," ")).toLocaleLowerCase("pl");
+   const b=document.createElement("button");b.type="button";b.textContent=ch.title;b.dataset.id=ch.id;
+   if(ch.id===activeGuideId)b.classList.add("active");if(q&&!plain.includes(q))b.classList.add("hidden-by-search");
+   b.onclick=()=>openGuide(ch.id);nav.appendChild(b);
+  });
+ }
+ function openGuide(id="start"){
+  activeGuideId=GUIDE_INDEX[id]?id:"start";
+  const modal=document.getElementById("guideModal"),content=document.getElementById("guideContent");if(!modal||!content)return;
+  content.innerHTML=GUIDE_INDEX[activeGuideId].html;renderGuideNav(document.getElementById("guideSearch")?.value||"");
+  const toggle=document.getElementById("tutorialTipsToggle");if(toggle)toggle.checked=tutorialPreference();
+  modal.classList.remove("hidden");document.body.classList.add("guide-open");
+ }
+ function closeGuide(){document.getElementById("guideModal")?.classList.add("hidden");document.body.classList.remove("guide-open")}
+ window.openPSSGuide=openGuide;
+
+ function showTutorialTip(key,title,text,chapter=key){
+  if(!S||!tutorialPreference()||tutorialSeen(key))return;
+  markTutorialSeen(key);
+  const box=document.getElementById("tutorialTip");if(!box)return;
+  document.getElementById("tutorialTipTitle").textContent=title;
+  document.getElementById("tutorialTipText").textContent=text;
+  const more=document.getElementById("tutorialTipMore");more.onclick=()=>{box.classList.add("hidden");openGuide(GUIDE_INDEX[chapter]?chapter:"start")};
+  box.classList.remove("hidden");
+ }
+
+ function tutorialStep(index){
+  if(!S)return;
+  const steps=[
+   ["TUTORIAL 1/5","Centrum kariery",`Na głównym ekranie widzisz OVR, umiejętności, klub, rolę, budżet i bieżący sezon. <b>OVR jest podsumowaniem poziomu, ale nie zastępuje konkretnych cech.</b>`],
+   ["TUTORIAL 2/5","Regularna jazda ma znaczenie",`Rozwój zależy nie tylko od ligi. Młody zawodnik potrzebuje biegów. Regularne starty poziom niżej mogą dać więcej niż ławka w mocniejszej lidze, a jakość rywali wpływa na wartość doświadczenia.`],
+   ["TUTORIAL 3/5","Punkty rozwoju",`Przycisk przy umiejętności pokazuje <b>koszt podniesienia jej o dokładnie +1</b>. Zapis „+1 • 9 PR” oznacza wydatek 9 punktów rozwoju. Czerwony przycisk ostrzega, że rozwijasz cechę ponad jej aktualny naturalny próg i płacisz więcej.`],
+   ["TUTORIAL 4/5","Finanse i team",`Nie musisz wydawać pieniędzy co sezon. W sekcji „Baza twojego teamu” możesz w dowolnym momencie kupować dostępne usługi. Tanie opcje pojawiają się wcześniej, a duża infrastruktura dopiero wraz z rozwojem kariery.`],
+   ["TUTORIAL 5/5","Decyzje w biegach",`Procent przy decyzji oznacza realną szansę powodzenia <b>tego konkretnego manewru lub obrony</b>. Forma dnia, tor, rywale, sprzęt i aktualna pozycja mogą mocno zmieniać szanse.`]
+  ];
+  if(index>=steps.length){const st=ensureTutorialState();st.completed=true;save();showTutorialTip("guide-anytime","Przewodnik jest zawsze pod ręką","W każdej chwili możesz otworzyć pełny Przewodnik z górnego menu.","start");return}
+  const [kicker,title,text]=steps[index];
+  const opts=[{title:index===steps.length-1?"Zaczynam":"Dalej",desc:index===steps.length-1?"Przejdź do kariery.":"Następna wskazówka.",action:()=>{closeModal();tutorialStep(index+1)}}];
+  if(index===0)opts.push({title:"Pomiń tutorial",desc:"Wyłącz startowy tutorial i podpowiedzi kontekstowe. Przewodnik nadal będzie dostępny w menu.",action:()=>{setTutorialPreference(false);const st=ensureTutorialState();st.completed=true;save();closeModal()}});
+  showModal(kicker,title,text,opts);
+ }
+ function restartTutorial(){
+  if(!S){setTutorialPreference(true);closeGuide();return}
+  S.tutorialEnabled=true;S.tutorialState={seen:[],completed:false};localStorage.setItem(TUTORIAL_PREF_KEY,"1");save();closeGuide();setTimeout(()=>tutorialStep(0),80);
+ }
+
+ // --- Punkty rozwoju: etykieta pokazuje +1 oraz realny koszt ----------------
+ const baseRenderSkills102Guide=renderSkills;
+ renderSkills=function(){
+  const box=document.getElementById("skills");if(!box||!S?.skills){baseRenderSkills102Guide();return}
+  box.innerHTML=Object.entries(S.skills).map(([k,v])=>{
+   const value=Math.round(v),target=skillSoftTarget(k),cost=skillUpgradeCostFor(value,k),disabled=!canUpgradeSkill(value,k),over=value>=target;
+   const thresholdInfo=value===target-1?`<span class="skill-threshold-inline">próg ${target}</span>`:"";
+   const reason=disabled?skillUpgradeBlockReason(value,k):(over?`Powyżej naturalnego progu ${target}. Kolejny punkt kosztuje ${cost} PR.`:`Koszt podniesienia cechy o +1: ${cost} PR.`);
+   return `<div class="skill"><div class="skill-label"><span>${SKILLS[k]} ${thresholdInfo}</span><b>${value}</b></div><div class="skill-bar" aria-label="${SKILLS[k]}: ${value}/100"><i style="width:${value}%"></i></div><button class="plus ${over?"plus-over-threshold":""}" data-k="${k}" title="${reason}" ${disabled?"disabled":""}>+1 • ${cost} PR</button></div>`;
+  }).join("");
+  document.querySelectorAll(".plus").forEach(b=>b.onclick=()=>{showTutorialTip("development","Punkty rozwoju","Liczba po znaku • to koszt w PR. Każde kliknięcie zwiększa wybraną cechę tylko o +1. Czerwony przycisk oznacza koszt ponad naturalnym progiem.","development");upgradeSkill(b.dataset.k)});
+ };
+
+ // --- Team market: stały, wielokrotny wybór zamiast sezonowego eventu -------
+ function ensureTeamMarket(){
+  if(!S)return null;S.teamMarket??={purchases:{},facilityBuiltYear:{}};S.teamMarket.purchases??={};S.teamMarket.facilityBuiltYear??={};return S.teamMarket;
+ }
+ function teamCareerTier(){
+  if(!S||S.league==="Etap szkolenia")return 0;
+  const o=overall(),rep=Number(S.reputation||0),salary=Number(S.salary||0),budget=Number(S.budget||0),earned=Number(S.totals?.earnings||0);
+  if(o>=81&&rep>=45&&(salary>=5000||budget>=650000||earned>=1500000))return 3;
+  if(o>=69&&rep>=23&&(salary>=2600||budget>=220000||earned>=400000))return 2;
+  return 1;
+ }
+ function teamTierName(tier){return ["szkółka / początek","młody zawodnik","profesjonalny team","czołówka / rozbudowany team"][tier]||"team"}
+ function serviceBought(id){return ensureTeamMarket().purchases[`${S.year}:${id}`]||0}
+ function markServiceBought(id){const st=ensureTeamMarket(),k=`${S.year}:${id}`;st.purchases[k]=(st.purchases[k]||0)+1}
+ function teamServiceOffers(){
+  const tier=teamCareerTier(),m=[.72,1,1.35,1.8][tier];
+  const price=base=>Math.max(3000,Math.round(base*m/1000)*1000);
+  const offers=[
+   {id:"setup-service",min:0,base:8000,title:"Serwis i konsultacja ustawień",desc:"Podstawowa praca nad motocyklem i setupem. Niewielka, pośrednia korzyść bez gwarancji wzrostu.",apply:()=>{S.equipment=clamp(S.equipment+1,0,100);tryNaturalGrowth("setup",1);S.professionalism+=1}},
+   {id:"video",min:0,base:6500,title:"Analiza wideo",desc:"Analiza startów, pierwszego łuku i jazdy na dystansie. Pomaga wyciągać wnioski z obecnego poziomu.",apply:()=>{tryNaturalGrowth(pick(["starts","corner","technique","distance"]),1);S.professionalism+=1}},
+   {id:"physio",min:0,base:9000,title:"Fizjoterapia i regeneracja",desc:"Mniejsze obciążenie organizmu i niższe ryzyko drobnych problemów. Nie daje automatycznie punktu Kondycji.",apply:()=>{S.injuryRisk=Math.max(1,S.injuryRisk-2);S.morale+=1;applyDevelopmentModifier({id:`team-physio-${S.year}`,label:"dodatkowa regeneracja",duration:1,declineProtection:.18,formBonus:.25,fitnessGrowthMult:.92})}},
+   {id:"start-session",min:1,base:12000,title:"Dodatkowy trening startowy",desc:"Krótki blok pracy nad reakcją i pierwszym łukiem. Naturalny wzrost nadal zależy od potencjału i etapu kariery.",apply:()=>{tryNaturalGrowth("starts",1);if(Math.random()<.45)tryNaturalGrowth("corner",1);S.professionalism+=1}},
+   {id:"private-track",min:2,base:33000,title:"Prywatne testy torowe",desc:"Więcej czasu na torze, kilka różnych prób i praca nad konkretnymi elementami technicznymi.",apply:()=>{for(let i=0;i<2;i++)tryNaturalGrowth(pick(["starts","corner","technique","distance","overtaking"]),1);S.professionalism+=1}},
+   {id:"tuner",min:2,base:52000,title:"Program tunerski",desc:"Dodatkowy serwis silnika i praca nad ustawieniami. Korzyści maleją wraz z poziomem sprzętu.",apply:()=>{S.equipment=clamp(S.equipment+(S.equipment<80?2:1),0,100);tryNaturalGrowth("setup",1)}},
+   {id:"pro-program",min:3,base:145000,title:"Program profesjonalnego teamu",desc:"Dodatkowy mechanik, dane, logistyka i regeneracja na część sezonu. Pomaga przygotowaniu, ale nie kupuje OVR.",apply:()=>{S.equipment=clamp(S.equipment+1,0,100);S.devPoints+=1;S.injuryRisk=Math.max(1,S.injuryRisk-2);applyDevelopmentModifier({id:`pro-team-${S.year}`,label:"program profesjonalnego teamu",duration:1,growthMult:1.025,teamBonus:.8,declineProtection:.18})}}
+  ];
+  return offers.filter(o=>tier>=o.min&&!serviceBought(o.id)).map(o=>({...o,cost:price(o.base)}));
+ }
+ function facilityShopOffers(){
+  const tier=teamCareerTier(),st=ensureTeamMarket();if(tier<2)return [];
+  return Object.keys(FACILITY_DEFS).filter(key=>facilityLevel(key)<FACILITY_DEFS[key].maxLevel&&st.facilityBuiltYear[key]!==S.year).map(key=>{
+   const def=FACILITY_DEFS[key],cost=facilityBuildCost(key),level=facilityLevel(key);
+   return {key,cost,title:`${def.name} — poziom ${level+1}`,desc:`Stała inwestycja: ${def.desc} Utrzymanie po zakupie: ${money(def.maintenance)} za poziom/sezon.`};
+  }).filter(o=>S.budget>=o.cost);
+ }
+ function buyTeamService(o){
+  if(S.budget<o.cost){alert("Nie masz wystarczających środków.");return}
+  S.budget-=o.cost;markServiceBought(o.id);o.apply();addHistory(`Team: ${o.title}`,`Koszt ${money(o.cost)}. ${o.desc}`);normalize();save();render();closeModal();setTimeout(openTeamMarket,70);
+ }
+ function buyTeamFacility(o){
+  if(!buildFacility(o.key))return;
+  ensureTeamMarket().facilityBuiltYear[o.key]=S.year;save();render();closeModal();setTimeout(openTeamMarket,70);
+ }
+ function openTeamMarket(){
+  if(!S)return;showTutorialTip("team","Team nie jest już wyborem „albo–albo”","Możesz kupić kilka różnych usług w jednym sezonie albo nic. Duże inwestycje pojawiają się dopiero wraz z rozwojem kariery.","team");
+  const tier=teamCareerTier(),services=teamServiceOffers(),facilities=facilityShopOffers(),options=[];
+  services.forEach(o=>options.push({title:`${o.title} — ${money(o.cost)}`,desc:o.desc,action:()=>buyTeamService(o)}));
+  facilities.forEach(o=>options.push({title:`INWESTYCJA: ${o.title} — ${money(o.cost)}`,desc:o.desc,action:()=>buyTeamFacility(o)}));
+  options.push({title:"Zamknij",desc:"Wróć do centrum kariery. Brak zakupu nie ma żadnej kary.",action:()=>closeModal()});
+  const unlock=tier<2?" Duża infrastruktura nie jest jeszcze dostępna — najpierw zbuduj pozycję sportową i finansową.":facilities.length?" Dostępne są także stałe inwestycje w bazę.":" Stałe inwestycje pojawią się, gdy spełnisz warunki i będziesz mieć środki na pełny koszt.";
+  showModal("TEAM I USŁUGI","Zarządzaj swoim zapleczem",`Budżet: <b>${money(S.budget)}</b> • etap: <b>${teamTierName(tier)}</b>. Możesz kupować różne pozycje niezależnie od siebie; usługi jednorazowe są dostępne maksymalnie raz na sezon.${unlock}`,options);
+ }
+ window.openPSSTeamMarket=openTeamMarket;
+
+ // Usuwamy obowiązkowy modal inwestycyjny z przepływu sezonu.
+ budgetManagement=function(next){S.budgetManagementCompletedYear=S.year;save();next()};
+
+ const baseRenderFacilities102Guide=renderFacilities;
+ renderFacilities=function(){
+  baseRenderFacilities102Guide();
+  const panel=document.getElementById("teamMarketPanel"),hint=document.getElementById("teamMarketHint");if(!panel||!hint||!S)return;
+  const tier=teamCareerTier();panel.classList.toggle("is-rookie",tier<=1);panel.classList.toggle("is-pro",tier>=2);
+  hint.textContent=tier<=1?"Na tym etapie dostępne są głównie niedrogie usługi jednorazowe. Duża infrastruktura odblokuje się później.":tier===2?"Możesz łączyć usługi z pierwszymi dużymi inwestycjami w profesjonalne zaplecze.":"Masz dostęp do pełniejszego rynku usług i dużych inwestycji teamu.";
+ };
+
+ // --- Kontekstowe podpowiedzi przy pierwszym kontakcie z systemem -----------
+ const baseShowModal102Guide=showModal;
+ showModal=function(kicker,title,text,options){
+  baseShowModal102Guide(kicker,title,text,options);
+  if(!S||!tutorialPreference()||/^TUTORIAL/i.test(String(kicker)))return;
+  const k=String(kicker||"").toUpperCase(),t=String(title||"").toUpperCase();
+  setTimeout(()=>{
+   if(k.includes("RYNEK TRANSFEROWY"))showTutorialTip("transfers","Czytaj prognozę jazdy","Oferta i rola to nie wszystko. Prognoza jazdy pokazuje, jak realna jest regularna obecność w składzie.","transfers");
+   else if(k.includes("PIERWSZE OKRĄŻENIE")||k.includes("KOŃCÓWKA BIEGU")||k.includes("DECYDUJĄCY BIEG")||k.includes("START I PIERWSZY ŁUK"))showTutorialTip("races","Procent dotyczy konkretnej decyzji","Sukces oznacza powodzenie wybranego manewru lub obrony. Szansa jest liczona z aktualnego kontekstu biegu.","races");
+   else if(k.includes("POWOŁANIE DO REPREZENTACJI"))showTutorialTip("national","Powołanie nie zależy od samego OVR","Znaczenie mają również forma, średnia, reputacja i aktualna konkurencja o miejsce w kadrze.","national");
+   else if(k.includes("WYNIK ZAWODÓW")||t.includes("SGP")||t.includes("SEC"))showTutorialTip("competitions","Turniej czy cykl?","Nie każda impreza jest cyklem. Pełne rozliczenie sezonowe dotyczy tylko jawnie wielorundowych rozgrywek.","competitions");
+  },120);
+ };
+
+ // --- finalne renderowanie / start nowej kariery ----------------------------
+ const baseCreatePlayer102Guide=createPlayer;
+ createPlayer=function(){
+  const enabled=document.getElementById("tutorialMode")?.checked!==false;
+  localStorage.setItem(TUTORIAL_PREF_KEY,enabled?"1":"0");
+  baseCreatePlayer102Guide();
+  S.tutorialEnabled=enabled;S.tutorialState={seen:[],completed:!enabled};ensureTeamMarket();save();render();
+  if(enabled)setTimeout(()=>tutorialStep(0),140);
+ };
+
+ const baseRender102Guide=render;
+ render=function(){baseRender102Guide();if(S){ensureTutorialState();ensureTeamMarket();renderFacilities();const toggle=document.getElementById("tutorialTipsToggle");if(toggle)toggle.checked=tutorialPreference()}};
+
+ // --- UI bindings ------------------------------------------------------------
+ const guideBtn=document.getElementById("guideBtn");if(guideBtn)guideBtn.onclick=()=>openGuide("start");
+ const devHelp=document.getElementById("devHelpBtn");if(devHelp)devHelp.onclick=()=>openGuide("development");
+ const teamBtn=document.getElementById("teamMarketBtn");if(teamBtn)teamBtn.onclick=openTeamMarket;
+ const guideClose=document.getElementById("guideCloseBtn");if(guideClose)guideClose.onclick=closeGuide;
+ const guideModal=document.getElementById("guideModal");if(guideModal)guideModal.onclick=e=>{if(e.target===guideModal)closeGuide()};
+ const search=document.getElementById("guideSearch");if(search)search.oninput=e=>renderGuideNav(e.target.value);
+ const tipsToggle=document.getElementById("tutorialTipsToggle");if(tipsToggle)tipsToggle.onchange=e=>setTutorialPreference(e.target.checked);
+ const restart=document.getElementById("restartTutorialBtn");if(restart)restart.onclick=restartTutorial;
+ const tipClose=document.getElementById("tutorialTipClose");if(tipClose)tipClose.onclick=()=>document.getElementById("tutorialTip")?.classList.add("hidden");
+ document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!document.getElementById("guideModal")?.classList.contains("hidden"))closeGuide()});
+ const startToggle=document.getElementById("tutorialMode");if(startToggle){startToggle.checked=tutorialPreference();startToggle.onchange=e=>localStorage.setItem(TUTORIAL_PREF_KEY,e.target.checked?"1":"0")}
+
+ // Ponownie renderujemy istniejący zapis po zainstalowaniu patcha.
+ if(S){ensureTutorialState();ensureTeamMarket();normalize();save();render()}
+ else{renderGuideNav()}
+})();
