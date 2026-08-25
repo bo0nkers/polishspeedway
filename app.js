@@ -2076,19 +2076,21 @@ function createPlayer(){
  $("newsBox").innerHTML=`<p class="eyebrow">PRZED LICENCJĄ</p><h3>${background.title.toUpperCase()}</h3><p>${background.text}</p><p><b>Zaplecze:</b> ${support.title}. Budżet początkowy: ${money(S.budget)}.</p>${openingReport?`<div class="guidance-report"><span>RAPORT SZKÓŁKI</span><p>${openingReport.text}</p></div>`:""}`;
  save();
 }
-function save(){localStorage.setItem("pss_v1021",JSON.stringify(S))}
+function save(){localStorage.setItem("pss_v1022",JSON.stringify(S))}
 function load(){
  try{
-  const newest=localStorage.getItem("pss_v1021");
+  const newest=localStorage.getItem("pss_v1022");
+  const previousV1021=localStorage.getItem("pss_v1021");
   const previousV102=localStorage.getItem("pss_v102");
   const previousV101=localStorage.getItem("pss_v101");
   const previousVersion=localStorage.getItem("pss_v100");
   const previousBrand=localStorage.getItem("pzs_v200");
   if(newest)return JSON.parse(newest);
-  if(previousV102){localStorage.setItem("pss_v1021",previousV102); return JSON.parse(previousV102);}
-  if(previousV101){localStorage.setItem("pss_v1021",previousV101); return JSON.parse(previousV101);}
-  if(previousVersion){localStorage.setItem("pss_v1021",previousVersion); return JSON.parse(previousVersion);}
-  if(previousBrand){localStorage.setItem("pss_v1021",previousBrand); return JSON.parse(previousBrand);}
+  if(previousV1021){localStorage.setItem("pss_v1022",previousV1021); return JSON.parse(previousV1021);}
+  if(previousV102){localStorage.setItem("pss_v1022",previousV102); return JSON.parse(previousV102);}
+  if(previousV101){localStorage.setItem("pss_v1022",previousV101); return JSON.parse(previousV101);}
+  if(previousVersion){localStorage.setItem("pss_v1022",previousVersion); return JSON.parse(previousVersion);}
+  if(previousBrand){localStorage.setItem("pss_v1022",previousBrand); return JSON.parse(previousBrand);}
   const v1361=localStorage.getItem("pzs_v1361");
   if(v1361)return JSON.parse(v1361);
   const v136=localStorage.getItem("pzs_v136");
@@ -8680,7 +8682,7 @@ createPlayer=function(){
 };
 
 function clearCareerSavesAndReload(){
- const keys=["pss_v1021","pss_v102","pss_v101","pss_v100","pzs_v200","pzs_v1361","pzs_v136","pzs_v135","pzs_v134","pzs_v1331","pzs_v133","pzs_v132","pzs_v131","pzs_v1301","pzs_v130","pzs_v129","pzs_v128","pzs_v127","pzs_v126","pzs_v1252","pzs_v1251","pzs_v125","pzs_v124","pzs_v123","pzs_v122","pzs_v121","pzs_v120","pzs_v119","pzs_v118","pzs_v117","pzs_v116","pzs_v115","pzs_v114","pzs_v113","pzs_v112","pzs_v111","pzs_v110","pzs_v109","pzs_v108","pzs_v107","pzs_v106","pzs_v105","pzs_v104","pzs_v103","pzs_v102","pzs_v101","pzs_v100","pzs_v305","pzs_v304","pzs_v303","pzs_v302","pzs_v301","pzs_final30","pzs_v30","pzs_v29","pzs_v28","pzs_v27","pzs_v26","pzs_v25","pzs_v24","pzs_v23","pzs_v22","pzs_v2"];
+ const keys=["pss_v1022","pss_v1021","pss_v102","pss_v101","pss_v100","pzs_v200","pzs_v1361","pzs_v136","pzs_v135","pzs_v134","pzs_v1331","pzs_v133","pzs_v132","pzs_v131","pzs_v1301","pzs_v130","pzs_v129","pzs_v128","pzs_v127","pzs_v126","pzs_v1252","pzs_v1251","pzs_v125","pzs_v124","pzs_v123","pzs_v122","pzs_v121","pzs_v120","pzs_v119","pzs_v118","pzs_v117","pzs_v116","pzs_v115","pzs_v114","pzs_v113","pzs_v112","pzs_v111","pzs_v110","pzs_v109","pzs_v108","pzs_v107","pzs_v106","pzs_v105","pzs_v104","pzs_v103","pzs_v102","pzs_v101","pzs_v100","pzs_v305","pzs_v304","pzs_v303","pzs_v302","pzs_v301","pzs_final30","pzs_v30","pzs_v29","pzs_v28","pzs_v27","pzs_v26","pzs_v25","pzs_v24","pzs_v23","pzs_v22","pzs_v2"];
  keys.forEach(k=>localStorage.removeItem(k));location.reload();
 }
 function showCareerEndSupportPopup(){
@@ -8771,7 +8773,8 @@ $("startForm").onsubmit=e=>{e.preventDefault();showStartDisclaimer()};
 $("playBtn").onclick=play;
 $("newBtn").onclick=()=>{if(confirm("Usunąć obecny zapis i rozpocząć nową karierę?"))clearCareerSavesAndReload()};
 $("exportBtn").onclick=()=>{const blob=new Blob([JSON.stringify(S,null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=`kariera-${S.name.replace(/\s+/g,"-").toLowerCase()}.json`;a.click();URL.revokeObjectURL(a.href)};
-$("importInput").onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{S=JSON.parse(r.result);S.seasonFlowActive=false;S.preseasonCompletedYear=null;S.budgetManagementCompletedYear=null;normalize();save();render()}catch{alert("Nieprawidłowy plik zapisu.")}};r.readAsText(f)};
+function setImportHeaderStatus(text="IMPORT",resetAfter=0){const el=$("importLabelText");if(!el)return;el.textContent=text;if(resetAfter)setTimeout(()=>{if(el.textContent===text)el.textContent="IMPORT"},resetAfter)}
+$("importInput").onchange=e=>{const f=e.target.files?.[0];if(!f){setImportHeaderStatus();return}setImportHeaderStatus("IMPORT…");const r=new FileReader();r.onload=()=>{try{S=JSON.parse(r.result);S.seasonFlowActive=false;S.preseasonCompletedYear=null;S.budgetManagementCompletedYear=null;normalize();save();render();setImportHeaderStatus("IMPORT ✓",1800)}catch{setImportHeaderStatus();alert("Nieprawidłowy plik zapisu.")}finally{e.target.value=""}};r.onerror=()=>{setImportHeaderStatus();e.target.value="";alert("Nie udało się odczytać pliku zapisu.")};r.readAsText(f)};
 installPSS102RuntimeStyles();
 const saved=load();if(saved){S=saved;S.seasonFlowActive=false;normalize();repairLegacyStuckSeason();repairMaxedMetaSave();save();render()}
 
@@ -9974,4 +9977,122 @@ const saved=load();if(saved){S=saved;S.seasonFlowActive=false;normalize();repair
   if(S.helpState.tipsEnabled===undefined)S.helpState.tipsEnabled=localStorage.getItem("pss_tips_enabled")!=="0";
   save();render();
  }
+})();
+
+
+// ============================================================================
+// Polish Speedway Simulator 1.02.2 — EASTER EGGI + KOMPAKTOWY HEADER
+// ============================================================================
+(() => {
+ const SPECIAL_PROFILE_VERSION=1;
+ const SPECIAL_GORZOW="GEZET Stal Gorzów";
+ const SPECIAL_SKILL_KEYS=["starts","corner","distance","technique","fitness","setup","mental","overtaking"];
+
+ function specialNameKey(value){
+  return String(value||"").trim().replace(/\s+/g," ").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase();
+ }
+ function intendedNumberValue(){
+  const raw=String($("riderNumber")?.value||"").trim();
+  return raw&&/^\d+$/.test(raw)?Number(raw):null;
+ }
+ function detectSpecialProfile(name,number){
+  const key=specialNameKey(name);
+  if(key==="bartosz zmarzlik"&&number===95)return "zmarzlik95";
+  if(key==="jakub woznik")return "woznik";
+  if(key==="super burschi")return "superBurschi";
+  return null;
+ }
+ function shuffled(values){
+  const out=[...values];for(let i=out.length-1;i>0;i--){const j=rand(0,i);[out[i],out[j]]=[out[j],out[i]]}return out;
+ }
+ function exactSpecialSkills(targetOverall,{spread=6,equipment=targetOverall,floor=48,ceiling=96,bias={}}={}){
+  S.equipment=clamp(Math.round(equipment),35,99);
+  const skillAverageTarget=(targetOverall-S.equipment*.06)/.94;
+  const randomOffsets=SPECIAL_SKILL_KEYS.map(k=>rand(-spread,spread)+(bias[k]||0));
+  const mean=randomOffsets.reduce((a,b)=>a+b,0)/randomOffsets.length;
+  SPECIAL_SKILL_KEYS.forEach((k,i)=>{S.skills[k]=clamp(Math.round(skillAverageTarget+randomOffsets[i]-mean),floor,ceiling)});
+  // Koryguj wyłącznie rozkład cech, dopóki zaokrąglony OVR nie trafi dokładnie w cel.
+  let guard=0;
+  while(overall()!==targetOverall&&guard++<160){
+   const direction=overall()<targetOverall?1:-1;
+   const candidates=shuffled(SPECIAL_SKILL_KEYS).filter(k=>direction>0?S.skills[k]<ceiling:S.skills[k]>floor);
+   if(!candidates.length)break;
+   S.skills[candidates[0]]+=direction;
+  }
+ }
+ function tuneSpecialDNA(id){
+  const dna=careerDNA();
+  dna.specialProfileId=id;dna.specialProfileVersion=SPECIAL_PROFILE_VERSION;dna.phaseYear=null;dna.phaseState=null;dna.phaseAnnouncedYear=null;dna.majorInjuryShock=null;
+  if(id==="zmarzlik95"){
+   Object.assign(dna,{potential:98,growthRate:1.30,curveType:"phenom",peakAge:rand(27,31),peakWidth:rand(1,3),declineRate:.86,consistency:.95,pressure:1.10,durability:1.04,adaptability:1.10,juniorGift:1.42,juniorPhenomenon:true,breakoutChance:.18,lateBloom:false,earlyPeak:true,exceptionalLongevity:Math.random()<.18});
+   for(const k of SPECIAL_SKILL_KEYS)dna.capOffsets[k]=rand(3,8);
+  }else if(id==="woznik"){
+   Object.assign(dna,{potential:97,growthRate:1.22,curveType:"volatile",peakAge:rand(28,34),peakWidth:rand(1,3),declineRate:.94,consistency:.78,pressure:1.01,durability:.98,adaptability:1.09,juniorGift:1.28,juniorPhenomenon:true,breakoutChance:.17,lateBloom:false,earlyPeak:false,exceptionalLongevity:Math.random()<.16});
+   for(const k of SPECIAL_SKILL_KEYS)dna.capOffsets[k]=rand(1,7);
+  }else if(id==="superBurschi"){
+   Object.assign(dna,{potential:99,growthRate:1.44,curveType:"steady",peakAge:rand(29,34),peakWidth:rand(3,5),declineRate:.76,consistency:.99,pressure:1.16,durability:1.14,adaptability:1.18,juniorGift:1.56,juniorPhenomenon:true,breakoutChance:.23,lateBloom:false,earlyPeak:false,exceptionalLongevity:true});
+   for(const k of SPECIAL_SKILL_KEYS)dna.capOffsets[k]=rand(6,10);
+  }
+ }
+ const SPECIAL_COPY={
+  zmarzlik95:[
+   {title:"TAKIEGO TALENTU JESZCZE TU NIE WIDZIELI",text:"W Gorzowie od dawna mówiło się o zdolnym chłopaku, ale po ostatnich treningach ton rozmów wyraźnie się zmienił. Trenerzy są zgodni: szybkość, instynkt i wyczucie motocykla zdecydowanie wykraczają poza to, czego oczekuje się od zawodnika na początku drogi."},
+   {title:"W GORZOWIE ROBI SIĘ GŁOŚNO",text:"Pierwsze poważniejsze jazdy wystarczyły, żeby starsi zawodnicy przestali pytać, czy masz talent. Teraz zastanawiają się, gdzie właściwie jest jego granica. W klubie coraz częściej pada słowo „wyjątkowy”."},
+   {title:"OCZEKIWANIA ROSNĄ BARDZO SZYBKO",text:"Mechanicy patrzą po sobie, trenerzy zapisują kolejne czasy, a przy bandzie słychać, że czegoś takiego dawno nie widziano. Kariera dopiero się zaczyna, ale w Gorzowie już wiedzą, że mają do czynienia z niezwykłym talentem."}
+  ],
+  woznik:[
+   {title:"A W SUMIE TO NIE WIEM",text:"Żużel zawsze kręcił cię bardziej, niż rozsądek podpowiadał. Problem w tym, że ostatnio niemal wszystko działało przeciwko tobie. Pewnego dnia człowiek od marketingu zapytał: „Po co ci to?”. Odpowiedziałeś: „A w sumie to nie wiem”. Wróciłeś do domu, poszedłeś spać, a rano obudziłeś się z przekonaniem, że właśnie teraz wszystko zaczyna się od nowa."},
+   {title:"JEDNA NOC, ZUPEŁNIE NOWY CZŁOWIEK",text:"Motocykle, koszty, siniaki i ciągłe pytania, czy to wszystko ma sens. Kiedy usłyszałeś w końcu „po co ci to?”, nie znalazłeś lepszej odpowiedzi niż „a w sumie to nie wiem”. Wyspałeś się. Rano odpowiedź była już dużo prostsza: jeszcze nie pokazałeś, na co naprawdę cię stać."},
+   {title:"ŻUŻEL NIE ZAWSZE BYŁ PO TWOJEJ STRONIE",text:"Byłeś zakręcony na punkcie żużla nawet wtedy, gdy żużel najwyraźniej nie był zakręcony na twoim punkcie. Jedno niewinne „po co ci to?” uruchomiło większą refleksję. Po nocy wszystko się poukładało — wracasz natchniony, spokojniejszy i zaskakująco gotowy na wielką karierę."}
+  ],
+  superBurschi:[
+   {title:"PROFESJONALISTA, ZANIM TO BYŁO POTRZEBNE",text:"Inni młodzi zawodnicy po treningu jadą do domu. Ty zostajesz, analizujesz nagrania, zapisujesz ustawienia motocykla i pytasz, co jutro można zrobić lepiej. Talent jest ogromny, ale jeszcze bardziej imponuje to, że właściwie niczego nie pozostawiasz przypadkowi."},
+   {title:"WSZYSTKO MUSI BYĆ ZROBIONE PERFEKCYJNIE",text:"Punktualność, przygotowanie, trening, regeneracja, analiza. Wszystko masz poukładane i wykonujesz z dokładnością, której nie powstydziłby się zawodowiec z wieloletnim stażem. Trenerzy żartują, że jeśli kiedyś popełnisz błąd, trzeba będzie wpisać go do klubowej kroniki."},
+   {title:"PLAN JEST PROSTY: NIE MARNOWAĆ ANI PROCENTA TALENTU",text:"Od najmłodszych lat przygotowujesz się tak, jakby następne zawody miały być finałem mistrzostw świata. Sprzęt dopieszczony, trening wykonany, regeneracja zaplanowana, notatki po każdym wyjeździe na tor. Talent jest oczywisty — dla rywali gorszą wiadomością jest twoja obsesyjna konsekwencja."}
+  ]
+ };
+ function specialProfileConfig(id){
+  if(id==="zmarzlik95")return {target:72,spread:7,equipment:74,floor:62,ceiling:84,bias:{starts:2,corner:2,overtaking:2},professionalism:88,morale:72,reputation:28,media:22,chance:76};
+  if(id==="woznik")return {target:69,spread:7,equipment:67,floor:58,ceiling:80,bias:{distance:1,overtaking:2,mental:1},professionalism:70,morale:68,reputation:20,media:16,chance:70};
+  return {target:76,spread:5,equipment:82,floor:69,ceiling:86,bias:{technique:1,setup:1,fitness:1},professionalism:99,morale:80,reputation:31,media:18,chance:82};
+ }
+ function applySpecialProfile(id){
+  const cfg=specialProfileConfig(id),copy=pick(SPECIAL_COPY[id]);
+  S.specialProfileId=id;S.specialProfileVersion=SPECIAL_PROFILE_VERSION;S.specialProfileLabel=id==="zmarzlik95"?"Bartosz Zmarzlik #95":id==="woznik"?"Jakub Woźnik":"Super Burschi";
+  if(id==="zmarzlik95"){
+   S.region="Lubuskie";S.academyClub=SPECIAL_GORZOW;
+   if(S.startProfile==="reserve"){
+    S.club=SPECIAL_GORZOW;S.league="PGE Ekstraliga";S.tableLeague=S.league;S.tableClub=S.club;
+   }else if(S.club==="Szkółka regionalna"){
+    const role=(START_PROFILES[S.startProfile]||START_PROFILES.academy).role;S.role=`${role} ${SPECIAL_GORZOW}`;
+   }
+  }
+  exactSpecialSkills(cfg.target,cfg);
+  S.professionalism=Math.max(S.professionalism||0,cfg.professionalism);S.morale=Math.max(S.morale||0,cfg.morale);S.reputation=Math.max(S.reputation||0,cfg.reputation);S.media=Math.max(S.media||0,cfg.media);S.chance=Math.max(S.chance||0,cfg.chance);
+  if(id==="superBurschi")S.injuryRisk=Math.min(S.injuryRisk,8);
+  if(id==="zmarzlik95")S.injuryRisk=Math.min(S.injuryRisk,10);
+  tuneSpecialDNA(id);
+  // Normalizacja może skorygować Fitness; po niej ponownie dopinamy dokładny OVR.
+  normalize();exactSpecialSkills(cfg.target,cfg);
+  S.startAge=S.age;S.startOverall=cfg.target;S.careerStats.startOverall=cfg.target;S.careerStats.bestOverall=Math.max(S.careerStats.bestOverall||0,cfg.target);
+  S.preLicenseBackground={id:`special-${id}`,title:copy.title,text:copy.text};
+  addHistory("Wyjątkowy początek",`${copy.title}. ${copy.text}`);
+  const support=S.preLicenseSupport?.title?`<p><b>Zaplecze:</b> ${S.preLicenseSupport.title}. Budżet początkowy: ${money(S.budget)}.</p>`:"";
+  const clubLine=id==="zmarzlik95"?`<p><b>Ośrodek:</b> ${SPECIAL_GORZOW}. Numer 95 od początku zwraca uwagę.</p>`:"";
+  save();render();
+  const box=$("newsBox");if(box)box.innerHTML=`<p class="eyebrow">WYJĄTKOWY POCZĄTEK</p><h3>${copy.title}</h3><p>${copy.text}</p>${clubLine}${support}`;
+  save();
+ }
+
+ const createPlayer1022=createPlayer;
+ createPlayer=function(){
+  const requestedName=String($("name")?.value||"");
+  const requestedNumber=intendedNumberValue();
+  const specialId=detectSpecialProfile(requestedName,requestedNumber);
+  createPlayer1022();
+  if(S&&specialId)applySpecialProfile(specialId);
+ };
+
+ // Kompaktowy status importu także po pierwszym renderze / migracji.
+ const importLabel=$("importLabel");if(importLabel)importLabel.setAttribute("aria-label","Importuj zapis gry");
 })();

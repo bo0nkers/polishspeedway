@@ -1,8 +1,25 @@
 # Polish Speedway Simulator
 
-## Wersja 1.02.1
+## Wersja 1.02.2
 
-Wersja 1.02.1 rozwija wydanie 1.02 o poprawki zebrane po kolejnych pełnych testach kariery. Zachowuje przebudowaną trajektorię rozwoju, interaktywne biegi, finanse turniejowe i Speedway of Nations, a dodatkowo porządkuje tutorial, team, zakończenie kariery i podsumowanie osiągnięć.
+Wersja 1.02.2 rozwija wydanie 1.02.1 o ukryte profile specjalne oraz uporządkowany górny pasek. Zachowuje tutorial, przebudowany team, zróżnicowane zakończenia kariery, zwarte osiągnięcia, finanse turniejowe i wszystkie wcześniejsze poprawki balansu.
+
+
+### Easter eggi — ukryte profile specjalne
+
+- **Bartosz Zmarzlik + numer 95** aktywuje ukryty profil tylko przy dokładnej kombinacji nazwy i numeru. Startowy OVR wynosi dokładnie **72**, statystyki są za każdym razem inaczej rozłożone, a ośrodek zostaje przeniesiony do Gorzowa.
+- **Jakub Woźnik** działa z dowolnym numerem. Startowy OVR wynosi dokładnie **69**, profil ma bardzo wysoki ukryty potencjał i trzy losowane warianty humorystycznej historii startowej.
+- **Super Burschi** działa z dowolnym numerem. Startowy OVR wynosi dokładnie **76**, ma najwyższy potencjał i profesjonalizm oraz najłatwiejszą z trzech profili drogę do poziomu 97–99.
+- W każdym z profili całkowity OVR jest stały, ale mocne i słabsze strony są ponownie losowane przy każdej nowej karierze.
+- Gra nie pokazuje komunikatu „easter egg aktywowany”; specjalny profil ujawnia się naturalnie przez parametry i unikalny opis.
+
+### Górny pasek
+
+- Skrócono oznaczenie wersji do **V 1.02.2**.
+- Zachowano logo, znak i napis **POLISH SPEEDWAY SIMULATOR** po lewej stronie w dotychczasowym układzie.
+- **Nowa kariera** pozostaje skrajnym prawym przyciskiem na desktopie.
+- Eksport i import są kompaktowymi przyciskami **EKSPORT / IMPORT**.
+- Natywne szerokie pole „Wybierz plik / Nie wybrano pliku” jest ukryte; po imporcie pojawia się tylko krótki status **IMPORT ✓**.
 
 ### Tutorial i przewodnik
 
@@ -75,7 +92,7 @@ Wersja 1.02.1 rozwija wydanie 1.02 o poprawki zebrane po kolejnych pełnych test
 
 ### Zapis gry
 
-Wersja 1.02.1 używa klucza `pss_v1021`. Przy pierwszym uruchomieniu automatycznie migruje zapis z `pss_v102` oraz obsługiwanych starszych wersji.
+Wersja 1.02.2 używa klucza `pss_v1022`. Przy pierwszym uruchomieniu automatycznie migruje zapis z `pss_v1021`, `pss_v102` oraz obsługiwanych starszych wersji.
 
 ### Pliki wydania
 

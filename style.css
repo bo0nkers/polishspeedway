@@ -922,3 +922,55 @@ button,.btn,.option,.choice-card{touch-action:manipulation;-webkit-tap-highlight
   .tutorial-tip{right:16px;bottom:16px}
   .team-offer-card{min-height:0}
 }
+
+
+/* =========================================================
+   Polish Speedway Simulator 1.02.2
+   Kompaktowy header / import zapisu
+   ========================================================= */
+@media(min-width:951px){
+  .masthead{gap:24px;flex-wrap:nowrap}
+  .brand-lockup{flex:0 0 auto;min-width:0}
+  .brand-lockup>div:last-child{min-width:0}
+  .masthead h1{white-space:nowrap}
+  .header-actions{margin-left:auto;display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-wrap:nowrap;min-width:0}
+  .header-actions .header-btn{min-height:42px;padding-left:14px;padding-right:14px;white-space:nowrap}
+  .version-badge{white-space:nowrap;padding:7px 9px;flex:0 0 auto}
+  .save-actions{display:flex;align-items:center;gap:6px;flex:0 0 auto}
+  .new-career-header{flex:0 0 auto;margin-left:4px}
+}
+.import-button{position:relative;display:inline-flex!important;align-items:center;justify-content:center;overflow:hidden;white-space:nowrap}
+.import-button input[type="file"]{
+  position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;
+  overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important;opacity:0!important;pointer-events:none!important;
+}
+#importLabelText{pointer-events:none}
+.save-actions{display:flex;align-items:center;gap:6px}
+
+@media(min-width:951px) and (max-width:1240px){
+  .masthead{padding-left:18px;padding-right:18px;gap:14px}
+  .brand-lockup{gap:10px}
+  .brand-mark{width:42px;height:42px;flex-basis:42px}
+  .masthead h1{font-size:1.35rem}
+  .masthead .eyebrow{font-size:.61rem}
+  .header-actions{gap:6px}
+  .header-actions .header-btn{padding-left:10px;padding-right:10px;font-size:.72rem}
+  .version-badge{font-size:.67rem;padding-left:7px;padding-right:7px}
+}
+
+@media(max-width:950px){
+  .masthead{flex-wrap:wrap}
+  .brand-lockup{max-width:100%}
+  .header-actions{width:100%;display:flex;justify-content:flex-end;align-items:center;gap:7px;flex-wrap:wrap}
+  .save-actions{display:flex;gap:7px}
+  .new-career-header{order:10;margin-left:auto}
+}
+
+@media(max-width:650px){
+  .masthead h1{font-size:1.25rem;line-height:1.05}
+  .header-actions{display:grid;grid-template-columns:auto auto 1fr;gap:7px}
+  .save-actions{display:flex;gap:7px;grid-column:1/-1;order:5}
+  .new-career-header{grid-column:3;grid-row:1;margin-left:0;justify-self:end;order:initial}
+  .header-actions .header-btn{min-height:39px;padding:0 11px;font-size:.7rem}
+  .version-badge{align-self:center}
+}
