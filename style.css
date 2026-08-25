@@ -743,3 +743,11 @@ button,.btn,.option,.choice-card{touch-action:manipulation;-webkit-tap-highlight
  .career-restart-btn{min-height:54px}
  .career-end-actions .career-support-link img{min-height:0;height:auto;object-fit:contain}
 }
+
+/* 1.02 rebuild — rozliczenia zawodów */
+.roller-sport-effect{margin-top:10px;color:var(--muted,#68736f);font-size:1rem;line-height:1.45}
+.competition-finance-summary{margin-top:14px;padding:12px 14px;border:1px solid rgba(18,78,70,.18);border-radius:10px;background:rgba(18,78,70,.055);line-height:1.5}
+@media(max-width:680px){
+  .competition-finance-summary{font-size:12px;padding:8px 9px}
+  .roller-sport-effect{font-size:.92rem}
+}

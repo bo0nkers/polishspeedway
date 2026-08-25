@@ -8772,3 +8772,719 @@ $("exportBtn").onclick=()=>{const blob=new Blob([JSON.stringify(S,null,2)],{type
 $("importInput").onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{S=JSON.parse(r.result);S.seasonFlowActive=false;S.preseasonCompletedYear=null;S.budgetManagementCompletedYear=null;normalize();save();render()}catch{alert("Nieprawidłowy plik zapisu.")}};r.readAsText(f)};
 installPSS102RuntimeStyles();
 const saved=load();if(saved){S=saved;S.seasonFlowActive=false;normalize();repairLegacyStuckSeason();repairMaxedMetaSave();save();render()}
+
+// ============================================================================
+// Polish Speedway Simulator 1.02 — REBUILD 25.08.2026
+// Kolejna rewizja 1.02: trajektorie karier, spójność ruletki, finanse turniejowe,
+// Speedway of Nations i dodatkowe możliwości wydawania nadwyżek finansowych.
+// ============================================================================
+(() => {
+ const PATCH_MODEL=4;
+
+ function ensureRebuildState(){
+  if(!S)return null;
+  S.pss102Rebuild??={model:PATCH_MODEL,trajectoryAdjustedYear:null,competitionFinanceLedger:{},qualifierFinanceLedger:{},cycleFinance:[],moneySinkYear:null};
+  S.pss102Rebuild.model=PATCH_MODEL;
+  S.pss102Rebuild.competitionFinanceLedger??={};
+  S.pss102Rebuild.qualifierFinanceLedger??={};
+  S.pss102Rebuild.cycleFinance??=[];
+  return S.pss102Rebuild;
+ }
+ function skillKeys(){return Object.keys(S.skills||{})}
+ function rounded(v){return Math.round(Number(v)||0)}
+
+ // --------------------------------------------------------------------------
+ // 1. TRAJEKTORIA KARIERY: PEAK MA BYĆ PEAKIEM, A NIE KOŃCEM KARIERY
+ // --------------------------------------------------------------------------
+ const baseCreateCareerDNA=createCareerDNA;
+ createCareerDNA=function(startProfile="academy"){
+  const dna=baseCreateCareerDNA(startProfile);
+  // Długie plateau pozostaje możliwe, ale nie jest ustawieniem domyślnym.
+  const widthRanges={phenom:[1,2],early:[0,2],boomBust:[0,1],volatile:[0,2],underachiever:[1,3],steady:[2,4],classic:[1,2],late:[1,2],resurgence:[1,3]};
+  const wr=widthRanges[dna.curveType]||[1,2];
+  dna.peakWidth=rand(wr[0],wr[1]);
+  if(dna.curveType==="classic")dna.peakAge=clamp(dna.peakAge,27,33);
+  if(dna.curveType==="steady")dna.peakAge=clamp(dna.peakAge,28,34);
+  if(dna.curveType==="volatile")dna.peakAge=clamp(dna.peakAge,25,32);
+  if(dna.curveType==="underachiever")dna.peakAge=clamp(dna.peakAge,27,34);
+  if(dna.curveType==="late")dna.peakAge=clamp(dna.peakAge,32,36);
+  dna.modelVersion=PATCH_MODEL;
+  dna.postPeakResistance=Math.round(triangular(.82,1,1.18)*100)/100;
+  return dna;
+ };
+
+ const baseCareerDNA=careerDNA;
+ careerDNA=function(){
+  const dna=baseCareerDNA();
+  if((dna.modelVersion||0)<PATCH_MODEL){
+   const ranges={phenom:[1,2],early:[0,2],boomBust:[0,1],volatile:[0,2],underachiever:[1,3],steady:[2,4],classic:[1,2],late:[1,2],resurgence:[1,3]};
+   const wr=ranges[dna.curveType]||[1,2];
+   // Starszych zapisów nie ścinamy brutalnie, ale ograniczamy najczęstsze 4–5-letnie plateau.
+   dna.peakWidth=clamp(dna.peakWidth??rand(wr[0],wr[1]),wr[0],Math.max(wr[1],dna.curveType==="steady"?4:3));
+   if(!dna.postPeakResistance)dna.postPeakResistance=Math.round(triangular(.82,1,1.18)*100)/100;
+   dna.modelVersion=PATCH_MODEL;
+  }
+  ensureRebuildState();
+  return dna;
+ };
+
+ careerCurveTargetOverall=function(){
+  const dna=careerDNA(),age=S.age,phase=careerPhaseState();
+  const startAge=S.startAge??Math.max(15,age-(S.careerStats?.seasons?.length||0));
+  const startOverall=S.startOverall??S.careerStats?.seasons?.[0]?.overallValue??overall();
+  const peak=dna.peakAge||31,peakLevel=dna.realizedPeak||dna.potential||84,plateau=Math.max(0,Math.min(4,dna.peakWidth??1));
+  let target;
+  if(age<=peak){
+   const years=Math.max(3,peak-startAge),p=clamp((age-startAge)/years,0,1);
+   const exponent=dna.curveType==="late"?1.52:dna.curveType==="underachiever"?1.35:dna.curveType==="phenom"?.82:dna.curveType==="boomBust"?.90:1.08;
+   target=startOverall+(peakLevel-startOverall)*(1-Math.pow(1-p,exponent));
+  }else{
+   const after=age-peak,plateauYears=Math.min(after,plateau),declineYears=Math.max(0,after-plateau);
+   const typeRate={phenom:1.06,early:1.12,boomBust:1.46,volatile:1.12,underachiever:1.06,steady:.78,classic:1.00,late:.94,resurgence:.84}[dna.curveType]||1;
+   const longevity=dna.exceptionalLongevity?.54:1;
+   const resistance=dna.postPeakResistance||1;
+   const plateauDrift=dna.curveType==="steady"?.03:.10;
+   const decline=(dna.declineRate||1)*typeRate*longevity*resistance;
+   target=peakLevel-plateauYears*plateauDrift-declineYears*decline-Math.max(0,declineYears-4)*.24*longevity;
+  }
+  if(dna.curveType==="underachiever")target-=age<peak?1.6:.8;
+  if(dna.curveType==="phenom")target+=age<=26?1:.15;
+  if(dna.curveType==="boomBust"&&age>peak+1)target-=Math.min(5,(age-peak-1)*.55);
+  if(dna.curveType==="resurgence"&&age>=33&&age<=36)target+=.6;
+  if(dna.exceptionalLongevity&&age>=37)target+=1.0;
+  target+=Number(phase.target||0)+careerTrajectoryOffset()+developmentTargetDelta();
+  target+=clamp((dna.decisionQuality||0)*.05,-2.5,3)+clamp((S.professionalism-50)*.013,-.8,.8);
+  return clamp(target,40,99);
+ };
+
+ function oppositionFieldStrength(){
+  const level=leagueByName(S.league)?.level||3;
+  const base=level===1?84:level===2?73:62;
+  const meta=S.clubMeta?.[S.club]||S.clubMeta?.[clubBaseName(S.club)]||{};
+  return clamp(base+(Number(meta.strength||0)-base)*.12,55,90);
+ }
+ function oppositionQualityMultiplier(){
+  const field=oppositionFieldStrength(),gap=field-overall();
+  const level=leagueByName(S.league)?.level||3;
+  const levelFactor=level===1?1.12:level===2?1.02:.92;
+  const strongerBonus=clamp(gap*.007,-.05,.10);
+  return clamp(levelFactor+strongerBonus,.84,1.20);
+ }
+ function competitionMaintenanceProtection(){
+  const dna=careerDNA(),after=S.age-(dna.peakAge||31),plateau=dna.peakWidth||1;
+  if(after<=plateau)return 0;
+  const heats=S.season?.heats||0,field=oppositionFieldStrength();
+  if(heats<35)return 0;
+  const exposure=clamp((heats-35)/70,0,1),quality=clamp((field-65)/24,0,1);
+  return exposure*quality*.30; // silna konkurencja po szczycie pomaga głównie utrzymać poziom
+ }
+
+ ageGrowthCurve=function(){
+  const dna=careerDNA(),age=S.age,peak=dna.peakAge||31,after=age-peak,plateau=Math.max(0,dna.peakWidth??1),phase=careerPhaseState();
+  if(["breakthrough","secondWind"].includes(phase.type))return after>plateau?.62:1.05;
+  if(age>=45)return dna.exceptionalLongevity?.055:.006;
+  if(after>plateau+6)return dna.exceptionalLongevity?.12:.012;
+  if(after>plateau+3)return dna.exceptionalLongevity?.18:.025;
+  if(after>plateau)return dna.exceptionalLongevity?.27:.045;
+  if(after>0)return dna.exceptionalLongevity?.48:.22;
+  if(dna.lateBloom&&age<24)return .72;
+  if(age<19)return 1.18;
+  if(age<23)return 1.10;
+  if(age<27)return 1.03;
+  return .94;
+ };
+
+ curvePressureOnGrowth=function(){
+  const dna=careerDNA(),target=careerCurveTargetOverall(),diff=overall()-target,after=S.age-(dna.peakAge||31),plateau=dna.peakWidth||1,phase=careerPhaseState();
+  if(["breakthrough","secondWind"].includes(phase.type))return diff<=0?1.08:.55;
+  if(after>plateau){
+   // Po szczycie naturalny rozwój nie ma już automatycznie odrabiać spadku do targetu.
+   if(diff<=-4)return .16;
+   if(diff<=0)return .11;
+   return .025;
+  }
+  if(diff<=-5)return 1.18;
+  if(diff<=0)return 1.02;
+  if(diff<=2)return .42;
+  return .12;
+ };
+
+ growthChanceForSkill=function(value,key=null){
+  const base=value<60?.92:value<75?.64:value<85?.35:value<92?.14:value<97?.045:.009;
+  const dna=careerDNA(),cap=key?skillSoftTarget(key):dna.potential,capDistance=cap-value;
+  const ceilingFactor=capDistance>=8?1:capDistance>=3?.58:capDistance>=0?.22:.03;
+  const breakout=dna.lastBreakoutYear===S.year?1.38:1,juniorMultiplier=S.age<=21?(dna.juniorGift||1):1,phase=careerPhaseState();
+  const fitnessPenalty=key==="fitness"?(value>=94?.08:value>=91?.22:value>=87?.48:value>=83?.75:1):1;
+  const after=S.age-(dna.peakAge||31),plateau=dna.peakWidth||1;
+  const postPeak=after>plateau&&!['breakthrough','secondWind'].includes(phase.type)?.45:1;
+  const opp=after>plateau?1:oppositionQualityMultiplier();
+  return clamp(base*dna.growthRate*ageGrowthCurve()*careerDecisionFactor()*ceilingFactor*breakout*juniorMultiplier*eliteSkillGrowthMultiplier(value)*curvePressureOnGrowth()*(phase.growth||1)*developmentGrowthMultiplier(key)*fitnessPenalty*postPeak*opp,.00015,.97);
+ };
+
+ function reduceSkillPoint({preferPhysical=false}={}){
+  const physical=["fitness","starts","distance","overtaking"].filter(k=>S.skills[k]>42);
+  const technical=["corner","technique","setup","mental"].filter(k=>S.skills[k]>44);
+  const all=skillKeys().filter(k=>S.skills[k]>42);
+  const pool=preferPhysical&&physical.length?physical:(!preferPhysical&&technical.length?technical:all);
+  const key=pick(pool.length?pool:all);if(key)S.skills[key]-=1;return key;
+ }
+ function applyEndOfSeasonTrajectoryAdjustment(){
+  const state=ensureRebuildState();if(!state||state.trajectoryAdjustedYear===S.year)return;
+  const dna=careerDNA(),phase=careerPhaseState(),target=careerCurveTargetOverall(),peak=dna.peakAge||31,plateau=Math.max(0,dna.peakWidth??1),after=S.age-peak,beyond=Math.max(0,after-plateau);
+  const protectedPhase=["breakthrough","secondWind"].includes(phase.type);
+  let losses=0;
+
+  // Korekta do krzywej: jeżeli sezonowy rozwój wywindował profil wyraźnie ponad trajektorię,
+  // sprowadzamy go stopniowo do realnego pułapu. To działa na statystyki, a nie bezpośrednio na OVR.
+  const tolerance=after<=0?1.35:after<=plateau?.60:.25;
+  let guard=0;
+  while(overall()>target+tolerance&&guard<44){
+   reduceSkillPoint({preferPhysical:after>0&&Math.random()<.66});losses++;guard++;
+  }
+
+  if(after>0&&!protectedPhase){
+   if(after<=plateau){
+    const chance=dna.curveType==="steady"?.18:dna.exceptionalLongevity?.10:.30;
+    if(Math.random()<chance){const n=rand(1,2);for(let i=0;i<n;i++){reduceSkillPoint({preferPhysical:true});losses++}}
+   }else{
+    // Nawet gdy zawodnik jest lekko poniżej targetu, organizm po peaku nie stoi w miejscu przez dekadę.
+    // Silna regularna jazda z mocnymi rywalami część tego zużycia kompensuje jako utrzymanie poziomu.
+    const protection=competitionMaintenanceProtection();
+    let n=Math.round((2.4+Math.min(4,beyond*.58))*(dna.declineRate||1)*(1-protection));
+    if(dna.exceptionalLongevity)n=Math.round(n*.48);
+    if(phase.type==="slump")n+=rand(2,4);
+    if(phase.type==="recovery")n=Math.max(0,n-1);
+    n=Math.max(dna.exceptionalLongevity?0:1,n);
+    for(let i=0;i<n;i++){reduceSkillPoint({preferPhysical:Math.random()<.72});losses++}
+   }
+  }
+  if(S.skills.fitness>skillSoftTarget("fitness")+1){
+   const over=Math.ceil(S.skills.fitness-(skillSoftTarget("fitness")+1));
+   S.skills.fitness-=over;losses+=over;
+  }
+  state.trajectoryAdjustedYear=S.year;
+  if(losses>=6&&beyond>0)addHistory("Naturalna zmiana poziomu",`Po okresie szczytowym coraz trudniej utrzymywać wszystkie parametry na dotychczasowym poziomie. Bilans przygotowań i obciążeń przynosi wyraźną korektę formy.`);
+  normalize();
+ }
+
+ const baseMarkSeasonSettled=markSeasonSettled;
+ markSeasonSettled=function(pph){
+  applyEndOfSeasonTrajectoryAdjustment();
+  // `bestOverall` ma odzwierciedlać OVR zapisany po korekcie sezonowej, a nie chwilową wartość
+  // sprzed biologicznej korekty. Zapobiega to fałszywemu peakowi w podsumowaniu kariery.
+  if(S?.careerStats){
+   const historic=(S.careerStats.seasons||[]).map(x=>Number(x.overallValue??x.ovr)).filter(Number.isFinite);
+   S.careerStats.bestOverall=Math.max(overall(),...(historic.length?historic:[0]));
+  }
+  baseMarkSeasonSettled(pph);
+ };
+
+ // Pełny regres jest wykonywany przed zapisaniem końcowego OVR sezonu; na przełomie lat
+ // zostawiamy tylko lekkie zużycie, żeby nie naliczać tej samej korekty drugi raz.
+ careerDecline=function(){
+  const state=ensureRebuildState(),dna=careerDNA(),after=S.age-(dna.peakAge||31),plateau=dna.peakWidth||1;
+  if(state?.trajectoryAdjustedYear===S.year-1){
+   if(after>plateau&&!['breakthrough','secondWind'].includes(careerPhaseState().type)&&Math.random()<.40){
+    reduceSkillPoint({preferPhysical:true});
+   }
+   return;
+  }
+  if(after>plateau){const n=dna.exceptionalLongevity?rand(0,1):rand(1,3);for(let i=0;i<n;i++)reduceSkillPoint({preferPhysical:true})}
+ };
+ const baseCurveDecay=curveDrivenSkillDecay;
+ curveDrivenSkillDecay=function(){
+  const state=ensureRebuildState();if(state?.trajectoryAdjustedYear===S.year-1)return;
+  baseCurveDecay();
+ };
+
+ // Kondycja nie rośnie automatycznie co rok tylko dlatego, że baza treningowa jest rozwinięta.
+ applyFacilityPreseasonEffects=function(){
+  const technical=facilityLevel("technical"),training=facilityLevel("training"),recovery=facilityLevel("recovery"),operations=facilityLevel("operations");
+  if(technical){
+   for(let i=0;i<technical;i++)tryNaturalGrowth("setup",1);
+   S.equipment+=technical*2;S.injuryRisk-=technical;
+  }
+  if(training){
+   S.devPoints+=training*2;
+   if(Math.random()<.38+.10*training)tryNaturalGrowth("fitness",1);
+   if(training>=2)tryNaturalGrowth(pick(["starts","corner","technique","distance"]),1);
+   if(training>=3)tryNaturalGrowth(pick(["mental","setup","overtaking"]),1);
+  }
+  if(recovery){S.injuryRisk-=recovery*4;applyMetaDelta("morale",recovery*3)}
+  if(operations)S.media+=operations;
+  normalize();
+ };
+
+ const baseNormalize=normalize;
+ normalize=function(){
+  baseNormalize();
+  ensureRebuildState();
+  if(S?.skills?.fitness!=null){
+   const cap=clamp(skillSoftTarget("fitness")+1,78,97);
+   if(S.skills.fitness>cap)S.skills.fitness=cap;
+  }
+ };
+
+ // --------------------------------------------------------------------------
+ // 2. INTERAKTYWNE BIEGI: PROCENT = REALNA SZANSA POWODZENIA ZAMIARU
+ // --------------------------------------------------------------------------
+ raceOutcomeProbabilities=function(mode,{phase="distance",rivals=[],teammate=null,context={},position=4}={}){
+  const key=RACE_EVENT_LIBRARY[mode]?mode:"attack",st=raceState(context,position);ensureRacePreparationContext(context);
+  const mine=raceSportStrength(key,phase,rivals,context,position),rival=raceOpponentReference(rivals,position,phase,context),gap=mine-rival,adj=contextChoiceAdjustment(key,context,position);
+  const safe=key==="safe"||key==="team";
+  let base=safe?66:key==="inside"?49:key==="outside"?46:42;
+  if(phase==="start")base+=safe?0:key==="inside"?1:key==="outside"?-1:-2;
+  if(position===1){base+=safe?12:5}
+  if(position===4&&!safe)base+=2;
+  if(context.teamRace&&teamRaceSituation(context).teammateAhead&&safe)base+=6;
+  let totalSuccess=base+gap*(safe?2.05:2.35)+adj.success*.35;
+  if(context.advice?.suggested===key)totalSuccess+=(context.advice.quality?.bonus||1.5)*.9;
+  if(st.consecutiveFails)totalSuccess-=Math.min(10,st.consecutiveFails*2.6);
+  let incident=clamp(.65+S.injuryRisk*.014-facilityLevel("technical")*.10+adj.incident+(key==="attack"?.55:key==="outside"?.25:0),.2,safe?1.5:6.0);
+  totalSuccess=clamp(totalSuccess,safe?14:5,Math.min(safe?96:91,98-incident));
+  // Wyjątkowy sukces jest częścią puli powodzenia, a nie niezależnym bytem mogącym ją zdominować.
+  const superShare=clamp((safe?.10:.15)+Math.max(0,gap)*.0035+Math.max(0,st.momentum)*.012+Math.max(0,adj.superAdj)*.004,.08,safe?.22:.30);
+  const superP=Math.max(.5,totalSuccess*superShare),success=Math.max(.5,totalSuccess-superP),fail=Math.max(.5,100-totalSuccess-incident);
+  const sum=superP+success+fail+incident;
+  return {super:superP/sum*100,success:success/sum*100,fail:fail/sum*100,incident:incident/sum*100};
+ };
+
+ function startOutcomeNarrative(outcome,target,mode){
+  const line=mode==="inside"?"przy krawężniku":mode==="outside"?"po szerokiej":mode==="safe"?"spokojniej":"agresywnie";
+  if(outcome==="super"){
+   if(target===1)return "Kapitalnie ruszasz spod taśmy i po pierwszym łuku wychodzisz na prowadzenie.";
+   return `Świetnie rozgrywasz start ${line} i po pierwszym łuku układasz się na ${target}. pozycji.`;
+  }
+  if(outcome==="success"){
+   if(target===1)return "Plan na start działa — po pierwszym łuku obejmujesz prowadzenie.";
+   return `Dobrze realizujesz plan na start i po pierwszym łuku jedziesz na ${target}. miejscu.`;
+  }
+  if(target===4)return "Nie trafiasz ze startem. Po pierwszym łuku jesteś czwarty i musisz odrabiać.";
+  return `Start nie układa się po twojej myśli. Po pierwszym łuku jesteś na ${target}. miejscu.`;
+ }
+
+ resolveSportEffect=function(mode,execution,{phase="distance",rivals=[],context={},position=4}={}){
+  const st=raceState(context,position),mine=raceSportStrength(mode,phase,rivals,context,position),rival=raceOpponentReference(rivals,position,phase,context),gap=mine-rival;
+  const safe=mode==="safe"||mode==="team",teamAhead=context.teamRace&&teamRaceSituation(context).teamOneTwo;
+  if(phase==="start"){
+   const ratings=rivals.map(r=>Number(r.rating||overall())).filter(Number.isFinite);
+   const jitter=execution==="super"?2:1;
+   const baseline=clamp(1+ratings.filter(r=>r+rand(-jitter,jitter)>mine).length,1,4);
+   let target=baseline;
+   if(execution==="super")target=safe?Math.max(1,baseline-1):Math.max(1,baseline-2);
+   else if(execution==="success")target=safe?Math.min(3,baseline):Math.max(1,baseline-1);
+   else if(execution==="fail"){
+    // Niepowodzenie startu nie może normalnie dać P1. Nie ma też „spadania” z pola startowego.
+    target=Math.max(2,Math.min(4,baseline+(Math.random()<.62?1:0)));
+   }
+   target=clamp(target,1,4);
+   return {targetPosition:target,playerStrength:mine,rivalStrength:rival,gap,narrative:startOutcomeNarrative(execution,target,mode)};
+  }
+  let target=position;
+  if(execution==="super"){
+   if(safe||position===1||teamAhead)target=position;
+   else{target=Math.max(1,position-1);if(position>=3&&gap>=5&&Math.random()<clamp(.18+gap*.015,.18,.42))target=Math.max(1,target-1)}
+  }else if(execution==="success"){
+   // Zielone pole gwarantuje sportowe powodzenie zamiaru.
+   if(safe||position===1||teamAhead)target=position;
+   else target=Math.max(1,position-1);
+  }else if(execution==="fail"){
+   // Niepowodzenie nigdy nie poprawia pozycji. Może oznaczać utrzymanie lub stratę.
+   const loseBase=safe?8:mode==="attack"?31:mode==="outside"?25:20;
+   const lose=clamp(loseBase+Math.max(0,-gap)*(safe?.9:1.35)+(st.consecutiveFails||0)*6+Math.max(0,-st.gap)*3,position>=4?0:4,92);
+   if(position<4&&Math.random()*100<lose)target=position+1;
+  }
+  target=clamp(target,1,4);
+  const narrative=execution==="success"&&safe
+   ?(position===1?"Skutecznie bronisz prowadzenia i nie zostawiasz rywalowi miejsca do ataku.":`Obrona działa — utrzymujesz ${position}. miejsce.`)
+   :execution==="success"&&!safe
+    ?(target<position?`Manewr dochodzi do skutku — wyprzedzasz rywala i awansujesz na ${target}. miejsce.`:`Utrzymujesz pozycję.`)
+    :execution==="super"&&!safe&&target<position
+     ?(position-target>=2?`Wyjątkowa akcja — mijasz dwóch rywali i awansujesz na ${target}. miejsce.`:`Wyjątkowo skuteczny manewr daje ci ${target}. miejsce.`)
+     :(target>position?`Decyzja nie wychodzi — rywal wykorzystuje błąd i jedziesz teraz ${target}.`:`Nie udaje się zrealizować zamiaru, ale pozycja na razie pozostaje bez zmian.`);
+  return {targetPosition:target,playerStrength:mine,rivalStrength:rival,gap,narrative};
+ };
+
+ // Stan biegu jest ewolucją poprzedniego układu. Nie przeliczamy całej czwórki od zera po każdej decyzji.
+ finishRaceFromSnapshot=function(snapshot,mode,{teamRace=false,rivals=null,teammate=null,context={},preview=false,suppressIncident=false}={}){
+  const merged={...(snapshot.context||{}),...context},order=(snapshot.order||snapshot.scores||[]).map((r,i)=>({
+   ...r,
+   raceScore:Number.isFinite(r.raceScore)?r.raceScore:100-i,
+   finalScore:Number.isFinite(r.finalScore)?r.finalScore:100-i
+  }));
+  const position=Math.max(1,order.findIndex(r=>r.player)+1);
+  return {position,points:4-position,incident:null,scores:order,order,context:merged};
+ };
+
+ // Mentor może dołożyć czwartą sensowną opcję zamiast polecać coś, czego nie ma na ekranie.
+ ensureMentorChoiceAvailable=function(choices,context,phase="distance",position=2){
+  const suggested=context?.advice?.suggested;if(!suggested||choices.some(x=>x.key===suggested))return choices;
+  const allowed=mentorAllowedAdviceKeys(phase,null,context);
+  if(allowed.includes(suggested)&&choices.length<4){
+   const extra=raceChoiceTemplate(suggested,phase,position);
+   if(extra&&!choices.some(x=>x.key===extra.key))return [...choices,extra];
+  }
+  const fallback=choices.find(x=>allowed.includes(x.key))?.key||choices[0]?.key;
+  if(context?.advice&&fallback){
+   context.advice.suggested=fallback;const q=context.advice.quality||mentorAdviceQuality();
+   context.advice.html=`<p class="race-advice"><b>${q.source}:</b> Sugeruje ${mentorAdviceLabel(fallback,phase,context)}.</p>`;
+  }
+  return choices;
+ };
+
+ // Bez narracji „zwycięstwo coraz bliżej” oderwanej od wyniku dwumeczu.
+ const baseContextualRaceNarrative=contextualRaceNarrative;
+ contextualRaceNarrative=function(mode,outcome,before,after,context){
+  return baseContextualRaceNarrative(mode,outcome,before,after,context)
+   .replace("a zwycięstwo jest coraz bliżej","i zachowujesz pełną kontrolę nad swoim biegiem")
+   .replace("Zwycięstwo jest coraz bliżej.","Nadal kontrolujesz swój bieg.");
+ };
+ importantMatchScoreContext=function(ctx){
+  const match=`${clubDisplayName(S.club)} ${ctx.teamScore}:${ctx.opponentScore} ${clubDisplayName(ctx.opponent)}`;
+  if(!ctx.tieContext?.firstLeg)return {match,aggregate:"",note:""};
+  const ourAgg=ctx.tieContext.firstLeg.ourScore+ctx.teamScore,oppAgg=ctx.tieContext.firstLeg.opponentScore+ctx.opponentScore,diff=ourAgg-oppAgg;
+  const remaining=Math.max(0,15-(ctx.completedHeats||0)),maxSwing=remaining*4;
+  let note;
+  if(diff>0)note=`W dwumeczu prowadzicie ${diff} pkt.`;
+  else if(diff===0)note="W dwumeczu jest remis.";
+  else if(Math.abs(diff)>maxSwing)note=`Straty w dwumeczu wynoszą ${Math.abs(diff)} pkt i przy liczbie pozostałych biegów nie da się ich już odrobić.`;
+  else if(Math.abs(diff)>Math.max(8,maxSwing*.55))note=`Sytuacja w dwumeczu pozostaje bardzo trudna — tracicie ${Math.abs(diff)} pkt i potrzebna jest seria mocnych biegów.`;
+  else note=`W dwumeczu przegrywacie ${Math.abs(diff)} pkt. Teraz liczy się zmniejszanie strat.`;
+  return {match,aggregate:`Dwumecz: ${ourAgg}:${oppAgg}`,note};
+ };
+
+ // Globalnie: opis wyniku i jego kolor pojawiają się dopiero PO pełnym zatrzymaniu ruletki.
+ showOutcomeRoller=function({title,subtitle="",mode="attack",prob,outcome,onDone,resultText=""}){
+  const phaseResult=/^(Start i pierwszy łuk|Środek biegu|Końcówka biegu)$/i.test(String(title||""))&&subtitle;
+  const preText=phaseResult?"":subtitle,revealText=resultText||(phaseResult?subtitle:"");
+  const base=rollerSegments(prob,100),hits=base.map((s,i)=>s.key===outcome?i:-1).filter(i=>i>=0),hit=pick(hits.length?hits:[50]);
+  const cycles=9,segments=[];for(let c=0;c<cycles;c++)segments.push(...base.map(s=>({...s})));
+  const targetIndex=500+hit,startIndex=targetIndex-rand(68,86),counts={super:0,success:0,fail:0,incident:0};base.forEach(x=>counts[x.key]++);
+  const legend=`<div class="roller-legend"><span><i class="roller-dot roller-super"></i>${counts.super}% wyjątkowy sukces</span><span><i class="roller-dot roller-success"></i>${counts.success}% sukces</span><span><i class="roller-dot roller-fail"></i>${counts.fail}% niepowodzenie</span><span><i class="roller-dot roller-incident"></i>${counts.incident}% incydent</span></div>`;
+  const strip=`<div class="outcome-roller outcome-roller-loop"><div class="roller-marker"></div><div class="roller-strip" id="rollerStrip">${segments.map((s,i)=>`<span data-index="${i}" data-key="${s.key}" class="${s.className}"></span>`).join("")}</div></div>`;
+  showModal("ROZSTRZYGNIĘCIE",title,`${preText}<p><b>Realna szansa powodzenia wybranej decyzji:</b></p>${strip}${legend}`,[{title:"Losowanie trwa…",desc:"",action:()=>{}}]);
+  const opts=$("modalOptions");if(opts)opts.style.display="none";
+  requestAnimationFrame(()=>{
+   const stripEl=document.getElementById("rollerStrip"),roller=document.querySelector(".outcome-roller");if(!stripEl||!roller)return;
+   const tile=stripEl.querySelector("span"),style=getComputedStyle(stripEl),tw=tile?.getBoundingClientRect().width||24,gap=parseFloat(style.columnGap||style.gap)||2,step=tw+gap;
+   const start=startIndex*step+tw/2-roller.clientWidth/2,end=targetIndex*step+tw/2-roller.clientWidth/2,duration=4.00+Math.random()*.45;
+   stripEl.dataset.expectedOutcome=outcome;stripEl.dataset.targetIndex=String(targetIndex);
+   animateRollerWithBrake(stripEl,start,end,duration,()=>{
+    const box=$("modalText");if(box)box.insertAdjacentHTML("beforeend",`<div class="roller-result roller-result-${outcome}">${outcomeLabel(outcome)}</div>${revealText?`<div class="roller-sport-effect">${revealText}</div>`:""}`);
+    const options=$("modalOptions");if(options){
+     options.style.display="";options.innerHTML="";const b=document.createElement("button");b.className="option";b.innerHTML="<strong>KONTYNUUJ</strong><small>Przejdź do dalszej części biegu.</small>";
+     b.onclick=()=>{if(b.dataset.busy==="1")return;b.dataset.busy="1";b.disabled=true;try{onDone?.()}catch(error){console.error("Błąd po ruletce:",error);b.dataset.busy="0";b.disabled=false;if(S?.seasonFlowActive){recoverSeasonFlow(error);return}showModal("BŁĄD INTERAKTYWNEGO BIEGU","Gra odzyskała kontrolę",`Nie udało się przejść dalej.<br><b>Błąd techniczny:</b> ${String(error?.message||error||"Nieznany błąd")}`,[{title:"Wróć do gry",desc:"Zamknij komunikat i spróbuj ponownie.",action:()=>closeModal()}])}};
+     options.appendChild(b);
+    }
+   });
+  });
+ };
+
+ // Ta sama zasada puli „super ⊂ powodzenie” w rywalizacji o dziką kartę IMP.
+ impWildcardTrainingProb=function(mode,event){
+  const rival=Number(event.rivalRating||overall()),day=ensureDayForm("IMP Wild Card",event.trainingToken||`${S.year}:IMP:wildcard-training`).modifier,team=developmentEventTeamQuality();
+  let mine,risk=1,base=50;
+  if(mode==="starts"){mine=overall()*.42+S.skills.starts*.24+S.skills.corner*.16+S.equipment*.08+S.professionalism*.10+day*.55;base=45;risk=2.2}
+  else if(mode==="setup"){mine=overall()*.38+S.skills.setup*.24+S.equipment*.18+S.skills.technique*.08+S.professionalism*.07+team*.9+day*.42;base=52;risk=.7}
+  else{mine=overall()*.50+S.skills.technique*.15+S.skills.mental*.12+S.skills.distance*.10+S.professionalism*.13+day*.48;base=50;risk=.6}
+  const gap=mine-rival,total=clamp(base+gap*2.75,10,88),incident=clamp(risk+S.injuryRisk*.006,.3,4),share=clamp(.12+Math.max(0,gap)*.003,.08,.25),superP=total*share,success=total-superP,fail=Math.max(1,100-total-incident),sum=superP+success+fail+incident;
+  return {super:superP/sum*100,success:success/sum*100,fail:fail/sum*100,incident:incident/sum*100};
+ };
+
+ // --------------------------------------------------------------------------
+ // 3. NAGRODY FINANSOWE ZA ZAWODY POZALIGOWE + ROZLICZENIA CYKLI
+ // --------------------------------------------------------------------------
+ const ONE_DAY_PRIZES={
+  "Brązowy Kask":[15000,10500,7500,5200,3200,3200,3200,3200,1600],
+  "Srebrny Kask":[26000,19000,13500,9000,5200,5200,5200,5200,2300],
+  "MIMP":[38000,27000,19000,13000,7600,7600,7600,7600,3800],
+  "Złoty Kask":[45000,31500,22500,16500,12000,10500,9500,8500,5000],
+  "Memoriał Jancarza":[52000,37500,26000,20000,16000,14500,13000,11500,6000],
+  "Memoriał Smoczyka":[41000,30000,21000,15000,12000,10500,9000,8000,4500],
+  "Kryterium Asów":[49000,34000,24000,18000,14000,12500,11000,9500,5200],
+  "GP Challenge":[52000,40000,30000,19000,14500,11500,9000,7500,5000]
+ };
+ const ROUND_PRIZES={
+  SGP:[82500,64000,51000,41000,34000,29000,25500,22500,19500,17000,15000,13000,10500,9000,7500,6000],
+  SEC:[49000,36000,28500,22500,19000,16500,14500,13000,11500,10000,9000,8000,7000,6000,5200,4500],
+  IMP:[30000,22500,17000,13000,10500,9000,7800,6800,5900,5100,4400,3800,3300,2900,2500,2200],
+  SGP2:[26000,20000,16000,13000,10500,9000,7800,6800,5900,5100,4400,3800,3300,2900,2500,2200]
+ };
+ const SERIES_BONUS={
+  SGP:[525000,340000,225000,145000,105000,75000,56000,41000,33000,28000,24000,20000],
+  SEC:[185000,122000,85000,56000,41000,30000,24000,19000,15000,12000],
+  IMP:[90000,63000,45000,32000,25000,20500,17000,14000,12000,10000],
+  SGP2:[90000,60000,41000,26000,19000,15000,12000,9500]
+ };
+ function prizeForPlace(table,place){
+  if(!Array.isArray(table)||!Number.isFinite(place)||place<1)return 0;
+  if(place<=table.length)return table[place-1]||0;
+  return table.at(-1)||0;
+ }
+ function normalizeFinanceKey(result){
+  const k=canonicalCompetitionKey(result);
+  if(k==="SGP")return "SGP";if(k==="SEC")return "SEC";if(k==="IMP")return "IMP";if(k==="SGP2")return "SGP2";
+  if(k==="MIMP")return "MIMP";if(k==="GP Challenge")return "GP Challenge";
+  return result?.key||result?.name||k;
+ }
+ function roundPlacesForResult(result,key){
+  if(["SGP","SEC","IMP","SGP2"].includes(key)){
+   // roundData jest technicznym polem wyniku: przechowuje faktyczne miejsca rund,
+   // nawet gdy tekstowy `details` służy wyłącznie do narracji.
+   if(Array.isArray(result.roundData)&&result.roundData.length){
+    return result.roundData.map(x=>typeof x==="number"?x:Number(x.roundPlace||x.place||x.finalPlace||99)).filter(p=>Number.isFinite(p)&&p>=1&&p<=16);
+   }
+   if(Array.isArray(result.details)&&result.details.length){
+    const places=result.details.map(x=>typeof x==="number"?x:(x&&typeof x==="object"?Number(x.roundPlace||x.place||x.finalPlace||99):NaN)).filter(p=>Number.isFinite(p)&&p>=1&&p<=16);
+    if(places.length)return places;
+   }
+   if(Array.isArray(result.roundAchievements)&&result.roundAchievements.length){
+    // Awaryjnie znamy tylko podia; nie dopisujemy fikcyjnych miejsc pozostałych rund.
+    return result.roundAchievements.map(x=>Number(x.place||x.roundPlace)).filter(p=>Number.isFinite(p)&&p>=1&&p<=3);
+   }
+  }
+  return [];
+ }
+ function expectedRounds(result,key){
+  if(key==="SGP"){const m=String(result.stage||"").match(/(\d+)\s*rund/);return m?Number(m[1]):ensureMajorSeriesCalendar().sgpHosts.length}
+  if(key==="SEC")return 4;if(key==="IMP")return 3;if(key==="SGP2")return 3;
+  return 1;
+ }
+ function teamPrize(result,key){
+  const place=Number(result.place||99),heats=Number(result.heats||0);
+  if(key==="DMPJ")return (place===1?11000:place===2?7500:place===3?5500:place===4?3000:1800)+Math.min(5000,heats*250);
+  if(key==="DMŚJ")return 5500+heats*1500+(place===1?30000:place===2?20500:place===3?15000:0);
+  if(key==="DME")return 11000+heats*2250+(place===1?60000:place===2?41000:place===3?26000:0);
+  if(key==="DPŚ")return 11000+heats*3750+(place===1?110000:place===2?75000:place===3?52000:0);
+  if(key==="SoN")return 11000+heats*3750+(place===1?98000:place===2?67500:place===3?45000:0);
+  return 0;
+ }
+ function oneDayPrize(result,key){
+  if(key==="SGP Wild Card")return prizeForPlace(ROUND_PRIZES.SGP,Number(result.roundPlace||result.place||99));
+  if(key==="SEC Wild Card")return prizeForPlace(ROUND_PRIZES.SEC,Number(result.roundPlace||result.place||99));
+  if(key==="IMP Wild Card")return prizeForPlace(ROUND_PRIZES.IMP,Number(result.roundPlace||result.place||99));
+  const table=ONE_DAY_PRIZES[key]||ONE_DAY_PRIZES[result.key]||ONE_DAY_PRIZES[result.name];
+  return prizeForPlace(table,Number(result.place||99));
+ }
+ function rewardLedgerKey(result,key){return `${S.year}:${key}:${result.hostCity||""}:${result.stage||""}:${result.points??""}:${result.place??result.roundPlace??""}`}
+ function ensureCompetitionReward(result){
+  if(!result)return null;const state=ensureRebuildState(),key=normalizeFinanceKey(result),ledgerKey=rewardLedgerKey(result,key);
+  if(state.competitionFinanceLedger[ledgerKey]){result.finance=state.competitionFinanceLedger[ledgerKey];return result.finance}
+  let roundsPrize=0,seasonBonus=0,basePrize=0,roundPlaces=[];
+  if(["SGP","SEC","IMP","SGP2"].includes(key)){
+   roundPlaces=roundPlacesForResult(result,key);roundsPrize=roundPlaces.reduce((s,p)=>s+prizeForPlace(ROUND_PRIZES[key],p),0);
+   seasonBonus=prizeForPlace(SERIES_BONUS[key],Number(result.place||99));
+  }else{
+   const canonical=canonicalCompetitionKey(result);
+   if(["DMPJ","DMŚJ","DME","DPŚ"].includes(canonical)||key==="SoN")basePrize=teamPrize(result,key==="SoN"?"SoN":canonical);
+   else basePrize=oneDayPrize(result,key);
+  }
+  const subtotal=Math.round(roundsPrize+seasonBonus+basePrize);
+  const podium=Number(result.place||result.roundPlace||99)<=3;
+  const sponsorBonus=podium&&subtotal>0&&Math.random()<.24?Math.round(subtotal*triangular(.08,.12,.18)/500)*500:0;
+  const total=subtotal+sponsorBonus;
+  const roundsExpected=expectedRounds(result,key),roundsParticipated=roundPlaces.length||(["SGP","SEC","IMP","SGP2"].includes(key)?Math.min(roundsExpected,Number(String(result.stage||"").match(/(\d+)/)?.[1]||roundsExpected)):1);
+  const podiums=roundPlaces.filter(p=>p<=3).length,wins=roundPlaces.filter(p=>p===1).length;
+  const finance={year:S.year,key,total,basePrize,roundsPrize,seasonBonus,sponsorBonus,roundsExpected,roundsParticipated,podiums,wins};
+  state.competitionFinanceLedger[ledgerKey]=finance;result.finance=finance;
+  if(total>0){
+   S.budget+=total;S.totals.earnings=(S.totals.earnings||0)+total;
+   if(S.season){S.season.tournamentEarnings=(S.season.tournamentEarnings||0)+total}
+   addHistory("Nagroda finansowa",`${result.name||key}: ${money(total)}${sponsorBonus?` (w tym ${money(sponsorBonus)} premii sponsorskiej)`:""}.`);
+  }
+  if(["SGP","SEC","IMP","SGP2"].includes(key))state.cycleFinance.push({competition:result.name||key,...finance});
+  return finance;
+ }
+ function competitionFinanceHtml(result){
+  const f=result?.finance;if(!f||!f.total)return "";
+  if(["SGP","SEC","IMP","SGP2"].includes(f.key)){
+   return `<div class="competition-finance-summary"><b>Rozliczenie cyklu:</b><br>Udział w rundach: <b>${f.roundsParticipated}/${f.roundsExpected}</b> • zwycięstwa: <b>${f.wins}</b> • podia: <b>${f.podiums}</b><br>Nagrody za rundy: <b>${money(f.roundsPrize)}</b> • premia za klasyfikację końcową: <b>${money(f.seasonBonus)}</b>${f.sponsorBonus?` • premie sponsorskie: <b>${money(f.sponsorBonus)}</b>`:""}<br><b>Łączna gratyfikacja za cykl: ${money(f.total)}</b></div>`;
+  }
+  return `<div class="competition-finance-summary"><b>Gratyfikacja finansowa:</b> ${money(f.total)}${f.sponsorBonus?` (w tym ${money(f.sponsorBonus)} premii sponsorskiej)`:""}.</div>`;
+ }
+
+ const baseSimulateCompetitions=simulateCompetitions;
+ simulateCompetitions=function(basePph){const results=baseSimulateCompetitions(basePph);results.forEach(ensureCompetitionReward);return results};
+
+ const baseShowCompetitionResult=showCompetitionResult;
+ showCompetitionResult=function(result,next){
+  ensureCompetitionReward(result);
+  const openResult=()=>{
+   const healthNote=postCompetitionHealthExposure(result),resultText=ensureSentence((result?.result||"Zawody zakończone")+healthNote);
+   showModal("WYNIK ZAWODÓW",result?.name||"Zawody",`<b>${resultText}</b>${result?.points!=null?`<br>Twój dorobek: ${result.points} pkt.`:""}${competitionFinanceHtml(result)}`,[{title:"Kontynuuj",desc:"Przejdź dalej.",action:()=>{closeModal();next?.()}}]);
+  };
+  const c=competitionCelebration(result);if(c)showAchievementCelebration(c.kind,c.title,c.subtitle,openResult);else openResult();
+ };
+
+ const baseCompetitionsSummary=competitionsSummary;
+ competitionsSummary=function(results){
+  if(!results?.length)return baseCompetitionsSummary(results||[]);
+  return results.map(r=>{const f=r.finance?.total?` • ${money(r.finance.total)}`:"";return `${r.name}: ${ensureSentence(r.result)}${r.points!==undefined?` (${r.points} pkt)`:""}${f}`}).join(" • ");
+ };
+
+ // Kwalifikacje też dają niewielkie pieniądze; awans jest wart więcej niż sam udział.
+ function addQualifierReward(id,amount,label){
+  const state=ensureRebuildState();if(state.qualifierFinanceLedger[id])return;
+  state.qualifierFinanceLedger[id]=amount;S.budget+=amount;S.totals.earnings=(S.totals.earnings||0)+amount;
+  if(S.season)S.season.tournamentEarnings=(S.season.tournamentEarnings||0)+amount;
+  if(amount>0)addHistory("Gratyfikacja kwalifikacyjna",`${label}: ${money(amount)}.`);
+ }
+ const baseSimInternationalQualifier=simulateInternationalQualifier;
+ simulateInternationalQualifier=function(series,basePph){
+  const r=baseSimInternationalQualifier(series,basePph),id=`${S.year}:${series}:qualifier:${r.track?.city||""}`;
+  addQualifierReward(id,5000+(r.advanced?7500:0),`${series==="SGP"?"Eliminacje SGP":"Eliminacje SEC"}${r.advanced?" — awans":""}`);return r;
+ };
+ const baseSECChallenge=simulateSECChallengeQualification;
+ simulateSECChallengeQualification=function(basePph){
+  const r=baseSECChallenge(basePph),id=`${S.year}:SEC-Challenge:${r.track?.city||""}`;
+  addQualifierReward(id,7500+(r.advanced?22500:0),`SEC Challenge${r.advanced?" — awans do SEC":""}`);return r;
+ };
+ const baseIMPQual=simulateIMPQualificationStage;
+ simulateIMPQualificationStage=function(stage,basePph){
+  const r=baseIMPQual(stage,basePph),id=`${S.year}:IMP-qual:${stage}:${r.city||""}`;
+  addQualifierReward(id,stage==="challenge"?6500:4000,`IMP — ${stage}`);return r;
+ };
+
+ // --------------------------------------------------------------------------
+ // 4. SPEEDWAY OF NATIONS
+ // --------------------------------------------------------------------------
+ function simulateSpeedwayOfNations(basePph,event={}){
+  const nations=["Polska","Dania","Szwecja","Wielka Brytania","Australia","Czechy","Niemcy"];
+  const power=nationalTeamPower(basePph),primaryChance=clamp(48+(overall()-80)*3+(basePph-1.65)*18+(S.reputation-30)*.12,30,92);
+  const primary=Math.random()*100<primaryChance,heats=primary?6:rand(1,3),pointsByPlace=[4,3,2,0];
+  let playerPoints=0,wins=0;
+  for(let i=0;i<heats;i++){
+   const rivalMean=event.fieldMean||86,playerScore=power+rand(-9,9),scores=[rivalMean+rand(-8,8),rivalMean+rand(-8,8),power-2+rand(-7,7)];
+   const place=1+scores.filter(x=>x>playerScore).length;playerPoints+=pointsByPlace[place-1];if(place===1)wins++;
+  }
+  const teamScores=nations.map(n=>({nation:n,score:n==="Polska"?playerPoints+(6*3.0)+power*.34+rand(0,10):(event.fieldMean||86)*.34+rand(19,38)})).sort((a,b)=>b.score-a.score);
+  const place=teamScores.findIndex(x=>x.nation==="Polska")+1,result=place===1?"złoty medal Speedway of Nations":place===2?"srebrny medal Speedway of Nations":place===3?"brązowy medal Speedway of Nations":`${place}. miejsce w finale Speedway of Nations`;
+  S.national="Polska";S.teamCaps=(S.teamCaps||0)+1;if(place<=3)S.nationalMedals=(S.nationalMedals||0)+1;
+  addHistory("Speedway of Nations",`Powołanie do trzyosobowej kadry Polski. ${primary?`Jedziesz w podstawowej parze i występujesz w 6 biegach — po jednym przeciw każdej z sześciu pozostałych reprezentacji.`:`Pełnisz rolę trzeciego zawodnika i dostajesz ${heats} ${heats===1?"bieg":"biegi"}.`} Zdobywasz ${playerPoints} pkt. Polska: ${result}.`);
+  return {name:"Speedway of Nations",key:"SoN",stage:"finał — 7 reprezentacji",result,points:playerPoints,place,heats,primaryPair:primary,wins};
+ }
+ const baseSimNational=simulateNationalTeamCompetitions;
+ simulateNationalTeamCompetitions=function(basePph){
+  const out=baseSimNational(basePph),worldCupYear=(S.year-2027)%3===0,power=nationalTeamPower(basePph);
+  const eligible=S.age>=18&&overall()>=80&&basePph>=1.65&&S.reputation>=26;
+  // SoN nie jest wciskane co rok; najczęściej pojawia się w sezonie bez DPŚ.
+  if(!worldCupYear&&eligible&&Math.random()<.58&&Math.random()*100<clamp(12+(power-82)*1.7,5,68)){
+   S.pendingTeamCompetitions??=[];
+   if(!S.pendingTeamCompetitions.some(x=>x.name==="Speedway of Nations"))S.pendingTeamCompetitions.push({name:"Speedway of Nations",format:"son",fieldMean:86});
+  }
+  return out;
+ };
+
+ const basePlayTeamQueue=playTeamCompetitionQueue;
+ playTeamCompetitionQueue=function(basePph,next){
+  const pending=S.pendingTeamCompetitions||[];
+  if(!pending.some(x=>x.format==="son")){basePlayTeamQueue(basePph,next);return}
+  const queue=[...pending];S.pendingTeamCompetitions=[];
+  const proceed=()=>{
+   if(!queue.length){next();return}
+   const event=queue.shift();
+   if(event.format!=="son"){
+    // Oddajemy pojedyncze stare wydarzenie do istniejącej kolejki, a po nim wracamy do lokalnej kolejki.
+    S.pendingTeamCompetitions=[event];basePlayTeamQueue(basePph,proceed);return;
+   }
+   showModal("POWOŁANIE DO REPREZENTACJI","Speedway of Nations",`Do finału zgłoszono 3 zawodników. Występuje 7 reprezentacji, więc podstawowa para może rozegrać <b>6 biegów</b> — po jednym przeciw każdemu rywalowi.`,[
+    {title:"Rozegraj finał SoN",desc:"Gra zasymuluje parowy finał, rolę w trzyosobowej kadrze oraz twój rzeczywisty program startów.",action:()=>{closeModal();const r=simulateSpeedwayOfNations(basePph,event);ensureCompetitionReward(r);S.competitions.push(r);renderCompetitions();save();showCompetitionResult(r,proceed)}}
+   ]);
+  };
+  proceed();
+ };
+
+ const baseCanonicalCompetitionKey=canonicalCompetitionKey;
+ canonicalCompetitionKey=function(entry){const n=entry?.key||entry?.name||"";if(n==="SoN"||/Speedway of Nations/i.test(n))return "SoN";return baseCanonicalCompetitionKey(entry)};
+ const baseChampionshipName=championshipName;
+ championshipName=function(key){return key==="SoN"?"Speedway of Nations":baseChampionshipName(key)};
+
+ // --------------------------------------------------------------------------
+ // 5. NADWYŻKI FINANSOWE: DROGIE, ALE NIE „KUP OVR 99”
+ // --------------------------------------------------------------------------
+ function premiumTeamOffers(){
+  const scale=clamp((overall()-60)/35,0,1),budget=Math.max(0,S.budget||0);
+  const tuner=Math.round((120000+scale*150000)/5000)*5000;
+  const testing=Math.round((85000+scale*115000)/5000)*5000;
+  const recovery=Math.round((80000+scale*100000)/5000)*5000;
+  const full=Math.round((360000+scale*330000)/10000)*10000;
+  return [
+   {title:`Program tunerski i rezerwa silnikowa — ${money(tuner)}`,cost:tuner,desc:"Dodatkowy silnik, serwis i praca nad ustawieniami. Pomaga sprzętowi i setupowi, ale z malejącym efektem na najwyższym poziomie.",apply:()=>{const gain=equipmentUpgradeGain(rand(1,3));tryNaturalGrowth("setup",1);addHistory("Program tunerski",`Koszt ${money(tuner)}. Sprzęt +${gain}; dodatkowa praca nad ustawieniami.`)}},
+   {title:`Prywatne testy torowe — ${money(testing)}`,cost:testing,desc:"Dodatkowe sesje na torze ukierunkowane na start, pierwszy łuk i technikę. Bez gwarancji wzrostu.",apply:()=>{for(let i=0;i<3;i++)tryNaturalGrowth(pick(["starts","corner","technique","distance"]),1);S.professionalism+=1;addHistory("Prywatne testy",`Koszt ${money(testing)}. Dodatkowy blok pracy technicznej.`)}},
+   {title:`Fizjoterapia i regeneracja premium — ${money(recovery)}`,cost:recovery,desc:"Mniejsze ryzyko przeciążenia i lepsza świeżość. Nie podnosi automatycznie Kondycji.",apply:()=>{S.injuryRisk-=5;S.morale+=3;applyDevelopmentModifier({id:`premium-recovery-${S.year}`,label:"regeneracja premium",duration:1,declineProtection:.35,formBonus:.5,fitnessGrowthMult:.85});addHistory("Regeneracja premium",`Koszt ${money(recovery)}. Ryzyko urazu spada, a organizm lepiej znosi sezon.`)}},
+   {title:`Pełny program profesjonalnego teamu — ${money(full)}`,cost:full,desc:"Tuner, dodatkowy mechanik, dane, fizjoterapia i logistyka na cały sezon. Bardzo drogi pakiet utrzymaniowy, a nie zakup punktów OVR.",apply:()=>{equipmentUpgradeGain(rand(1,2));tryNaturalGrowth("setup",1);tryNaturalGrowth(pick(["mental","technique","starts"]),1);S.injuryRisk-=3;applyDevelopmentModifier({id:`factory-team-${S.year}`,label:"pełny program teamu",duration:1,growthMult:1.04,skillGrowth:{setup:1.12,technique:1.08},teamBonus:1.2,declineProtection:.25});addHistory("Pełny program teamu",`Koszt ${money(full)}. Rozbudowane zaplecze pomaga przygotowaniu i utrzymaniu poziomu, ale nie gwarantuje wzrostu OVR.`)}}
+  ].filter(x=>budget>=x.cost);
+ }
+ budgetManagement=function(next){
+  if(S.budgetManagementCompletedYear===S.year){next();return}
+  if(S.league==="Etap szkolenia"||S.budget<55000){S.budgetManagementCompletedYear=S.year;next();return}
+  const facilityOffers=availableFacilityOffers(2).map(key=>{const def=FACILITY_DEFS[key],level=facilityLevel(key),cost=facilityBuildCost(key);return {title:`${def.name} — poziom ${level+1} — ${money(cost)}`,desc:`${def.desc} ${def.effect.join(" • ")} • utrzymanie: ${money(def.maintenance)} za poziom/sezon`,action:()=>{if(buildFacility(key)){S.budgetManagementCompletedYear=S.year;save();closeModal();deferSeasonStep(next)}else document.querySelectorAll("#modalOptions .option").forEach(button=>{button.disabled=false;button.dataset.busy="0"})}}});
+  const premium=premiumTeamOffers().slice(-2).map(o=>({title:o.title,desc:o.desc,action:()=>{if(S.budget<o.cost)return;S.budget-=o.cost;o.apply();S.budgetManagementCompletedYear=S.year;ensureRebuildState().moneySinkYear=S.year;normalize();save();closeModal();deferSeasonStep(next)}}));
+  const options=[...facilityOffers,...premium,{title:"Zachowaj środki",desc:"Nie wydajesz nadwyżki w tym sezonie.",action:()=>{S.budgetManagementCompletedYear=S.year;save();closeModal();deferSeasonStep(next)}}];
+  showModal("ROZWÓJ TEAMU","Jak wykorzystujesz zgromadzony kapitał?",`Budżet: <b>${money(S.budget)}</b>. Najdroższe pakiety pomagają w przygotowaniu i utrzymaniu poziomu, ale nie pozwalają kupić OVR 99.`,options);
+ };
+
+ // --------------------------------------------------------------------------
+ // 6. DROBNE UZUPEŁNIENIA UI / START KARIERY
+ // --------------------------------------------------------------------------
+ const baseCreatePlayerRebuild=createPlayer;
+ createPlayer=function(){baseCreatePlayerRebuild();requestAnimationFrame(()=>{document.documentElement.scrollTop=0;document.body.scrollTop=0;window.scrollTo(0,0)})};
+
+ // Dodatkowe style nie zmieniają desktopu, tylko czytelność nowych podsumowań.
+ const extra=document.createElement("style");extra.id="pss102-rebuild-styles";extra.textContent=`
+  .roller-sport-effect{margin-top:10px;color:var(--muted,#68736f);font-size:1rem;line-height:1.45}
+  .competition-finance-summary{margin-top:14px;padding:12px 14px;border:1px solid rgba(18,78,70,.18);border-radius:10px;background:rgba(18,78,70,.055);line-height:1.5}
+  @media(max-width:680px){.competition-finance-summary{font-size:12px;padding:8px 9px}.roller-sport-effect{font-size:.92rem}}
+ `;if(!document.getElementById(extra.id))document.head.appendChild(extra);
+
+ if(S?.skills){ensureRebuildState();normalize();save();render()}
+})();
+
+// ============================================================================
+// PSS 1.02 — FINALNE UZUPEŁNIENIE DANYCH CYKLI
+// Zachowuje pełne miejsca rund dla późniejszego rozliczenia finansowego.
+// ============================================================================
+(() => {
+ const baseSGP2Name="Indywidualne Mistrzostwa Świata Juniorów — SGP2";
+ simulateSGP2Cycle=function(basePph){
+  const key="SGP2",cfg=COMPETITION_LEVELS[key],playerPower=competitionPower(basePph,key);
+  const riders=Array.from({length:16},(_,index)=>({
+   id:index===0?"player":`r${index}`,
+   name:cycleRiderName(index,key),
+   rating:index===0?playerPower:competitionRivalRating(key,index-1),
+   total:0,wins:0,rounds:[]
+  }));
+  for(let round=1;round<=3;round++){
+   const rows=riders.map(rider=>({rider,points:simulateFiveRideScore(rider.rating+rand(-5,5),cfg.mean),tie:Math.random()}));
+   rows.sort((a,b)=>b.points-a.points||b.rider.rating-a.rider.rating||b.tie-a.tie);
+   rows.forEach((row,index)=>{
+    const place=index+1;
+    row.rider.total+=row.points;
+    if(place===1)row.rider.wins++;
+    row.rider.rounds.push({round,points:row.points,place,roundPlace:place});
+   });
+  }
+  return {riders,standings:rankStandings(riders),player:riders[0]};
+ };
+ simulateSGP2=function(basePph){
+  const cycle=simulateSGP2Cycle(basePph),player=cycle.player,place=standingPlace(cycle.riders),scores=player.rounds.map(r=>r.points);
+  const result=medalResult(place,"mistrz świata juniorów",p=>`${p}. miejsce i medal SGP2`,p=>`${p}. miejsce w SGP2`);
+  awardCompetitionResult("SGP2",place,player.total);
+  addHistory("SGP2",`${result}. 3 rundy: ${scores.join(" + ")} = ${player.total} pkt.`);
+  return {name:baseSGP2Name,key:"SGP2",stage:"3 rundy",result,points:player.total,place,details:scores,roundData:player.rounds,healthExposureHeats:15};
+ };
+
+ // W symulowanym IMP zachowujemy zarówno narracyjne opisy rund, jak i ich faktyczne miejsca.
+ simulateIMP=function(basePph){
+  const key="IMP",cycle=simulateIMPCycle(basePph),player=cycle.player,place=standingPlace(cycle.riders);
+  const rounds=player.rounds.map(round=>{
+   const phase=round.regularPlace<=2?`bezpośredni finał`:round.regularPlace<=6?`baraż: ${round.baragePlace}. miejsce`:`bez barażu`;
+   return `${round.base} pkt w ${cityLocative(round.host)} (${round.regularPlace}. po fazie zasadniczej, ${phase}${round.finalPlace?`, finał: ${round.finalPlace}. miejsce, +${round.finalPoints} pkt`:""})`;
+  });
+  const result=medalResult(place,"Mistrz Polski",p=>`${p}. miejsce i medal IMP`,p=>`${p}. miejsce w IMP`);
+  awardCompetitionResult(key,place,player.total);
+  const roundAchievements=applyRoundAchievementBonuses(key,player.rounds,cycle.hosts);
+  addHistory("IMP",`${result}. Trzy rundy: ${rounds.join(" • ")}. Razem ${player.total} pkt.`);
+  return {name:"Indywidualne Mistrzostwa Polski",key:"IMP",stage:"3 rundy",result:capitalizeFirstText(result),points:player.total,place,details:rounds,roundData:player.rounds,roundAchievements,healthExposureHeats:15};
+ };
+})();
