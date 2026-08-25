@@ -2076,17 +2076,19 @@ function createPlayer(){
  $("newsBox").innerHTML=`<p class="eyebrow">PRZED LICENCJĄ</p><h3>${background.title.toUpperCase()}</h3><p>${background.text}</p><p><b>Zaplecze:</b> ${support.title}. Budżet początkowy: ${money(S.budget)}.</p>${openingReport?`<div class="guidance-report"><span>RAPORT SZKÓŁKI</span><p>${openingReport.text}</p></div>`:""}`;
  save();
 }
-function save(){localStorage.setItem("pss_v102",JSON.stringify(S))}
+function save(){localStorage.setItem("pss_v1021",JSON.stringify(S))}
 function load(){
  try{
-  const newest=localStorage.getItem("pss_v102");
+  const newest=localStorage.getItem("pss_v1021");
+  const previousV102=localStorage.getItem("pss_v102");
   const previousV101=localStorage.getItem("pss_v101");
   const previousVersion=localStorage.getItem("pss_v100");
   const previousBrand=localStorage.getItem("pzs_v200");
   if(newest)return JSON.parse(newest);
-  if(previousV101){localStorage.setItem("pss_v102",previousV101); return JSON.parse(previousV101);}
-  if(previousVersion){localStorage.setItem("pss_v102",previousVersion); return JSON.parse(previousVersion);}
-  if(previousBrand){localStorage.setItem("pss_v102",previousBrand); return JSON.parse(previousBrand);}
+  if(previousV102){localStorage.setItem("pss_v1021",previousV102); return JSON.parse(previousV102);}
+  if(previousV101){localStorage.setItem("pss_v1021",previousV101); return JSON.parse(previousV101);}
+  if(previousVersion){localStorage.setItem("pss_v1021",previousVersion); return JSON.parse(previousVersion);}
+  if(previousBrand){localStorage.setItem("pss_v1021",previousBrand); return JSON.parse(previousBrand);}
   const v1361=localStorage.getItem("pzs_v1361");
   if(v1361)return JSON.parse(v1361);
   const v136=localStorage.getItem("pzs_v136");
@@ -3384,7 +3386,7 @@ function suggestedRaceOption(rivals,phase="start",teammate=null,context={}){
   let val=0;
   if(phase==="start"){
    if(choice==="attack")val=S.skills.starts*.52+S.skills.corner*.27+S.skills.mental*.12+S.equipment*.05;
-   if(choice==="inside")val=S.skills.corner*.40+S.skills.technique*.28+S.skills.starts*.22+S.skills.mental*.08;
+   if(choice==="inside")val=S.skills.corner*.37+S.skills.technique*.27+S.skills.starts*.23+S.skills.mental*.09;
    if(choice==="outside")val=S.skills.distance*.28+S.skills.corner*.24+S.skills.technique*.24+S.skills.overtaking*.16;
    if(choice==="safe")val=S.skills.mental*.38+S.skills.starts*.22+S.skills.technique*.20+S.skills.setup*.12;
   }else{
@@ -3395,9 +3397,13 @@ function suggestedRaceOption(rivals,phase="start",teammate=null,context={}){
    if(choice==="safe")val=S.skills.mental*.40+S.skills.technique*.24+S.skills.distance*.14+S.skills.setup*.12;
   }
   if(track?.skill){
-   const match={starts:"attack",corner:"inside",distance:"outside",technique:"inside",overtaking:"attack",setup:"safe",mental:"safe",fitness:"outside"}[track.skill];
+   const match={starts:"attack",distance:"outside",overtaking:"attack",setup:"safe",mental:"safe",fitness:"outside"}[track.skill];
    if(choice===match)val+=5;
+   // Sam „techniczny” tor ani wymagający pierwszy łuk nie oznaczają automatycznie krawężnika.
+   if((track.skill==="corner"||track.skill==="technique")&&(choice==="inside"||choice==="outside"))val+=2;
   }
+  if(context.trackShift?.favored===choice)val+=8;
+  if(context.trackShift?.hurt===choice)val-=6;
   if(avgRival>overall()+6&&choice==="safe")val+=3;
   if(avgRival<overall()-5&&choice==="attack")val+=2;
   if(val>bestValue){bestValue=val;best=choice}
@@ -3414,6 +3420,9 @@ function raceAdviceText(rivals,phase="start",teammate=null,context={}){
  }
  const alternatives=allowed.filter(x=>x!==correct);
  const suggested=Math.random()<q.accuracy||!alternatives.length?correct:pick(alternatives);
+ context.mentorSuggestionHistory??=[];
+ context.mentorSuggestionHistory.push(suggested);
+ if(context.mentorSuggestionHistory.length>4)context.mentorSuggestionHistory.shift();
  const precision=q.accuracy>=.9?"Jest niemal pewien, że warto":q.accuracy>=.82?"Wyraźnie sugeruje":q.accuracy>=.70?"Podpowiada":"Sugeruje, by";
  const html=`<p class="race-advice"><b>${q.source}:</b> ${precision} ${mentorAdviceLabel(suggested,phase,context)}.</p>`;
  context.advice={suggested,correct,quality:q,phase,html};
@@ -3781,6 +3790,23 @@ function raceSituationNarrative(snapshot,{teamRace=false}={}){
   }
  }
  return parts.join(" ");
+}
+function compactRaceSituationNarrative(snapshot,{teamRace=false}={}){
+ const order=snapshot?.order||snapshot?.scores||[],position=snapshot.position;
+ if(teamRace){
+  const me=order.findIndex(x=>x.player),mate=order.findIndex(x=>x.side==="own"&&!x.player);
+  if(me===1&&mate===0)return "Przed tobą jedzie kolega z pary, a rywale są za wami.";
+  if(me===0&&mate===1)return "Tuż za tobą jedzie kolega z pary, a rywale są za wami.";
+ }
+ return raceSituationNarrative(snapshot,{teamRace}).replace(/^Jedziesz \d+\.\s*/,"");
+}
+function startNarrativeForSnapshot(resolved,snapshot,{teamRace=false}={}){
+ if(!teamRace)return resolved.narrative;
+ const order=snapshot?.order||snapshot?.scores||[],me=order.findIndex(x=>x.player),mate=order.findIndex(x=>x.side==="own"&&!x.player);
+ if((me===0&&mate===1)||(me===1&&mate===0)){
+  return me===0?"Po pierwszym łuku wychodzicie na podwójne prowadzenie — prowadzisz przed kolegą z drużyny.":"Po pierwszym łuku wychodzicie na podwójne prowadzenie — przed tobą jedzie kolega z drużyny, a rywale są za wami.";
+ }
+ return resolved.narrative;
 }
 function maybeShiftTrackConditions(context,phase="distance"){
  if(context.trackShiftChecked)return context.trackShift;
@@ -4191,8 +4217,30 @@ function resolveRaceDecision(mode,{phase="distance",rivals=[],teammate=null,cont
 }
 
 function tacticalThemeForRace(rivals,teammate=null,context={}){
- const p=suggestedRaceOption(rivals,"start",teammate,context);
- return p==="inside"?"inside":p==="outside"?"outside":p==="attack"?"attack":"balanced";
+ if(context.trackShift?.favored==="inside"||context.trackShift?.favored==="outside")return context.trackShift.favored;
+ const inside=S.skills.technique*.31+S.skills.corner*.27+S.skills.setup*.16+S.skills.overtaking*.12;
+ const outside=S.skills.distance*.31+S.skills.overtaking*.26+S.skills.technique*.17+S.skills.corner*.12;
+ const delta=outside-inside+rand(-4,4);
+ if(delta>4)return "outside";
+ if(delta<-4)return "inside";
+ return "balanced";
+}
+function contextualRaceLine(snapshot,phase="distance"){
+ const context=snapshot?.context||{};
+ if(context.trackShift?.favored==="inside"||context.trackShift?.favored==="outside")return context.trackShift.favored;
+ context.linePreference??={};
+ if(context.linePreference[phase])return context.linePreference[phase];
+ const theme=context.theme||"balanced";
+ let line;
+ if(theme==="inside"||theme==="outside")line=theme;
+ else{
+  const inside=S.skills.technique*.32+S.skills.corner*.27+S.skills.setup*.15+S.skills.overtaking*.12;
+  const outside=S.skills.distance*.32+S.skills.overtaking*.27+S.skills.technique*.15+S.skills.corner*.12;
+  const delta=outside-inside+rand(-7,7);
+  line=delta>2?"outside":delta<-2?"inside":(Math.random()<.5?"inside":"outside");
+ }
+ context.linePreference[phase]=line;
+ return line;
 }
 function compatibleDistanceChoices(theme,position,teammate=null){
  let out=[];
@@ -4349,8 +4397,9 @@ function startLeagueRace(startMode,ctx,pair,heatNo,next,startContext=null,startP
   const dc=mentorAdviceContext(pair.away,"distance",pair.own[1],startContext);dc.raceState=startContext.raceState;dc.trackShift=startContext.trackShift;dc.trackShiftChecked=true;snap.context=dc;
   const choices=distanceChoices(snap,{teamRace:true}).map(opt=>{const p=raceOutcomeProbabilities(opt.key,{phase:"distance",rivals:pair.away,teammate:pair.own[1],context:dc,position:snap.position});return {title:opt.title,desc:opt.desc,prob:p,action:()=>finishLeagueRace(opt.key,ctx,pair,heatNo,next,snap,dc,p)}});
   const scoreCtx=importantMatchScoreContext(ctx);
+  const startText=startNarrativeForSnapshot(resolved,snap,{teamRace:true});
   showModal("PIERWSZE OKRĄŻENIE",`Bieg ${heatNo}: jesteś ${snap.position}.`,
-   `${resolved.narrative} ${raceSituationNarrative(snap,{teamRace:true})} ${scoreCtx.note}${currentRaceAdvice(pair.away,"distance",pair.own[1],dc)}`,choices);
+   `${startText} ${compactRaceSituationNarrative(snap,{teamRace:true})} ${scoreCtx.note}${currentRaceAdvice(pair.away,"distance",pair.own[1],dc)}`,choices);
  }});
 }
 function completeLeagueRaceResult(result,ctx,pair,heatNo,next,mode){
@@ -4409,7 +4458,7 @@ function finishLeagueRace(mode,ctx,pair,heatNo,next,snap,c=null,prob=null){
      completeLeagueRaceResult(result,ctx,pair,heatNo,next,opt.key);
     }});
    }}});
-   showModal("KOŃCÓWKA BIEGU",`Jedziesz ${preview.position}.`,`${narrative} ${raceSituationNarrative(preview,{teamRace:true})}${currentRaceAdvice(pair.away,"late",pair.own[1],lateContext)}`,choices);
+   showModal("KOŃCÓWKA BIEGU",`Jedziesz ${preview.position}.`,`${narrative} ${compactRaceSituationNarrative(preview,{teamRace:true})}${currentRaceAdvice(pair.away,"late",pair.own[1],lateContext)}`,choices);
   }});
 }
 function finishPlayableMatch(ctx,next){
@@ -6012,7 +6061,7 @@ function playFiveInteractiveTournamentHeats({key,label,prefix="",startingCyclePo
      const p=raceOutcomeProbabilities(opt.key,{phase:"distance",rivals,context:dc,position:snap.position});
      return {title:opt.title,desc:opt.desc,prob:p,action:()=>middleIndividualRace(opt.key,snap,rivals,dc,p)};
     });
-    showModal("PIERWSZE OKRĄŻENIE",`Jedziesz ${snap.position}.`,`${resolved.narrative} ${raceSituationNarrative(snap)}${currentRaceAdvice(rivals,"distance",null,dc)}`,choices);
+    showModal("PIERWSZE OKRĄŻENIE",`Jedziesz ${snap.position}.`,`${resolved.narrative} ${compactRaceSituationNarrative(snap)}${currentRaceAdvice(rivals,"distance",null,dc)}`,choices);
    }});
   }
 
@@ -6029,7 +6078,7 @@ function playFiveInteractiveTournamentHeats({key,label,prefix="",startingCyclePo
      return {title:opt.title,desc:opt.desc,prob:p,action:()=>finishIndividualRace(opt.key,snapshotFromRaceResult(preview),rivals,lc,p,preview.position)};
     });
     const lateAdvice=currentRaceAdvice(rivals,"late",null,lc);
-    showModal("KOŃCÓWKA BIEGU",`Jedziesz ${preview.position}.`,`${resolved.narrative} ${raceSituationNarrative({...preview,context:lc})}${lateAdvice}`,choices);
+    showModal("KOŃCÓWKA BIEGU",`Jedziesz ${preview.position}.`,`${resolved.narrative} ${compactRaceSituationNarrative({...preview,context:lc})}${lateAdvice}`,choices);
    }});
   }
 
@@ -6598,7 +6647,7 @@ function finalizeNationalEvent(event,scores,playerPoints,playerResults){
  S.national="Polska";S.teamCaps=(S.teamCaps||0)+1;if(place<=3)S.nationalMedals=(S.nationalMedals||0)+1;
  applyMetaDelta("reputation",place===1?7:place<=3?4:1);applyMetaDelta("morale",place<=3?3:-1);S.devPoints+=place<=3?1:0;
  addHistory(event.name,`Reprezentacja Polski kończy zawody na ${place}. miejscu. Twój dorobek: ${playerPoints} pkt. Wyniki: ${nationalStandingsText(scores)}.`);
- return {name:event.name,key:event.name,stage:event.junior?"Reprezentacja U21":"Reprezentacja seniorów",result,points:playerPoints,place,teamScores:{...scores}};
+ return {name:event.name,key:event.name,stage:event.junior?"Reprezentacja U21":"Reprezentacja seniorów",result,points:playerPoints,place,heats:playerResults.length,teamScores:{...scores}};
 }
 function simulateNationalFourTeamEvent(event){
  const teams=nationalFourTeamField(event),scores=Object.fromEntries(teams.map(t=>[t,0])),playerHeats=new Set([2,6,10,14,18]);
@@ -6654,7 +6703,7 @@ function playInteractiveNationalFourTeamEvent(event,done){
     const p=raceOutcomeProbabilities(opt.key,{phase:"distance",rivals,context:dc,position:snap.position});
     return {title:opt.title,desc:opt.desc,prob:p,action:()=>middleNational(opt.key,p,dc,snap,entrants,rivals,target)};
    });
-   showModal("PIERWSZE OKRĄŻENIE",`Jedziesz ${snap.position}.`,`${raceSituationNarrative(snap)}${currentRaceAdvice(rivals,"distance",null,dc)}`,choices);
+   showModal("PIERWSZE OKRĄŻENIE",`Jedziesz ${snap.position}.`,`${compactRaceSituationNarrative(snap)}${currentRaceAdvice(rivals,"distance",null,dc)}`,choices);
   }});
  }
 
@@ -7047,17 +7096,25 @@ function leagueSeasonLabel(record){
  return `${place}. miejsce${promotion}${relegation}`;
 }
 function canonicalCompetitionKey(entry){
- const name=entry.key||entry.name||"";
+ const explicitName=String(entry?.name||"");
+ // Nazwa zawodów ma pierwszeństwo dla typów, które w 1.02 mogły dostać błędny klucz SGP.
+ // Dzięki temu poprawnie migrują także archiwa już zapisanych karier.
+ if(/Drużynowe Mistrzostwa Świata Juniorów/.test(explicitName))return "DMŚJ";
+ if(/Mistrzostwa Świata Juniorów — SGP2/.test(explicitName))return "SGP2";
+ if(/Drużynowe Mistrzostwa Polski Juniorów/.test(explicitName))return "DMPJ";
+ if(/Drużynowy Puchar Świata/.test(explicitName))return "DPŚ";
+ if(/Drużynowe Mistrzostwa Europy/.test(explicitName))return "DME";
+ const name=entry?.key||explicitName||"";
  if(name==="IMP Wild Card"||/IMP.*dzika karta/i.test(name))return "IMP Wild Card";
- if(name==="Speedway Grand Prix"||/Mistrzostwa Świata/.test(name))return "SGP";
+ if(name==="SGP2")return "SGP2";
+ if(name==="DMPJ")return "DMPJ";
+ if(name==="DPŚ")return "DPŚ";
+ if(name==="DME")return "DME";
+ if(name==="DMŚJ")return "DMŚJ";
+ if(name==="Speedway Grand Prix"||name==="SGP"||/^Mistrzostwa Świata$/i.test(name)||/^Indywidualne Mistrzostwa Świata$/i.test(name))return "SGP";
  if(name==="SEC"||/Euro Championship/.test(name))return "SEC";
  if(name==="IMP"||/Indywidualne Mistrzostwa Polski$/.test(name))return "IMP";
  if(/Młodzieżowe Indywidualne Mistrzostwa Polski/.test(name))return "MIMP";
- if(name==="SGP2"||/Mistrzostwa Świata Juniorów — SGP2/.test(name))return "SGP2";
- if(/Drużynowe Mistrzostwa Polski Juniorów/.test(name))return "DMPJ";
- if(/Drużynowy Puchar Świata/.test(name))return "DPŚ";
- if(/Drużynowe Mistrzostwa Europy/.test(name))return "DME";
- if(/Drużynowe Mistrzostwa Świata Juniorów/.test(name))return "DMŚJ";
  if(/Grand Prix Challenge/.test(name))return "GP Challenge";
  return name;
 }
@@ -7712,14 +7769,16 @@ function postSeasonMarket(pph){
  updateClubFinances();
  const current=clubDisplayName(S.club),currentLeague=S.league,currentLevel=leagueByName(currentLeague)?.level||3;
  const star=overall()>=84||S.reputation>=75||isQualifiedForCurrentSGP()||pph>=2.0;
- const currentRole=star?"Podstawowy zawodnik":pph>1.65?"Rotacja":"Rezerwowy / rozwój";
- const currentProjected=projectedLineupChance(current,currentLeague,{stay:true,role:currentRole});
+ const initialCurrentRole=star?"Podstawowy zawodnik":pph>1.65?"Rotacja":"Rezerwowy / rozwój";
+ let currentProjected=projectedLineupChance(current,currentLeague,{stay:true,role:initialCurrentRole});
+ const currentRole=currentProjected>=55?"Podstawowy zawodnik":currentProjected>=25?"Rotacja":"Rezerwowy / rozwój";
+ currentProjected=projectedLineupChance(current,currentLeague,{stay:true,role:currentRole});
  const wantsScore=S.clubRelation+S.loyalty*.30+pph*16+S.reputation*.12+rand(-10,14);
  // Obecny klub zna zawodnika, dlatego częściej daje mu szansę na przedłużenie niż obcy klub.
  const wants=wantsScore>48||currentProjected>=18||S.age<=21&&S.clubRelation>=42;
  const options=[];
  if(wants){
-  const role=star?"Podstawowy zawodnik":currentProjected>=55?"Podstawowy zawodnik":currentProjected>=25?"Rotacja":"Rezerwowy / rozwój";
+  const role=currentProjected>=55?"Podstawowy zawodnik":currentProjected>=25?"Rotacja":"Rezerwowy / rozwój";
   const salary=clubOfferSalary(current,currentLeague,role,pph,{stay:true});
   const prep=preparationMoney(salary,current,currentLeague,role,{transfer:false});
   options.push(clubOffer(current,currentLeague,50,role,salary,prep,drawContractYears({young:S.age<=24,star:overall()>=82}),true));
@@ -8545,7 +8604,7 @@ function mentorAllowedAdviceKeys(phase="distance",teammate=null,context={}){
 function raceDecisionChoices(snapshot,{teamRace=false,phase="distance"}={}){
  const position=snapshot.position,context=snapshot.context||{},theme=context.theme||"balanced",order=snapshot.order||snapshot.scores||context.order||[];
  const mate=teamRace?order.find(x=>x.side==="own"&&!x.player):null,matePos=mate?order.indexOf(mate)+1:null,teammateDirectlyAhead=teamRace&&matePos===position-1,teamOneTwo=teamRace&&position===2&&matePos===1;
- const lineKey=theme==="outside"?"outside":"inside";
+ const lineKey=contextualRaceLine(snapshot,phase);
  let choices=[];
  if(phase==="late"){
   if(position===1)choices=[
@@ -8678,14 +8737,21 @@ createPlayer=function(){
 };
 
 function clearCareerSavesAndReload(){
- const keys=["pss_v102","pss_v101","pss_v100","pzs_v200","pzs_v1361","pzs_v136","pzs_v135","pzs_v134","pzs_v1331","pzs_v133","pzs_v132","pzs_v131","pzs_v1301","pzs_v130","pzs_v129","pzs_v128","pzs_v127","pzs_v126","pzs_v1252","pzs_v1251","pzs_v125","pzs_v124","pzs_v123","pzs_v122","pzs_v121","pzs_v120","pzs_v119","pzs_v118","pzs_v117","pzs_v116","pzs_v115","pzs_v114","pzs_v113","pzs_v112","pzs_v111","pzs_v110","pzs_v109","pzs_v108","pzs_v107","pzs_v106","pzs_v105","pzs_v104","pzs_v103","pzs_v102","pzs_v101","pzs_v100","pzs_v305","pzs_v304","pzs_v303","pzs_v302","pzs_v301","pzs_final30","pzs_v30","pzs_v29","pzs_v28","pzs_v27","pzs_v26","pzs_v25","pzs_v24","pzs_v23","pzs_v22","pzs_v2"];
+ const keys=["pss_v1021","pss_v102","pss_v101","pss_v100","pzs_v200","pzs_v1361","pzs_v136","pzs_v135","pzs_v134","pzs_v1331","pzs_v133","pzs_v132","pzs_v131","pzs_v1301","pzs_v130","pzs_v129","pzs_v128","pzs_v127","pzs_v126","pzs_v1252","pzs_v1251","pzs_v125","pzs_v124","pzs_v123","pzs_v122","pzs_v121","pzs_v120","pzs_v119","pzs_v118","pzs_v117","pzs_v116","pzs_v115","pzs_v114","pzs_v113","pzs_v112","pzs_v111","pzs_v110","pzs_v109","pzs_v108","pzs_v107","pzs_v106","pzs_v105","pzs_v104","pzs_v103","pzs_v102","pzs_v101","pzs_v100","pzs_v305","pzs_v304","pzs_v303","pzs_v302","pzs_v301","pzs_final30","pzs_v30","pzs_v29","pzs_v28","pzs_v27","pzs_v26","pzs_v25","pzs_v24","pzs_v23","pzs_v22","pzs_v2"];
  keys.forEach(k=>localStorage.removeItem(k));location.reload();
 }
 function showCareerEndSupportPopup(){
- const card=$("careerSummaryCard");
- card?.scrollIntoView?.({behavior:"smooth",block:"start"});
- const actions=$("careerEndActions");
+ const card=$("careerSummaryCard"),actions=$("careerEndActions");
  if(actions){actions.classList.add("career-end-actions-highlight");setTimeout(()=>actions.classList.remove("career-end-actions-highlight"),1800)}
+ showModal(
+  "KONIEC KARIERY",
+  "Co dalej?",
+  "Pełne podsumowanie kariery pozostaje na ekranie poniżej. Możesz od razu rozpocząć nową karierę albo dobrowolnie wesprzeć dalszy rozwój gry.",
+  [
+   {title:"Nowa kariera",desc:"Rozpocznij nową historię zawodnika.",action:()=>{if(confirm("Rozpocząć nową karierę? Obecny zapis zostanie usunięty.")){closeModal();clearCareerSavesAndReload()}}},
+   {title:"Postaw kawę ☕",desc:"Dobrowolnie wesprzyj rozwój Polish Speedway Simulator.",action:()=>{window.open("https://www.naffy.io/piotr-bak-qwihy/postaw-kawe","_blank","noopener,noreferrer");closeModal();card?.scrollIntoView?.({behavior:"smooth",block:"start"})}}
+  ]
+ );
 }
 function installPSS102RuntimeStyles(){
  if(document.getElementById("pss102-runtime-styles"))return;
@@ -8774,8 +8840,8 @@ installPSS102RuntimeStyles();
 const saved=load();if(saved){S=saved;S.seasonFlowActive=false;normalize();repairLegacyStuckSeason();repairMaxedMetaSave();save();render()}
 
 // ============================================================================
-// Polish Speedway Simulator 1.02 — REBUILD 25.08.2026
-// Kolejna rewizja 1.02: trajektorie karier, spójność ruletki, finanse turniejowe,
+// Polish Speedway Simulator 1.02.1 — PATCH 25.08.2026
+// Wersja 1.02.1: poprawki DMŚJ, mentorów/linii, narracji biegów i końca kariery,
 // Speedway of Nations i dodatkowe możliwości wydawania nadwyżek finansowych.
 // ============================================================================
 (() => {
@@ -9060,7 +9126,8 @@ const saved=load();if(saved){S=saved;S.seasonFlowActive=false;normalize();repair
    return `Dobrze realizujesz plan na start i po pierwszym łuku jedziesz na ${target}. miejscu.`;
   }
   if(target===4)return "Nie trafiasz ze startem. Po pierwszym łuku jesteś czwarty i musisz odrabiać.";
-  return `Start nie układa się po twojej myśli. Po pierwszym łuku jesteś na ${target}. miejscu.`;
+  if(target===3)return "Start nie wychodzi idealnie. Po pierwszym łuku układasz się na 3. pozycji.";
+  return "Nie trafiasz idealnie ze startem, ale po pierwszym łuku jesteś drugi.";
  }
 
  resolveSportEffect=function(mode,execution,{phase="distance",rivals=[],context={},position=4}={}){
@@ -9223,12 +9290,13 @@ const saved=load();if(saved){S=saved;S.seasonFlowActive=false;normalize();repair
  }
  function normalizeFinanceKey(result){
   const k=canonicalCompetitionKey(result);
-  if(k==="SGP")return "SGP";if(k==="SEC")return "SEC";if(k==="IMP")return "IMP";if(k==="SGP2")return "SGP2";
-  if(k==="MIMP")return "MIMP";if(k==="GP Challenge")return "GP Challenge";
-  return result?.key||result?.name||k;
+  // Zawsze bazujemy na kanonicznym typie zawodów. To chroni DMŚJ i inne imprezy
+  // przed przypadkowym wejściem w rozliczenie cyklu tylko przez podobną nazwę.
+  return k||result?.key||result?.name||"";
  }
+ function isFinancialSeriesKey(key){return ["SGP","SEC","IMP","SGP2"].includes(key)}
  function roundPlacesForResult(result,key){
-  if(["SGP","SEC","IMP","SGP2"].includes(key)){
+  if(isFinancialSeriesKey(key)){
    // roundData jest technicznym polem wyniku: przechowuje faktyczne miejsca rund,
    // nawet gdy tekstowy `details` służy wyłącznie do narracji.
    if(Array.isArray(result.roundData)&&result.roundData.length){
@@ -9253,12 +9321,47 @@ const saved=load();if(saved){S=saved;S.seasonFlowActive=false;normalize();repair
  function teamPrize(result,key){
   const place=Number(result.place||99),heats=Number(result.heats||0);
   if(key==="DMPJ")return (place===1?11000:place===2?7500:place===3?5500:place===4?3000:1800)+Math.min(5000,heats*250);
-  if(key==="DMŚJ")return 5500+heats*1500+(place===1?30000:place===2?20500:place===3?15000:0);
+  if(key==="DMŚJ")return 4000+Math.min(3000,heats*600)+(place===1?22000:place===2?15000:place===3?10000:0);
   if(key==="DME")return 11000+heats*2250+(place===1?60000:place===2?41000:place===3?26000:0);
   if(key==="DPŚ")return 11000+heats*3750+(place===1?110000:place===2?75000:place===3?52000:0);
   if(key==="SoN")return 11000+heats*3750+(place===1?98000:place===2?67500:place===3?45000:0);
   return 0;
  }
+ function repairLegacyDMWJFinance(){
+  const state=ensureRebuildState();
+  if(!state||state.dmwjFinanceRepair1021)return;
+  const bad=(state.cycleFinance||[]).filter(x=>x?.key==="SGP"&&/Drużynowe Mistrzostwa Świata Juniorów/i.test(String(x.competition||"")));
+  let correction=0,currentYearCorrection=0,repaired=0;
+  for(const old of bad){
+   const current=(S.competitions||[]).find(r=>/Drużynowe Mistrzostwa Świata Juniorów/i.test(String(r?.name||""))&&Number(old.year||S.year)===S.year);
+   const archived=(S.careerStats?.competitionArchive||[]).find(r=>Number(r.year)===Number(old.year)&&/Drużynowe Mistrzostwa Świata Juniorów/i.test(String(r?.name||"")));
+   const source=current||archived||{};
+   const place=Number(source.place||99);
+   const match=String(source.result||"").match(/(\d+)\s*pkt\s*w\s*(\d+)\s*bieg/i);
+   const heats=Number(source.heats||match?.[2]||0);
+   const corrected=4000+Math.min(3000,heats*600)+(place===1?22000:place===2?15000:place===3?10000:0);
+   const excess=Math.max(0,Number(old.total||0)-corrected);
+   correction+=excess;if(Number(old.year)===S.year)currentYearCorrection+=excess;repaired++;
+   for(const [ledgerKey,finance] of Object.entries(state.competitionFinanceLedger||{})){
+    if(finance?.key==="SGP"&&Number(finance.year)===Number(old.year)&&Number(finance.total)===Number(old.total)&&/Reprezentacja U21/.test(ledgerKey))delete state.competitionFinanceLedger[ledgerKey];
+   }
+   if(current){
+    const finance={year:S.year,key:"DMŚJ",total:corrected,basePrize:corrected,roundsPrize:0,seasonBonus:0,sponsorBonus:0,roundsExpected:1,roundsParticipated:1,podiums:0,wins:0};
+    state.competitionFinanceLedger[rewardLedgerKey(current,"DMŚJ")]=finance;current.finance=finance;
+   }
+  }
+  if(repaired){
+   state.cycleFinance=(state.cycleFinance||[]).filter(x=>!(x?.key==="SGP"&&/Drużynowe Mistrzostwa Świata Juniorów/i.test(String(x.competition||""))));
+   if(correction>0){
+    S.budget=Math.max(0,(S.budget||0)-correction);
+    if(S.totals)S.totals.earnings=Math.max(0,(S.totals.earnings||0)-correction);
+    if(S.season&&currentYearCorrection>0)S.season.tournamentEarnings=Math.max(0,(S.season.tournamentEarnings||0)-currentYearCorrection);
+    addHistory("Korekta finansów",`Wersja 1.02.1 usuwa błędne rozliczenie DMŚJ jako cyklu SGP. Skorygowano zawyżone premie o ${money(correction)}.`);
+   }
+  }
+  state.dmwjFinanceRepair1021=true;
+ }
+
  function oneDayPrize(result,key){
   if(key==="SGP Wild Card")return prizeForPlace(ROUND_PRIZES.SGP,Number(result.roundPlace||result.place||99));
   if(key==="SEC Wild Card")return prizeForPlace(ROUND_PRIZES.SEC,Number(result.roundPlace||result.place||99));
@@ -9271,7 +9374,7 @@ const saved=load();if(saved){S=saved;S.seasonFlowActive=false;normalize();repair
   if(!result)return null;const state=ensureRebuildState(),key=normalizeFinanceKey(result),ledgerKey=rewardLedgerKey(result,key);
   if(state.competitionFinanceLedger[ledgerKey]){result.finance=state.competitionFinanceLedger[ledgerKey];return result.finance}
   let roundsPrize=0,seasonBonus=0,basePrize=0,roundPlaces=[];
-  if(["SGP","SEC","IMP","SGP2"].includes(key)){
+  if(isFinancialSeriesKey(key)){
    roundPlaces=roundPlacesForResult(result,key);roundsPrize=roundPlaces.reduce((s,p)=>s+prizeForPlace(ROUND_PRIZES[key],p),0);
    seasonBonus=prizeForPlace(SERIES_BONUS[key],Number(result.place||99));
   }else{
@@ -9283,7 +9386,7 @@ const saved=load();if(saved){S=saved;S.seasonFlowActive=false;normalize();repair
   const podium=Number(result.place||result.roundPlace||99)<=3;
   const sponsorBonus=podium&&subtotal>0&&Math.random()<.24?Math.round(subtotal*triangular(.08,.12,.18)/500)*500:0;
   const total=subtotal+sponsorBonus;
-  const roundsExpected=expectedRounds(result,key),roundsParticipated=roundPlaces.length||(["SGP","SEC","IMP","SGP2"].includes(key)?Math.min(roundsExpected,Number(String(result.stage||"").match(/(\d+)/)?.[1]||roundsExpected)):1);
+  const roundsExpected=expectedRounds(result,key),roundsParticipated=roundPlaces.length||(isFinancialSeriesKey(key)?Math.min(roundsExpected,Number(String(result.stage||"").match(/(\d+)/)?.[1]||roundsExpected)):1);
   const podiums=roundPlaces.filter(p=>p<=3).length,wins=roundPlaces.filter(p=>p===1).length;
   const finance={year:S.year,key,total,basePrize,roundsPrize,seasonBonus,sponsorBonus,roundsExpected,roundsParticipated,podiums,wins};
   state.competitionFinanceLedger[ledgerKey]=finance;result.finance=finance;
@@ -9292,12 +9395,12 @@ const saved=load();if(saved){S=saved;S.seasonFlowActive=false;normalize();repair
    if(S.season){S.season.tournamentEarnings=(S.season.tournamentEarnings||0)+total}
    addHistory("Nagroda finansowa",`${result.name||key}: ${money(total)}${sponsorBonus?` (w tym ${money(sponsorBonus)} premii sponsorskiej)`:""}.`);
   }
-  if(["SGP","SEC","IMP","SGP2"].includes(key))state.cycleFinance.push({competition:result.name||key,...finance});
+  if(isFinancialSeriesKey(key))state.cycleFinance.push({competition:result.name||key,...finance});
   return finance;
  }
  function competitionFinanceHtml(result){
   const f=result?.finance;if(!f||!f.total)return "";
-  if(["SGP","SEC","IMP","SGP2"].includes(f.key)){
+  if(isFinancialSeriesKey(f.key)){
    return `<div class="competition-finance-summary"><b>Rozliczenie cyklu:</b><br>Udział w rundach: <b>${f.roundsParticipated}/${f.roundsExpected}</b> • zwycięstwa: <b>${f.wins}</b> • podia: <b>${f.podiums}</b><br>Nagrody za rundy: <b>${money(f.roundsPrize)}</b> • premia za klasyfikację końcową: <b>${money(f.seasonBonus)}</b>${f.sponsorBonus?` • premie sponsorskie: <b>${money(f.sponsorBonus)}</b>`:""}<br><b>Łączna gratyfikacja za cykl: ${money(f.total)}</b></div>`;
   }
   return `<div class="competition-finance-summary"><b>Gratyfikacja finansowa:</b> ${money(f.total)}${f.sponsorBonus?` (w tym ${money(f.sponsorBonus)} premii sponsorskiej)`:""}.</div>`;
@@ -9437,11 +9540,11 @@ const saved=load();if(saved){S=saved;S.seasonFlowActive=false;normalize();repair
   @media(max-width:680px){.competition-finance-summary{font-size:12px;padding:8px 9px}.roller-sport-effect{font-size:.92rem}}
  `;if(!document.getElementById(extra.id))document.head.appendChild(extra);
 
- if(S?.skills){ensureRebuildState();normalize();save();render()}
+ if(S?.skills){ensureRebuildState();repairLegacyDMWJFinance();normalize();save();render()}
 })();
 
 // ============================================================================
-// PSS 1.02 — FINALNE UZUPEŁNIENIE DANYCH CYKLI
+// PSS 1.02.1 — UZUPEŁNIENIE DANYCH CYKLI
 // Zachowuje pełne miejsca rund dla późniejszego rozliczenia finansowego.
 // ============================================================================
 (() => {

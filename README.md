@@ -1,52 +1,29 @@
 # Polish Speedway Simulator
 
-## Wersja 1.02 — przebudowana
+## Wersja 1.02.1
 
-Ta paczka ponownie używa numeru **1.02**, ale zawiera pełną przebudowę najważniejszych mechanizmów zgłoszonych podczas testów kariery i biegów interaktywnych.
+Poprawkowe wydanie bazujące na przebudowanej wersji 1.02. Zachowuje nowy model progresji kariery, interaktywne biegi, finanse turniejowe i pozostałe mechanizmy 1.02, a naprawia błędy ujawnione podczas kolejnych pełnych karier testowych.
 
-### Najważniejsze zmiany
+### Najważniejsze poprawki 1.02.1
 
-- **Przebudowana trajektoria kariery** — typowa kariera znacznie częściej ma układ: rozwój → szczyt / plateau → regres. Peak na samym końcu kariery ma być wyjątkiem, a nie regułą. Nadal możliwe są wcześni fenomeni, późny rozkwit, stagnacja, odbudowa i rzadka druga młodość.
-- **Mocniejsza biologiczna korekta po peaku** działa na konkretne statystyki, a nie przez sztuczne odejmowanie OVR. Rozwój po szczycie jest dużo trudniejszy, a bardzo mocna regularna konkurencja częściej pomaga utrzymać poziom niż dalej bez końca go podnosić.
-- **Jakość rywali wpływa na rozwój** — regularna jazda przeciw mocniejszym zawodnikom daje lepszy bodziec niż identyczna liczba biegów w słabszej stawce. Liczy się jednak również faktyczna liczba startów, więc ławka w wyższej lidze nie jest automatycznie lepsza od regularnej jazdy poziom niżej.
-- **Kondycja nie pompuje się automatycznie do 99**. Baza treningowa i drogie zaplecze rozkładają korzyści również na start, technikę, dystans, ustawienia i psychikę.
-- Zachowano i dopracowano **warunkowe wydarzenia rozwojowe**: przełom techniczny, złapany rytm, ściana rozwoju, przebudowa stylu, zgranie z mechanikiem, kryzys pewności siebie, adaptacja po kontuzji, późne zrozumienie żużla, przeciążenie kalendarzem i wpływ nowego środowiska po transferze.
+- **DMŚJ nie jest cyklem.** Drużynowe Mistrzostwa Świata Juniorów są traktowane jako impreza reprezentacyjna z ewentualnymi eliminacjami i finałem. Nie pojawia się już fikcyjne „10/10” czy „12/12 rund”, liczba podiów w cyklu ani premia za klasyfikację końcową cyklu.
+- Naprawiono klasyfikację nazw zawodów: konkretne imprezy juniorskie i drużynowe są rozpoznawane przed ogólnym określeniem „Mistrzostwa Świata”. Dzięki temu **DMŚJ nie może zostać pomylone z SGP**.
+- **Obniżono gratyfikacje DMŚJ** do poziomu juniorskiej imprezy reprezentacyjnej. Przykładowo srebro przy pięciu startach daje około 22 tys. zł przed ewentualnym niewielkim bonusem sponsora, a nie setki tysięcy złotych.
+- Dodano twardą listę cykli finansowych: tylko **SGP, SEC, IMP i SGP2** mogą korzystać z rozliczenia sezonowego X/Y rund, podiów, zwycięstw i premii końcowej.
+- Na końcu kariery ponownie pojawia się **automatyczny pop-up z dwiema opcjami: „Nowa kariera” i „Postaw kawę”**. Te same dwa wybory pozostają również na stałym ekranie podsumowania kariery.
+- Na desktopie delikatnie zwiększono rozmiar tekstu przycisku **„Nowa kariera”** przy końcowym podsumowaniu.
+- Usunięto wyraźny **bias podpowiedzi mentora w stronę krawężnika**. Techniczny tor lub wymagający pierwszy łuk nie są już automatycznie utożsamiane z jazdą po wewnętrznej, a wybór linii mocniej zależy od realnych cech zawodnika i aktualnego stanu toru.
+- Neutralne motywy `balanced`, `safe` i podobne nie wpadają już automatycznie w krawężnik jako domyślny fallback. Linia wewnętrzna i szeroka są wybierane kontekstowo dla danej fazy biegu.
+- Poprawiono **narrację przy układzie 5:1**. Jeśli po pierwszym łuku gracz jedzie drugi za partnerem i drużyna ma podwójne prowadzenie, gra nie mówi już, że „start nie układa się po twojej myśli”.
+- Ograniczono powtarzanie tej samej informacji o pozycji i układzie biegu w nagłówku, opisie i kolejnym zdaniu.
+- Na rynku transferowym rola zawodnika jest mocniej powiązana z **prognozą jazdy**. Oferta pozostania może nadal wynikać z lojalności i dobrej relacji z klubem, ale prognoza rzędu kilku procent nie powinna być opisana jako pewna rola „Podstawowego zawodnika”.
+- Zachowano przebudowany model progresji z 1.02: częste kariery mają naturalny układ **rozwój → peak / plateau → regres**, ale nadal możliwe są późny rozkwit, wcześniejszy szczyt, długa stabilizacja, odbudowa, druga młodość i wyjątkowa długowieczność.
 
-### Interaktywne biegi
+### Zapis gry
 
-- **Procent przy decyzji oznacza realną szansę powodzenia konkretnego zamiaru.** Udany atak daje awans, udana obrona utrzymuje pozycję, a niepowodzenie nie może normalnie przynieść lepszego skutku niż sukces.
-- Szanse są liczone z uwzględnieniem m.in. OVR gracza i rywali, właściwych umiejętności, formy dnia, toru, ustawień, sprzętu, teamu/mechanika, mentora, aktualnej pozycji i charakteru decyzji.
-- **Wyjątkowy sukces jest częścią całej puli powodzenia** i nie może być częstszy od zwykłego sukcesu.
-- **Start ma osobną logikę**: wszyscy ruszają równocześnie, więc wynik startu dopiero ustala kolejność po pierwszym łuku. Nie ma narracji typu „spadasz z 2. na 3.” względem pola startowego.
-- Usunięto paradoksy typu **niepowodzenie najbezpieczniejszej strategii → P1** bez wyraźnego zdarzenia po stronie rywali.
-- Stan biegu jest **ciągły między kolejnymi decyzjami** — pozycje nie są losowane od zera po każdym etapie. Duża nagła zmiana układu wymaga rzeczywistego, opisanego incydentu.
-- **Mentor poleca tylko dostępne strategie**. Jeśli sensowna rekomendacja nie mieści się w podstawowych trzech wariantach, gra może dodać czwartą opcję.
-- **Wynik ruletki nie jest zdradzany przed końcem animacji**. Etykieta rezultatu, opis sportowego skutku i przycisk „Kontynuuj” pojawiają się dopiero po pełnym zatrzymaniu losowania.
-- Narracja meczowa uwzględnia **wynik dwumeczu i liczbę pozostałych biegów**, zamiast automatycznie sugerować zbliżające się zwycięstwo.
+Wersja 1.02.1 używa klucza `pss_v1021` i automatycznie migruje zapis z `pss_v102`, `pss_v101` oraz starszych obsługiwanych wersji.
 
-### Turnieje i reprezentacja
-
-- Dodano okresową możliwość startu w **Speedway of Nations**: 3 zawodników w kadrze, 7 reprezentacji w finale, a zawodnik podstawowej pary może pojechać **6 biegów** — po jednym przeciw każdemu z sześciu rywali narodowych.
-- Wszystkie ważniejsze zawody pozaligowe otrzymały **gratyfikacje finansowe** dopasowane do prestiżu, etapu i wyniku. Stawki są celowo umiarkowane, żeby kontrakt ligowy pozostał głównym źródłem dochodu.
-- Dla cykli **SGP, SEC, IMP i SGP2** późniejszy ekran wyniku pokazuje rozliczenie: udział w rundach X/Y, zwycięstwa, podia, nagrody za rundy, premię końcową, ewentualny bonus sponsora i łączną kwotę.
-- Pełne rozliczenie finansowe cyklu **nie pojawia się na ekranie celebracji/„wybuchającym”**, tylko w spokojnym późniejszym ekranie informacyjnym.
-
-### Finanse i team
-
-- Dodano droższe sposoby wykorzystania nadwyżek budżetowych: program tunerski i silnik rezerwowy, prywatne testy torowe, regenerację premium oraz pełny program profesjonalnego teamu.
-- Są to **money sinki z malejącą korzyścią**, a nie możliwość kupienia sobie OVR 99.
-
-### UI
-
-- Po rozpoczęciu kariery widok wraca na samą górę strony.
-- Mobilne podsumowanie „Sezon po sezonie” pozostaje **zwartą tabelą**, aby łatwiej zmieścić historię kariery na 1–2 zrzutach ekranu.
-- Na końcu kariery pozostają dwa wyraźne wybory: **„Nowa kariera”** oraz istniejący przycisk/grafika **„Postaw kawę”**.
-
-## Zapis gry
-
-Wersja 1.02 używa klucza `pss_v102`. Gra zachowuje migrację z `pss_v101` oraz starszych obsługiwanych zapisów.
-
-## Pliki wydania
+### Pliki wydania
 
 Do publikacji potrzebne są:
 
@@ -57,9 +34,9 @@ Do publikacji potrzebne są:
 - `social-preview.jpg`
 - `speedway-emblem.png`
 
-Trzy pliki graficzne nie zostały zmienione. Jeśli podmieniasz istniejący deployment, pozostaw je na serwerze i wgraj nowe `index.html`, `style.css`, `app.js` oraz `README.md`.
+Trzy pliki graficzne nie zostały zmienione. Przy aktualizacji istniejącego deploymentu wystarczy pozostawić je na serwerze i podmienić `index.html`, `style.css`, `app.js` oraz opcjonalnie `README.md`.
 
-## Publikacja
+### Publikacja
 
 Gra jest statyczna i nie wymaga procesu buildowania. Może być publikowana m.in. na Vercel, GitHub Pages, Netlify lub Cloudflare Pages.
 
