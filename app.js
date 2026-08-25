@@ -3386,7 +3386,7 @@ function suggestedRaceOption(rivals,phase="start",teammate=null,context={}){
   let val=0;
   if(phase==="start"){
    if(choice==="attack")val=S.skills.starts*.52+S.skills.corner*.27+S.skills.mental*.12+S.equipment*.05;
-   if(choice==="inside")val=S.skills.corner*.37+S.skills.technique*.27+S.skills.starts*.23+S.skills.mental*.09;
+   if(choice==="inside")val=S.skills.corner*.40+S.skills.technique*.28+S.skills.starts*.22+S.skills.mental*.08;
    if(choice==="outside")val=S.skills.distance*.28+S.skills.corner*.24+S.skills.technique*.24+S.skills.overtaking*.16;
    if(choice==="safe")val=S.skills.mental*.38+S.skills.starts*.22+S.skills.technique*.20+S.skills.setup*.12;
   }else{
@@ -3397,13 +3397,9 @@ function suggestedRaceOption(rivals,phase="start",teammate=null,context={}){
    if(choice==="safe")val=S.skills.mental*.40+S.skills.technique*.24+S.skills.distance*.14+S.skills.setup*.12;
   }
   if(track?.skill){
-   const match={starts:"attack",distance:"outside",overtaking:"attack",setup:"safe",mental:"safe",fitness:"outside"}[track.skill];
+   const match={starts:"attack",corner:"inside",distance:"outside",technique:"inside",overtaking:"attack",setup:"safe",mental:"safe",fitness:"outside"}[track.skill];
    if(choice===match)val+=5;
-   // Sam „techniczny” tor ani wymagający pierwszy łuk nie oznaczają automatycznie krawężnika.
-   if((track.skill==="corner"||track.skill==="technique")&&(choice==="inside"||choice==="outside"))val+=2;
   }
-  if(context.trackShift?.favored===choice)val+=8;
-  if(context.trackShift?.hurt===choice)val-=6;
   if(avgRival>overall()+6&&choice==="safe")val+=3;
   if(avgRival<overall()-5&&choice==="attack")val+=2;
   if(val>bestValue){bestValue=val;best=choice}
@@ -3420,9 +3416,6 @@ function raceAdviceText(rivals,phase="start",teammate=null,context={}){
  }
  const alternatives=allowed.filter(x=>x!==correct);
  const suggested=Math.random()<q.accuracy||!alternatives.length?correct:pick(alternatives);
- context.mentorSuggestionHistory??=[];
- context.mentorSuggestionHistory.push(suggested);
- if(context.mentorSuggestionHistory.length>4)context.mentorSuggestionHistory.shift();
  const precision=q.accuracy>=.9?"Jest niemal pewien, że warto":q.accuracy>=.82?"Wyraźnie sugeruje":q.accuracy>=.70?"Podpowiada":"Sugeruje, by";
  const html=`<p class="race-advice"><b>${q.source}:</b> ${precision} ${mentorAdviceLabel(suggested,phase,context)}.</p>`;
  context.advice={suggested,correct,quality:q,phase,html};
@@ -3790,23 +3783,6 @@ function raceSituationNarrative(snapshot,{teamRace=false}={}){
   }
  }
  return parts.join(" ");
-}
-function compactRaceSituationNarrative(snapshot,{teamRace=false}={}){
- const order=snapshot?.order||snapshot?.scores||[],position=snapshot.position;
- if(teamRace){
-  const me=order.findIndex(x=>x.player),mate=order.findIndex(x=>x.side==="own"&&!x.player);
-  if(me===1&&mate===0)return "Przed tobą jedzie kolega z pary, a rywale są za wami.";
-  if(me===0&&mate===1)return "Tuż za tobą jedzie kolega z pary, a rywale są za wami.";
- }
- return raceSituationNarrative(snapshot,{teamRace}).replace(/^Jedziesz \d+\.\s*/,"");
-}
-function startNarrativeForSnapshot(resolved,snapshot,{teamRace=false}={}){
- if(!teamRace)return resolved.narrative;
- const order=snapshot?.order||snapshot?.scores||[],me=order.findIndex(x=>x.player),mate=order.findIndex(x=>x.side==="own"&&!x.player);
- if((me===0&&mate===1)||(me===1&&mate===0)){
-  return me===0?"Po pierwszym łuku wychodzicie na podwójne prowadzenie — prowadzisz przed kolegą z drużyny.":"Po pierwszym łuku wychodzicie na podwójne prowadzenie — przed tobą jedzie kolega z drużyny, a rywale są za wami.";
- }
- return resolved.narrative;
 }
 function maybeShiftTrackConditions(context,phase="distance"){
  if(context.trackShiftChecked)return context.trackShift;
@@ -4217,30 +4193,8 @@ function resolveRaceDecision(mode,{phase="distance",rivals=[],teammate=null,cont
 }
 
 function tacticalThemeForRace(rivals,teammate=null,context={}){
- if(context.trackShift?.favored==="inside"||context.trackShift?.favored==="outside")return context.trackShift.favored;
- const inside=S.skills.technique*.31+S.skills.corner*.27+S.skills.setup*.16+S.skills.overtaking*.12;
- const outside=S.skills.distance*.31+S.skills.overtaking*.26+S.skills.technique*.17+S.skills.corner*.12;
- const delta=outside-inside+rand(-4,4);
- if(delta>4)return "outside";
- if(delta<-4)return "inside";
- return "balanced";
-}
-function contextualRaceLine(snapshot,phase="distance"){
- const context=snapshot?.context||{};
- if(context.trackShift?.favored==="inside"||context.trackShift?.favored==="outside")return context.trackShift.favored;
- context.linePreference??={};
- if(context.linePreference[phase])return context.linePreference[phase];
- const theme=context.theme||"balanced";
- let line;
- if(theme==="inside"||theme==="outside")line=theme;
- else{
-  const inside=S.skills.technique*.32+S.skills.corner*.27+S.skills.setup*.15+S.skills.overtaking*.12;
-  const outside=S.skills.distance*.32+S.skills.overtaking*.27+S.skills.technique*.15+S.skills.corner*.12;
-  const delta=outside-inside+rand(-7,7);
-  line=delta>2?"outside":delta<-2?"inside":(Math.random()<.5?"inside":"outside");
- }
- context.linePreference[phase]=line;
- return line;
+ const p=suggestedRaceOption(rivals,"start",teammate,context);
+ return p==="inside"?"inside":p==="outside"?"outside":p==="attack"?"attack":"balanced";
 }
 function compatibleDistanceChoices(theme,position,teammate=null){
  let out=[];
@@ -4397,9 +4351,8 @@ function startLeagueRace(startMode,ctx,pair,heatNo,next,startContext=null,startP
   const dc=mentorAdviceContext(pair.away,"distance",pair.own[1],startContext);dc.raceState=startContext.raceState;dc.trackShift=startContext.trackShift;dc.trackShiftChecked=true;snap.context=dc;
   const choices=distanceChoices(snap,{teamRace:true}).map(opt=>{const p=raceOutcomeProbabilities(opt.key,{phase:"distance",rivals:pair.away,teammate:pair.own[1],context:dc,position:snap.position});return {title:opt.title,desc:opt.desc,prob:p,action:()=>finishLeagueRace(opt.key,ctx,pair,heatNo,next,snap,dc,p)}});
   const scoreCtx=importantMatchScoreContext(ctx);
-  const startText=startNarrativeForSnapshot(resolved,snap,{teamRace:true});
   showModal("PIERWSZE OKRĄŻENIE",`Bieg ${heatNo}: jesteś ${snap.position}.`,
-   `${startText} ${compactRaceSituationNarrative(snap,{teamRace:true})} ${scoreCtx.note}${currentRaceAdvice(pair.away,"distance",pair.own[1],dc)}`,choices);
+   `${resolved.narrative} ${raceSituationNarrative(snap,{teamRace:true})} ${scoreCtx.note}${currentRaceAdvice(pair.away,"distance",pair.own[1],dc)}`,choices);
  }});
 }
 function completeLeagueRaceResult(result,ctx,pair,heatNo,next,mode){
@@ -4458,7 +4411,7 @@ function finishLeagueRace(mode,ctx,pair,heatNo,next,snap,c=null,prob=null){
      completeLeagueRaceResult(result,ctx,pair,heatNo,next,opt.key);
     }});
    }}});
-   showModal("KOŃCÓWKA BIEGU",`Jedziesz ${preview.position}.`,`${narrative} ${compactRaceSituationNarrative(preview,{teamRace:true})}${currentRaceAdvice(pair.away,"late",pair.own[1],lateContext)}`,choices);
+   showModal("KOŃCÓWKA BIEGU",`Jedziesz ${preview.position}.`,`${narrative} ${raceSituationNarrative(preview,{teamRace:true})}${currentRaceAdvice(pair.away,"late",pair.own[1],lateContext)}`,choices);
   }});
 }
 function finishPlayableMatch(ctx,next){
@@ -5976,7 +5929,7 @@ function majorCompetitionOpportunities(basePph){
  if(!currentSGP&&S.sgpQualifiedYear!==S.year+1&&available.some(e=>e.short==="GP Challenge")&&Math.random()<internationalNominationChance("SGP",basePph)){
   const qualifier=simulateInternationalQualifier("SGP",basePph);
   if(qualifier.advanced){
-   opportunities.push({key:"GP Challenge",name:"Grand Prix Challenge",qualificationReason:`${qualifier.place}. miejsce w eliminacjach SGP w ${cityLocative(qualifier.track.city)}.`});
+   opportunities.push({key:"GP Challenge",name:"Grand Prix Challenge",qualificationReason:`${qualifier.place}. miejsce w eliminacjach SGP Challenge w ${cityLocative(qualifier.track.city)}.`});
   }
  }
  return opportunities.slice(0,6);
@@ -6061,7 +6014,7 @@ function playFiveInteractiveTournamentHeats({key,label,prefix="",startingCyclePo
      const p=raceOutcomeProbabilities(opt.key,{phase:"distance",rivals,context:dc,position:snap.position});
      return {title:opt.title,desc:opt.desc,prob:p,action:()=>middleIndividualRace(opt.key,snap,rivals,dc,p)};
     });
-    showModal("PIERWSZE OKRĄŻENIE",`Jedziesz ${snap.position}.`,`${resolved.narrative} ${compactRaceSituationNarrative(snap)}${currentRaceAdvice(rivals,"distance",null,dc)}`,choices);
+    showModal("PIERWSZE OKRĄŻENIE",`Jedziesz ${snap.position}.`,`${resolved.narrative} ${raceSituationNarrative(snap)}${currentRaceAdvice(rivals,"distance",null,dc)}`,choices);
    }});
   }
 
@@ -6078,7 +6031,7 @@ function playFiveInteractiveTournamentHeats({key,label,prefix="",startingCyclePo
      return {title:opt.title,desc:opt.desc,prob:p,action:()=>finishIndividualRace(opt.key,snapshotFromRaceResult(preview),rivals,lc,p,preview.position)};
     });
     const lateAdvice=currentRaceAdvice(rivals,"late",null,lc);
-    showModal("KOŃCÓWKA BIEGU",`Jedziesz ${preview.position}.`,`${resolved.narrative} ${compactRaceSituationNarrative({...preview,context:lc})}${lateAdvice}`,choices);
+    showModal("KOŃCÓWKA BIEGU",`Jedziesz ${preview.position}.`,`${resolved.narrative} ${raceSituationNarrative({...preview,context:lc})}${lateAdvice}`,choices);
    }});
   }
 
@@ -6647,7 +6600,7 @@ function finalizeNationalEvent(event,scores,playerPoints,playerResults){
  S.national="Polska";S.teamCaps=(S.teamCaps||0)+1;if(place<=3)S.nationalMedals=(S.nationalMedals||0)+1;
  applyMetaDelta("reputation",place===1?7:place<=3?4:1);applyMetaDelta("morale",place<=3?3:-1);S.devPoints+=place<=3?1:0;
  addHistory(event.name,`Reprezentacja Polski kończy zawody na ${place}. miejscu. Twój dorobek: ${playerPoints} pkt. Wyniki: ${nationalStandingsText(scores)}.`);
- return {name:event.name,key:event.name,stage:event.junior?"Reprezentacja U21":"Reprezentacja seniorów",result,points:playerPoints,place,heats:playerResults.length,teamScores:{...scores}};
+ return {name:event.name,key:event.name,stage:event.junior?"Reprezentacja U21":"Reprezentacja seniorów",result,points:playerPoints,place,teamScores:{...scores}};
 }
 function simulateNationalFourTeamEvent(event){
  const teams=nationalFourTeamField(event),scores=Object.fromEntries(teams.map(t=>[t,0])),playerHeats=new Set([2,6,10,14,18]);
@@ -6703,7 +6656,7 @@ function playInteractiveNationalFourTeamEvent(event,done){
     const p=raceOutcomeProbabilities(opt.key,{phase:"distance",rivals,context:dc,position:snap.position});
     return {title:opt.title,desc:opt.desc,prob:p,action:()=>middleNational(opt.key,p,dc,snap,entrants,rivals,target)};
    });
-   showModal("PIERWSZE OKRĄŻENIE",`Jedziesz ${snap.position}.`,`${compactRaceSituationNarrative(snap)}${currentRaceAdvice(rivals,"distance",null,dc)}`,choices);
+   showModal("PIERWSZE OKRĄŻENIE",`Jedziesz ${snap.position}.`,`${raceSituationNarrative(snap)}${currentRaceAdvice(rivals,"distance",null,dc)}`,choices);
   }});
  }
 
@@ -7096,25 +7049,17 @@ function leagueSeasonLabel(record){
  return `${place}. miejsce${promotion}${relegation}`;
 }
 function canonicalCompetitionKey(entry){
- const explicitName=String(entry?.name||"");
- // Nazwa zawodów ma pierwszeństwo dla typów, które w 1.02 mogły dostać błędny klucz SGP.
- // Dzięki temu poprawnie migrują także archiwa już zapisanych karier.
- if(/Drużynowe Mistrzostwa Świata Juniorów/.test(explicitName))return "DMŚJ";
- if(/Mistrzostwa Świata Juniorów — SGP2/.test(explicitName))return "SGP2";
- if(/Drużynowe Mistrzostwa Polski Juniorów/.test(explicitName))return "DMPJ";
- if(/Drużynowy Puchar Świata/.test(explicitName))return "DPŚ";
- if(/Drużynowe Mistrzostwa Europy/.test(explicitName))return "DME";
- const name=entry?.key||explicitName||"";
+ const name=entry.key||entry.name||"";
  if(name==="IMP Wild Card"||/IMP.*dzika karta/i.test(name))return "IMP Wild Card";
- if(name==="SGP2")return "SGP2";
- if(name==="DMPJ")return "DMPJ";
- if(name==="DPŚ")return "DPŚ";
- if(name==="DME")return "DME";
- if(name==="DMŚJ")return "DMŚJ";
- if(name==="Speedway Grand Prix"||name==="SGP"||/^Mistrzostwa Świata$/i.test(name)||/^Indywidualne Mistrzostwa Świata$/i.test(name))return "SGP";
+ if(name==="Speedway Grand Prix"||/Mistrzostwa Świata/.test(name))return "SGP";
  if(name==="SEC"||/Euro Championship/.test(name))return "SEC";
  if(name==="IMP"||/Indywidualne Mistrzostwa Polski$/.test(name))return "IMP";
  if(/Młodzieżowe Indywidualne Mistrzostwa Polski/.test(name))return "MIMP";
+ if(name==="SGP2"||/Mistrzostwa Świata Juniorów — SGP2/.test(name))return "SGP2";
+ if(/Drużynowe Mistrzostwa Polski Juniorów/.test(name))return "DMPJ";
+ if(/Drużynowy Puchar Świata/.test(name))return "DPŚ";
+ if(/Drużynowe Mistrzostwa Europy/.test(name))return "DME";
+ if(/Drużynowe Mistrzostwa Świata Juniorów/.test(name))return "DMŚJ";
  if(/Grand Prix Challenge/.test(name))return "GP Challenge";
  return name;
 }
@@ -7769,16 +7714,14 @@ function postSeasonMarket(pph){
  updateClubFinances();
  const current=clubDisplayName(S.club),currentLeague=S.league,currentLevel=leagueByName(currentLeague)?.level||3;
  const star=overall()>=84||S.reputation>=75||isQualifiedForCurrentSGP()||pph>=2.0;
- const initialCurrentRole=star?"Podstawowy zawodnik":pph>1.65?"Rotacja":"Rezerwowy / rozwój";
- let currentProjected=projectedLineupChance(current,currentLeague,{stay:true,role:initialCurrentRole});
- const currentRole=currentProjected>=55?"Podstawowy zawodnik":currentProjected>=25?"Rotacja":"Rezerwowy / rozwój";
- currentProjected=projectedLineupChance(current,currentLeague,{stay:true,role:currentRole});
+ const currentRole=star?"Podstawowy zawodnik":pph>1.65?"Rotacja":"Rezerwowy / rozwój";
+ const currentProjected=projectedLineupChance(current,currentLeague,{stay:true,role:currentRole});
  const wantsScore=S.clubRelation+S.loyalty*.30+pph*16+S.reputation*.12+rand(-10,14);
  // Obecny klub zna zawodnika, dlatego częściej daje mu szansę na przedłużenie niż obcy klub.
  const wants=wantsScore>48||currentProjected>=18||S.age<=21&&S.clubRelation>=42;
  const options=[];
  if(wants){
-  const role=currentProjected>=55?"Podstawowy zawodnik":currentProjected>=25?"Rotacja":"Rezerwowy / rozwój";
+  const role=star?"Podstawowy zawodnik":currentProjected>=55?"Podstawowy zawodnik":currentProjected>=25?"Rotacja":"Rezerwowy / rozwój";
   const salary=clubOfferSalary(current,currentLeague,role,pph,{stay:true});
   const prep=preparationMoney(salary,current,currentLeague,role,{transfer:false});
   options.push(clubOffer(current,currentLeague,50,role,salary,prep,drawContractYears({young:S.age<=24,star:overall()>=82}),true));
@@ -8604,7 +8547,7 @@ function mentorAllowedAdviceKeys(phase="distance",teammate=null,context={}){
 function raceDecisionChoices(snapshot,{teamRace=false,phase="distance"}={}){
  const position=snapshot.position,context=snapshot.context||{},theme=context.theme||"balanced",order=snapshot.order||snapshot.scores||context.order||[];
  const mate=teamRace?order.find(x=>x.side==="own"&&!x.player):null,matePos=mate?order.indexOf(mate)+1:null,teammateDirectlyAhead=teamRace&&matePos===position-1,teamOneTwo=teamRace&&position===2&&matePos===1;
- const lineKey=contextualRaceLine(snapshot,phase);
+ const lineKey=theme==="outside"?"outside":"inside";
  let choices=[];
  if(phase==="late"){
   if(position===1)choices=[
@@ -8741,17 +8684,10 @@ function clearCareerSavesAndReload(){
  keys.forEach(k=>localStorage.removeItem(k));location.reload();
 }
 function showCareerEndSupportPopup(){
- const card=$("careerSummaryCard"),actions=$("careerEndActions");
+ const card=$("careerSummaryCard");
+ card?.scrollIntoView?.({behavior:"smooth",block:"start"});
+ const actions=$("careerEndActions");
  if(actions){actions.classList.add("career-end-actions-highlight");setTimeout(()=>actions.classList.remove("career-end-actions-highlight"),1800)}
- showModal(
-  "KONIEC KARIERY",
-  "Co dalej?",
-  "Pełne podsumowanie kariery pozostaje na ekranie poniżej. Możesz od razu rozpocząć nową karierę albo dobrowolnie wesprzeć dalszy rozwój gry.",
-  [
-   {title:"Nowa kariera",desc:"Rozpocznij nową historię zawodnika.",action:()=>{if(confirm("Rozpocząć nową karierę? Obecny zapis zostanie usunięty.")){closeModal();clearCareerSavesAndReload()}}},
-   {title:"Postaw kawę ☕",desc:"Dobrowolnie wesprzyj rozwój Polish Speedway Simulator.",action:()=>{window.open("https://www.naffy.io/piotr-bak-qwihy/postaw-kawe","_blank","noopener,noreferrer");closeModal();card?.scrollIntoView?.({behavior:"smooth",block:"start"})}}
-  ]
- );
 }
 function installPSS102RuntimeStyles(){
  if(document.getElementById("pss102-runtime-styles"))return;
@@ -8840,8 +8776,8 @@ installPSS102RuntimeStyles();
 const saved=load();if(saved){S=saved;S.seasonFlowActive=false;normalize();repairLegacyStuckSeason();repairMaxedMetaSave();save();render()}
 
 // ============================================================================
-// Polish Speedway Simulator 1.02.1 — PATCH 25.08.2026
-// Wersja 1.02.1: poprawki DMŚJ, mentorów/linii, narracji biegów i końca kariery,
+// Polish Speedway Simulator 1.02 — REBUILD 25.08.2026
+// Kolejna rewizja 1.02: trajektorie karier, spójność ruletki, finanse turniejowe,
 // Speedway of Nations i dodatkowe możliwości wydawania nadwyżek finansowych.
 // ============================================================================
 (() => {
@@ -9126,8 +9062,7 @@ const saved=load();if(saved){S=saved;S.seasonFlowActive=false;normalize();repair
    return `Dobrze realizujesz plan na start i po pierwszym łuku jedziesz na ${target}. miejscu.`;
   }
   if(target===4)return "Nie trafiasz ze startem. Po pierwszym łuku jesteś czwarty i musisz odrabiać.";
-  if(target===3)return "Start nie wychodzi idealnie. Po pierwszym łuku układasz się na 3. pozycji.";
-  return "Nie trafiasz idealnie ze startem, ale po pierwszym łuku jesteś drugi.";
+  return `Start nie układa się po twojej myśli. Po pierwszym łuku jesteś na ${target}. miejscu.`;
  }
 
  resolveSportEffect=function(mode,execution,{phase="distance",rivals=[],context={},position=4}={}){
@@ -9290,13 +9225,12 @@ const saved=load();if(saved){S=saved;S.seasonFlowActive=false;normalize();repair
  }
  function normalizeFinanceKey(result){
   const k=canonicalCompetitionKey(result);
-  // Zawsze bazujemy na kanonicznym typie zawodów. To chroni DMŚJ i inne imprezy
-  // przed przypadkowym wejściem w rozliczenie cyklu tylko przez podobną nazwę.
-  return k||result?.key||result?.name||"";
+  if(k==="SGP")return "SGP";if(k==="SEC")return "SEC";if(k==="IMP")return "IMP";if(k==="SGP2")return "SGP2";
+  if(k==="MIMP")return "MIMP";if(k==="GP Challenge")return "GP Challenge";
+  return result?.key||result?.name||k;
  }
- function isFinancialSeriesKey(key){return ["SGP","SEC","IMP","SGP2"].includes(key)}
  function roundPlacesForResult(result,key){
-  if(isFinancialSeriesKey(key)){
+  if(["SGP","SEC","IMP","SGP2"].includes(key)){
    // roundData jest technicznym polem wyniku: przechowuje faktyczne miejsca rund,
    // nawet gdy tekstowy `details` służy wyłącznie do narracji.
    if(Array.isArray(result.roundData)&&result.roundData.length){
@@ -9321,47 +9255,12 @@ const saved=load();if(saved){S=saved;S.seasonFlowActive=false;normalize();repair
  function teamPrize(result,key){
   const place=Number(result.place||99),heats=Number(result.heats||0);
   if(key==="DMPJ")return (place===1?11000:place===2?7500:place===3?5500:place===4?3000:1800)+Math.min(5000,heats*250);
-  if(key==="DMŚJ")return 4000+Math.min(3000,heats*600)+(place===1?22000:place===2?15000:place===3?10000:0);
+  if(key==="DMŚJ")return 3500+Math.min(4200,heats*700)+(place===1?18000:place===2?12000:place===3?8000:0);
   if(key==="DME")return 11000+heats*2250+(place===1?60000:place===2?41000:place===3?26000:0);
   if(key==="DPŚ")return 11000+heats*3750+(place===1?110000:place===2?75000:place===3?52000:0);
   if(key==="SoN")return 11000+heats*3750+(place===1?98000:place===2?67500:place===3?45000:0);
   return 0;
  }
- function repairLegacyDMWJFinance(){
-  const state=ensureRebuildState();
-  if(!state||state.dmwjFinanceRepair1021)return;
-  const bad=(state.cycleFinance||[]).filter(x=>x?.key==="SGP"&&/Drużynowe Mistrzostwa Świata Juniorów/i.test(String(x.competition||"")));
-  let correction=0,currentYearCorrection=0,repaired=0;
-  for(const old of bad){
-   const current=(S.competitions||[]).find(r=>/Drużynowe Mistrzostwa Świata Juniorów/i.test(String(r?.name||""))&&Number(old.year||S.year)===S.year);
-   const archived=(S.careerStats?.competitionArchive||[]).find(r=>Number(r.year)===Number(old.year)&&/Drużynowe Mistrzostwa Świata Juniorów/i.test(String(r?.name||"")));
-   const source=current||archived||{};
-   const place=Number(source.place||99);
-   const match=String(source.result||"").match(/(\d+)\s*pkt\s*w\s*(\d+)\s*bieg/i);
-   const heats=Number(source.heats||match?.[2]||0);
-   const corrected=4000+Math.min(3000,heats*600)+(place===1?22000:place===2?15000:place===3?10000:0);
-   const excess=Math.max(0,Number(old.total||0)-corrected);
-   correction+=excess;if(Number(old.year)===S.year)currentYearCorrection+=excess;repaired++;
-   for(const [ledgerKey,finance] of Object.entries(state.competitionFinanceLedger||{})){
-    if(finance?.key==="SGP"&&Number(finance.year)===Number(old.year)&&Number(finance.total)===Number(old.total)&&/Reprezentacja U21/.test(ledgerKey))delete state.competitionFinanceLedger[ledgerKey];
-   }
-   if(current){
-    const finance={year:S.year,key:"DMŚJ",total:corrected,basePrize:corrected,roundsPrize:0,seasonBonus:0,sponsorBonus:0,roundsExpected:1,roundsParticipated:1,podiums:0,wins:0};
-    state.competitionFinanceLedger[rewardLedgerKey(current,"DMŚJ")]=finance;current.finance=finance;
-   }
-  }
-  if(repaired){
-   state.cycleFinance=(state.cycleFinance||[]).filter(x=>!(x?.key==="SGP"&&/Drużynowe Mistrzostwa Świata Juniorów/i.test(String(x.competition||""))));
-   if(correction>0){
-    S.budget=Math.max(0,(S.budget||0)-correction);
-    if(S.totals)S.totals.earnings=Math.max(0,(S.totals.earnings||0)-correction);
-    if(S.season&&currentYearCorrection>0)S.season.tournamentEarnings=Math.max(0,(S.season.tournamentEarnings||0)-currentYearCorrection);
-    addHistory("Korekta finansów",`Wersja 1.02.1 usuwa błędne rozliczenie DMŚJ jako cyklu SGP. Skorygowano zawyżone premie o ${money(correction)}.`);
-   }
-  }
-  state.dmwjFinanceRepair1021=true;
- }
-
  function oneDayPrize(result,key){
   if(key==="SGP Wild Card")return prizeForPlace(ROUND_PRIZES.SGP,Number(result.roundPlace||result.place||99));
   if(key==="SEC Wild Card")return prizeForPlace(ROUND_PRIZES.SEC,Number(result.roundPlace||result.place||99));
@@ -9374,7 +9273,7 @@ const saved=load();if(saved){S=saved;S.seasonFlowActive=false;normalize();repair
   if(!result)return null;const state=ensureRebuildState(),key=normalizeFinanceKey(result),ledgerKey=rewardLedgerKey(result,key);
   if(state.competitionFinanceLedger[ledgerKey]){result.finance=state.competitionFinanceLedger[ledgerKey];return result.finance}
   let roundsPrize=0,seasonBonus=0,basePrize=0,roundPlaces=[];
-  if(isFinancialSeriesKey(key)){
+  if(["SGP","SEC","IMP","SGP2"].includes(key)){
    roundPlaces=roundPlacesForResult(result,key);roundsPrize=roundPlaces.reduce((s,p)=>s+prizeForPlace(ROUND_PRIZES[key],p),0);
    seasonBonus=prizeForPlace(SERIES_BONUS[key],Number(result.place||99));
   }else{
@@ -9386,7 +9285,7 @@ const saved=load();if(saved){S=saved;S.seasonFlowActive=false;normalize();repair
   const podium=Number(result.place||result.roundPlace||99)<=3;
   const sponsorBonus=podium&&subtotal>0&&Math.random()<.24?Math.round(subtotal*triangular(.08,.12,.18)/500)*500:0;
   const total=subtotal+sponsorBonus;
-  const roundsExpected=expectedRounds(result,key),roundsParticipated=roundPlaces.length||(isFinancialSeriesKey(key)?Math.min(roundsExpected,Number(String(result.stage||"").match(/(\d+)/)?.[1]||roundsExpected)):1);
+  const roundsExpected=expectedRounds(result,key),roundsParticipated=roundPlaces.length||(["SGP","SEC","IMP","SGP2"].includes(key)?Math.min(roundsExpected,Number(String(result.stage||"").match(/(\d+)/)?.[1]||roundsExpected)):1);
   const podiums=roundPlaces.filter(p=>p<=3).length,wins=roundPlaces.filter(p=>p===1).length;
   const finance={year:S.year,key,total,basePrize,roundsPrize,seasonBonus,sponsorBonus,roundsExpected,roundsParticipated,podiums,wins};
   state.competitionFinanceLedger[ledgerKey]=finance;result.finance=finance;
@@ -9395,12 +9294,12 @@ const saved=load();if(saved){S=saved;S.seasonFlowActive=false;normalize();repair
    if(S.season){S.season.tournamentEarnings=(S.season.tournamentEarnings||0)+total}
    addHistory("Nagroda finansowa",`${result.name||key}: ${money(total)}${sponsorBonus?` (w tym ${money(sponsorBonus)} premii sponsorskiej)`:""}.`);
   }
-  if(isFinancialSeriesKey(key))state.cycleFinance.push({competition:result.name||key,...finance});
+  if(["SGP","SEC","IMP","SGP2"].includes(key))state.cycleFinance.push({competition:result.name||key,...finance});
   return finance;
  }
  function competitionFinanceHtml(result){
   const f=result?.finance;if(!f||!f.total)return "";
-  if(isFinancialSeriesKey(f.key)){
+  if(["SGP","SEC","IMP","SGP2"].includes(f.key)){
    return `<div class="competition-finance-summary"><b>Rozliczenie cyklu:</b><br>Udział w rundach: <b>${f.roundsParticipated}/${f.roundsExpected}</b> • zwycięstwa: <b>${f.wins}</b> • podia: <b>${f.podiums}</b><br>Nagrody za rundy: <b>${money(f.roundsPrize)}</b> • premia za klasyfikację końcową: <b>${money(f.seasonBonus)}</b>${f.sponsorBonus?` • premie sponsorskie: <b>${money(f.sponsorBonus)}</b>`:""}<br><b>Łączna gratyfikacja za cykl: ${money(f.total)}</b></div>`;
   }
   return `<div class="competition-finance-summary"><b>Gratyfikacja finansowa:</b> ${money(f.total)}${f.sponsorBonus?` (w tym ${money(f.sponsorBonus)} premii sponsorskiej)`:""}.</div>`;
@@ -9414,7 +9313,7 @@ const saved=load();if(saved){S=saved;S.seasonFlowActive=false;normalize();repair
   ensureCompetitionReward(result);
   const openResult=()=>{
    const healthNote=postCompetitionHealthExposure(result),resultText=ensureSentence((result?.result||"Zawody zakończone")+healthNote);
-   showModal("WYNIK ZAWODÓW",result?.name||"Zawody",`<b>${resultText}</b>${result?.points!=null?`<br>Twój dorobek: ${result.points} pkt.`:""}${competitionFinanceHtml(result)}`,[{title:"Kontynuuj",desc:"Przejdź dalej.",action:()=>{closeModal();next?.()}}]);
+   showModal("WYNIK ZAWODÓW",result?.name||"Zawody",`<b>${resultText}</b>${result?.points!=null?`<br>Twój dorobek: ${result.points} pkt.`:""}`,[{title:"Kontynuuj",desc:"Przejdź dalej.",action:()=>{closeModal();next?.()}}]);
   };
   const c=competitionCelebration(result);if(c)showAchievementCelebration(c.kind,c.title,c.subtitle,openResult);else openResult();
  };
@@ -9435,7 +9334,7 @@ const saved=load();if(saved){S=saved;S.seasonFlowActive=false;normalize();repair
  const baseSimInternationalQualifier=simulateInternationalQualifier;
  simulateInternationalQualifier=function(series,basePph){
   const r=baseSimInternationalQualifier(series,basePph),id=`${S.year}:${series}:qualifier:${r.track?.city||""}`;
-  addQualifierReward(id,5000+(r.advanced?7500:0),`${series==="SGP"?"Eliminacje SGP":"Eliminacje SEC"}${r.advanced?" — awans":""}`);return r;
+  addQualifierReward(id,5000+(r.advanced?7500:0),`${series==="SGP"?"Eliminacje SGP Challenge":"Eliminacje SEC"}${r.advanced?" — awans":""}`);return r;
  };
  const baseSECChallenge=simulateSECChallengeQualification;
  simulateSECChallengeQualification=function(basePph){
@@ -9540,11 +9439,11 @@ const saved=load();if(saved){S=saved;S.seasonFlowActive=false;normalize();repair
   @media(max-width:680px){.competition-finance-summary{font-size:12px;padding:8px 9px}.roller-sport-effect{font-size:.92rem}}
  `;if(!document.getElementById(extra.id))document.head.appendChild(extra);
 
- if(S?.skills){ensureRebuildState();repairLegacyDMWJFinance();normalize();save();render()}
+ if(S?.skills){ensureRebuildState();normalize();save();render()}
 })();
 
 // ============================================================================
-// PSS 1.02.1 — UZUPEŁNIENIE DANYCH CYKLI
+// PSS 1.02 — FINALNE UZUPEŁNIENIE DANYCH CYKLI
 // Zachowuje pełne miejsca rund dla późniejszego rozliczenia finansowego.
 // ============================================================================
 (() => {
@@ -9592,274 +9491,487 @@ const saved=load();if(saved){S=saved;S.seasonFlowActive=false;normalize();repair
  };
 })();
 
-
 // ============================================================================
-// POLISH SPEEDWAY SIMULATOR 1.02 — TUTORIAL / GUIDE / TEAM MARKET PATCH
-// 25.08.2026
-// - layered tutorial + permanent guide
-// - explicit development-point cost UI
-// - red soft-threshold warning
-// - permanent, non-exclusive team/services market
-// - no forced preseason investment modal
+// Polish Speedway Simulator 1.02.1 — PATCH 25.08.2026
+// Tutorial, czytelniejsze PR, team bez migania, przypomnienia, różne zakończenia
+// kariery oraz zwarte, bogatsze podsumowanie osiągnięć.
 // ============================================================================
 (() => {
- const TUTORIAL_PREF_KEY="pss_tutorial_enabled";
+ const PATCH_1021 = 7;
+
+ // --------------------------------------------------------------------------
+ // 1. POMOC / TUTORIAL
+ // --------------------------------------------------------------------------
  const GUIDE_CHAPTERS=[
-  {id:"start",title:"Pierwsze kroki",html:`
-   <h3>Pierwsze kroki</h3>
-   <p>Polish Speedway Simulator prowadzi jednego zawodnika od szkółki lub początku kariery ligowej aż do jej zakończenia. Nie ma jednego poprawnego sposobu gry: możesz rozwijać się wolniej, zmieniać ligi, walczyć o regularne starty albo ryzykować wejście na wyższy poziom.</p>
-   <div class="guide-callout"><b>Najważniejsze na początku:</b> regularna jazda jest bardzo cenna. Sam prestiż ligi nie zastąpi biegów, treningu i odpowiedniego miejsca w składzie.</div>
-   <h4>Co robić w sezonie?</h4><ul><li>obserwuj szansę na skład i rolę w klubie,</li><li>wydawaj punkty rozwoju tylko tam, gdzie naprawdę chcesz kształtować profil zawodnika,</li><li>pilnuj sprzętu, morale, zdrowia i budżetu,</li><li>czytaj oferty transferowe pod kątem realnej prognozy jazdy, a nie tylko nazwy ligi.</li></ul>`},
-  {id:"ovr",title:"OVR i umiejętności",html:`
+  {id:"start",title:"Początek kariery",keywords:"start szkółka licencja trudność",html:`
+   <h3>Początek kariery</h3>
+   <p>Wybór profilu startowego określa wiek, początkowy poziom, budżet i miejsce w hierarchii klubu. Nie wybiera z góry całej kariery — dalszy rozwój zależy od jazdy, decyzji, formy, wydarzeń i indywidualnej trajektorii zawodnika.</p>
+   <p><b>Regularna jazda ma znaczenie.</b> Młody zawodnik zwykle więcej zyskuje na dużej liczbie biegów na odpowiednim poziomie niż na samym prestiżu ligi i siedzeniu na ławce.</p>`},
+  {id:"ovr",title:"OVR i umiejętności",keywords:"overall ovr start łuk technika kondycja",html:`
    <h3>OVR i umiejętności</h3>
-   <p>OVR jest syntetyczną oceną aktualnego poziomu zawodnika. Nie zastępuje konkretnych umiejętności: dwóch zawodników z podobnym OVR może jeździć zupełnie inaczej.</p>
-   <p>Na wynik wpływają m.in. start, pierwszy łuk, jazda na dystansie, technika, kondycja, ustawienia sprzętu, psychika i wyprzedzanie. Sprzęt jest osobnym elementem przygotowania.</p>
-   <div class="guide-callout">OVR nie gwarantuje dobrego wyniku każdego dnia. Forma dnia, tor, ustawienia, rywale, zmęczenie i przebieg biegu również mają znaczenie.</div>`},
-  {id:"development",title:"Punkty rozwoju",html:`
-   <h3>Punkty rozwoju</h3>
-   <p><b>Liczba na przycisku jest kosztem, a nie wielkością przyrostu.</b> Każde ręczne rozwinięcie podnosi wybraną umiejętność dokładnie o <b>+1</b>.</p>
-   <p><span class="guide-example">+1 • 11 PR</span> oznacza: wydajesz 11 punktów rozwoju, a dana cecha rośnie np. z 63 do 64.</p>
-   <h4>Standardowy koszt kolejnego punktu</h4>
-   <table class="guide-cost-table"><thead><tr><th>Aktualna wartość cechy</th><th>Podstawowy koszt +1</th></tr></thead><tbody>
-    <tr><td>do 60</td><td>1 PR</td></tr><tr><td>61–75</td><td>2 PR</td></tr><tr><td>76–85</td><td>3 PR</td></tr><tr><td>86–90</td><td>5 PR</td></tr><tr><td>91–94</td><td>8 PR</td></tr><tr><td>95</td><td>12 PR</td></tr><tr><td>96</td><td>18 PR</td></tr><tr><td>97</td><td>28 PR</td></tr><tr><td>98 → 99</td><td>44 PR</td></tr>
-   </tbody></table>
+   <p>OVR jest syntetyczną oceną poziomu zawodnika. Wynika przede wszystkim z umiejętności, a w niewielkiej części także z jakości sprzętu. Nie gwarantuje identycznej jazdy każdego dnia.</p>
+   <p>Na konkretny bieg wpływają również forma dnia, tor, ustawienia, sprzęt, zmęczenie, psychika, przeciwnicy i kontekst decyzji.</p>`},
+  {id:"development",title:"Punkty rozwoju",keywords:"punkty rozwoju pr koszt próg +1",html:`
+   <h3>Punkty rozwoju — najważniejsza zasada</h3>
+   <div class="guide-callout"><b>Liczba na przycisku to koszt, a nie przyrost.</b><br>Przycisk <b>+1 • 5 PR</b> oznacza: wydajesz 5 punktów rozwoju i podnosisz wybraną umiejętność dokładnie o 1.</div>
+   <p>Przykład: Start 68 + przycisk <b>+1 • 2 PR</b> = po zakupie Start wzrośnie z 68 do 69, a z puli znikną 2 PR.</p>
+   <h4>Bazowy koszt podniesienia cechy o 1</h4>
+   <div class="guide-cost-grid"><span>do 60</span><b>1 PR</b><span>61–75</span><b>2 PR</b><span>76–85</span><b>3 PR</b><span>86–90</span><b>5 PR</b><span>91–94</span><b>8 PR</b><span>95+</span><b>coraz więcej</b></div>
    <h4>Naturalny próg</h4>
-   <p>Każda cecha ma dynamiczny, miękki próg wynikający z profilu i aktualnej fazy kariery. To <b>nie jest twardy limit</b>. Możesz rozwijać cechę dalej, ale kolejny punkt kosztuje więcej.</p>
-   <div class="guide-callout warning"><b>Czerwone oznaczenie przycisku</b> informuje, że kolejny punkt znajduje się już ponad naturalnym progiem i płacisz podwyższony koszt.</div>
-   <p>Z wiekiem i kilka lat po indywidualnym szczycie kariery ręczny rozwój również może stawać się droższy. Niezależnie od ręcznych wydatków umiejętności mogą rosnąć naturalnie dzięki regularnej jeździe, treningowi, jakości rywali, wydarzeniom rozwojowym i dobremu otoczeniu.</p>`},
-  {id:"career",title:"Rozwój kariery",html:`
-   <h3>Rozwój kariery</h3>
-   <p>Kariera nie ma z góry ustalonego jednego wykresu. Często pojawia się wzrost, później peak lub plateau i stopniowy regres, ale możliwe są wcześniejsze szczyty, późny rozkwit, długie plateau, odbudowa i krótka druga młodość.</p>
-   <p>Jakość rywali ma znaczenie. Regularne biegi przeciw mocniejszej stawce mogą być bardziej rozwojowe niż podobna liczba biegów przeciw dużo słabszym zawodnikom. Jednocześnie siedzenie na ławce w najwyższej lidze nie musi być lepsze od regularnej jazdy poziom niżej.</p>`},
-  {id:"season",title:"Sezon i liga",html:`
-   <h3>Sezon i liga</h3>
-   <p>W lidze znaczenie mają OVR, rola w zespole, realna konkurencja w składzie, forma i wyniki. Liczba biegów w sezonie nie jest stała — zależy od tego, jak często trafiasz do składu i jaką rolę pełnisz.</p>
-   <div class="guide-callout">Prognoza jazdy na rynku transferowym jest ważnym sygnałem. Bardzo niski procent oznacza realne ryzyko spędzenia dużej części sezonu poza składem.</div>`},
-  {id:"finances",title:"Finanse",html:`
+   <p>Każda umiejętność ma miękki, dynamiczny próg wynikający z potencjału, wieku, fazy kariery, profesjonalizmu i zaplecza. Możesz rozwijać cechę powyżej progu, ale koszt kolejnego +1 rośnie.</p>
+   <p>Gdy płacisz podwyższony koszt ponad naturalny próg, przycisk jest <b>delikatnie zaznaczony na czerwono</b>. To ostrzeżenie, nie blokada.</p>
+   <p>Po późnym etapie kariery ręczne rozwijanie umiejętności również staje się droższe. Niezależnie od PR zawodnik może rozwijać się naturalnie dzięki jeździe, treningom, wydarzeniom i mocnej konkurencji.</p>`},
+  {id:"trajectory",title:"Rozwój kariery",keywords:"peak regres plateau forma rozwój wiek",html:`
+   <h3>Trajektoria kariery</h3>
+   <p>Najczęstszy przebieg to rozwój → szczyt lub plateau → stopniowy regres. Nie ma jednak jednego sztywnego wieku peaku. Możliwe są wcześniejsze szczyty, późny rozkwit, stagnacja, odbudowa, druga młodość i wyjątkowa długowieczność.</p>
+   <p>Poziom rywali również ma znaczenie: regularne biegi przeciw mocniejszej stawce mogą wspierać rozwój młodego zawodnika, a u starszego pomagać utrzymywać poziom.</p>`},
+  {id:"league",title:"Liga i miejsce w składzie",keywords:"liga skład prognoza jazdy biegi rola",html:`
+   <h3>Liga i miejsce w składzie</h3>
+   <p><b>Prognoza jazdy</b> opisuje realną szansę na regularne występy. Wyższa liga daje mocniejszych przeciwników, ale mała liczba biegów może zahamować rozwój.</p>
+   <p>Rola w klubie powinna być czytana razem z prognozą jazdy. „Podstawowy zawodnik” oznacza rzeczywistą perspektywę regularnych startów, a nie tylko prestiż kontraktu.</p>`},
+  {id:"team",title:"Team i zaplecze",keywords:"team baza usługi inwestycje tuner testy regeneracja",html:`
+   <h3>Team i zaplecze</h3>
+   <p>Usługi i inwestycje są opcjonalne. Nie musisz co sezon niczego kupować i brak zakupu nie powoduje automatycznej kary.</p>
+   <p><b>Usługi</b> są krótkoterminowe i zwykle można kupić każdą z nich raz w sezonie. <b>Inwestycje</b> rozwijają stałą bazę teamu, mają poziomy i generują koszty utrzymania.</p>
+   <p>Na kartach zawsze znajdziesz informację, co dana opcja wspiera, jak długo działa i jaki ma limit. Najdroższe zaplecze pomaga w utrzymaniu i przygotowaniu, ale nie pozwala po prostu kupić OVR 99.</p>`},
+  {id:"finance",title:"Finanse",keywords:"budżet pieniądze nagrody koszty sponsor",html:`
    <h3>Finanse</h3>
-   <p>Podstawą finansów pozostaje kontrakt ligowy. Pozaligowe turnieje, cykle i reprezentacja również mogą dawać gratyfikacje zależne od prestiżu, etapu i wyniku.</p>
-   <p>W cyklach wielorundowych pełne rozliczenie finansowe pojawia się dopiero w późniejszym podsumowaniu: udział w rundach, podia, zwycięstwa, suma nagród rundowych i premia za klasyfikację końcową.</p>
-   <p>Duża nadwyżka pieniędzy może być przeznaczana na usługi i rozwój teamu. Brak zakupu jest zawsze dopuszczalny — gra nie wymusza wydawania środków.</p>`},
-  {id:"team",title:"Team i usługi",html:`
-   <h3>Team i usługi</h3>
-   <p>Sekcja teamu jest stałym rynkiem, a nie jednorazowym wydarzeniem „albo–albo”. Możesz kupić kilka różnych usług w jednym sezonie, jeśli masz środki, albo nie kupować nic.</p>
-   <p>We wczesnej karierze dostępne są głównie podstawowe i relatywnie tanie usługi: dodatkowy trening, analiza wideo, serwis ustawień czy fizjoterapia. Duże inwestycje w stałą bazę odblokowują się dopiero wraz z poziomem sportowym, reputacją i realną skalą finansów.</p>
-   <div class="guide-callout">Inwestycje pomagają, ale nie są przyciskiem „kup OVR”. Korzyści są ograniczone, często pośrednie i podlegają malejącym efektom.</div>`},
-  {id:"transfers",title:"Kontrakty i transfery",html:`
+   <p>Podstawowym źródłem przychodu pozostaje liga, ale zawody pozaligowe również dają gratyfikacje. Cykle takie jak SGP, SEC, SGP2 i IMP rozliczają rundy oraz końcową klasyfikację.</p>
+   <p>Wydatki na sprzęt, przygotowanie, usługi i bazę teamu mają malejące korzyści. Najdroższe rozwiązanie nie zawsze jest najlepszą decyzją.</p>`},
+  {id:"transfers",title:"Kontrakty i transfery",keywords:"transfer kontrakt lojalność stawka klub",html:`
    <h3>Kontrakty i transfery</h3>
-   <p>Oferta klubu nie zależy wyłącznie od OVR. Znaczenie mają także forma, średnia, reputacja, relacja z klubem i lojalność. Dotychczasowy klub może chcieć zatrzymać zawodnika, którego dobrze zna.</p>
-   <p>Oddzielaj jednak samą ofertę od roli. Jeśli prognoza jazdy jest niska, nawet atrakcyjny kontrakt w mocnej lidze może oznaczać niewiele realnych biegów.</p>`},
-  {id:"races",title:"Biegi interaktywne",html:`
+   <p>Kluby oceniają poziom sportowy, wyniki, perspektywę jazdy, reputację i sytuację kadrową. Przy przedłużeniu umowy znaczenie mają także relacja z klubem i lojalność.</p>
+   <p>Wyższa stawka za punkt może oznaczać trudniejszą walkę o skład. Porównuj pieniądze z prognozą jazdy i poziomem ligi.</p>`},
+  {id:"races",title:"Biegi interaktywne",keywords:"bieg ruletka sukces mentor procent atak obrona",html:`
    <h3>Biegi interaktywne</h3>
-   <p>Procent przy decyzji oznacza realną szansę powodzenia <b>konkretnego zamiaru</b>. Jeśli wybierasz atak i wypada sukces, atak ma sportowo się udać. Jeśli wybierasz obronę i wypada sukces, pozycja zostaje obroniona.</p>
-   <p>Szanse są zależne od sytuacji: twoich umiejętności i OVR, rywali, pozycji, toru, formy dnia, ustawień, sprzętu, zmęczenia i charakteru decyzji.</p>
-   <div class="guide-callout"><b>Wyjątkowy sukces</b> jest rzadkim podzbiorem całej puli powodzenia. Nie powinien być częstszy od zwykłego sukcesu.</div>
-   <p>Pozycje w kolejnych fazach biegu są kontynuacją wcześniejszego przebiegu. Duży nagły zwrot powinien wynikać z jasno opisanego błędu, kontaktu, defektu albo innego incydentu.</p>`},
-  {id:"competitions",title:"Turnieje",html:`
+   <p>Procent przy decyzji oznacza realną szansę powodzenia konkretnego zamiaru. Sukces ataku oznacza skuteczny atak, a sukces obrony — skuteczne utrzymanie pozycji.</p>
+   <p>Szanse zależą m.in. od twojego poziomu, rywali, pozycji, formy dnia, toru, setupu, sprzętu, teamu i rodzaju manewru. Wyjątkowy sukces jest rzadką częścią całej puli powodzenia.</p>
+   <p>Mentor ocenia dostępne decyzje w aktualnej sytuacji. Jego rada nie jest gwarancją, szczególnie jeśli jakość podpowiedzi jest niższa.</p>`},
+  {id:"competitions",title:"Turnieje",keywords:"sgp sec imp sgp2 challenge turnieje",html:`
    <h3>Turnieje</h3>
-   <p>Poza ligą możesz trafiać do zawodów juniorskich, krajowych, europejskich i światowych. Część to pojedyncze turnieje lub eliminacje + finał, a część to cykle wielorundowe.</p>
-   <p>Do sezonowego „rozliczenia cyklu” należą wyłącznie jawnie oznaczone cykle, takie jak SGP, SEC, SGP2 oraz wielorundowy IMP. Imprezy drużynowe juniorów nie są sztucznie przeliczane jako kilkunastorundowy cykl.</p>`},
-  {id:"national",title:"Reprezentacja",html:`
+   <p>Nie wszystkie zawody mają ten sam format. SGP, SEC, SGP2 i IMP są cyklami wielorundowymi. MIMP, DME i wiele turniejów prestiżowych to pojedyncze imprezy. DMPJ składa się z kolejnych etapów.</p>
+   <p><b>Eliminacje SGP Challenge</b> prowadzą do właściwego Grand Prix Challenge. Sam Grand Prix Challenge jest osobnym turniejem kwalifikacyjnym do cyklu SGP.</p>`},
+  {id:"national",title:"Reprezentacja",keywords:"reprezentacja dpś son dme dmśj",html:`
    <h3>Reprezentacja</h3>
-   <p>Powołania zależą od poziomu sportowego, bieżącej formy, średniej i reputacji. W kalendarzu mogą pojawiać się m.in. imprezy juniorskie, Drużynowe Mistrzostwa Europy, Drużynowy Puchar Świata oraz Speedway of Nations.</p>
-   <p>W Speedway of Nations powoływana jest trzyosobowa kadra. W finale startuje siedem reprezentacji, więc zawodnik podstawowej pary może rozegrać sześć biegów — po jednym przeciw każdemu rywalowi.</p>`},
-  {id:"health",title:"Zdrowie i zmęczenie",html:`
-   <h3>Zdrowie i zmęczenie</h3>
-   <p>Duża liczba biegów, treningów i turniejów może kumulować zmęczenie. Regeneracja pomaga utrzymać świeżość, ale nie zamienia Kondycji w automatyczne 99.</p>
-   <p>Kontuzje mają różną skalę. Ciężkie i karierę zmieniające przypadki są dużo rzadsze niż drobne urazy. Niektóre urazy mogą wpływać nie tylko na chwilowy OVR, ale też na późniejszy styl i trajektorię rozwoju.</p>`}
+   <p>Powołania zależą od poziomu, formy, wyników i reputacji. W Speedway of Nations do kadry trafia trzech zawodników, a w finale siedem reprezentacji spotyka się w formacie parowym.</p>
+   <p>DMŚJ jest juniorską imprezą reprezentacyjną — nie pełnym wielorundowym cyklem.</p>`},
+  {id:"health",title:"Zdrowie i koniec kariery",keywords:"zdrowie kontuzje emerytura koniec kariery forma",html:`
+   <h3>Zdrowie i koniec kariery</h3>
+   <p>Kontuzje mają różną wagę, a najcięższe przypadki są rzadkie. Regeneracja i zaplecze mogą ograniczać ryzyko, ale nie eliminują go całkowicie.</p>
+   <p>Koniec kariery nie musi wynikać ze zdrowia. Gra bierze pod uwagę również trwały spadek poziomu sportowego, utratę miejsca w składzie, przeciążenie, długą karierę i świadomą decyzję zawodnika. Powód powinien odpowiadać rzeczywistym danym kariery.</p>`}
  ];
- const GUIDE_INDEX=Object.fromEntries(GUIDE_CHAPTERS.map(x=>[x.id,x]));
 
- function tutorialPreference(){
-  if(S&&typeof S.tutorialEnabled==="boolean")return S.tutorialEnabled;
-  const stored=localStorage.getItem(TUTORIAL_PREF_KEY);return stored===null?true:stored!=="0";
- }
- function setTutorialPreference(value){
-  localStorage.setItem(TUTORIAL_PREF_KEY,value?"1":"0");
-  if(S){S.tutorialEnabled=!!value;S.tutorialState??={seen:[],completed:false};save()}
-  const startToggle=document.getElementById("tutorialMode");if(startToggle)startToggle.checked=!!value;
-  const footerToggle=document.getElementById("tutorialTipsToggle");if(footerToggle)footerToggle.checked=!!value;
- }
- function ensureTutorialState(){
+ function ensureHelpState(){
   if(!S)return null;
-  S.tutorialState??={seen:[],completed:false};S.tutorialState.seen??=[];
-  if(typeof S.tutorialEnabled!=="boolean")S.tutorialEnabled=tutorialPreference();
-  return S.tutorialState;
+  S.helpState??={tutorialEnabled:true,onboardingDone:false,tipsEnabled:true,seenTips:{},tutorialVersion:PATCH_1021};
+  S.helpState.seenTips??={};
+  if(S.helpState.tipsEnabled===undefined)S.helpState.tipsEnabled=true;
+  return S.helpState;
  }
- function tutorialSeen(key){const st=ensureTutorialState();return !!st?.seen?.includes(key)}
- function markTutorialSeen(key){const st=ensureTutorialState();if(st&&!st.seen.includes(key)){st.seen.push(key);save()}}
-
- let activeGuideId="start";
- function renderGuideNav(query=""){
-  const nav=document.getElementById("guideNav");if(!nav)return;
-  const q=String(query||"").trim().toLocaleLowerCase("pl");
-  nav.innerHTML="";
-  GUIDE_CHAPTERS.forEach(ch=>{
-   const plain=(ch.title+" "+ch.html.replace(/<[^>]+>/g," ")).toLocaleLowerCase("pl");
-   const b=document.createElement("button");b.type="button";b.textContent=ch.title;b.dataset.id=ch.id;
-   if(ch.id===activeGuideId)b.classList.add("active");if(q&&!plain.includes(q))b.classList.add("hidden-by-search");
-   b.onclick=()=>openGuide(ch.id);nav.appendChild(b);
-  });
+ let activeGuideChapter="start",activeTipChapter="start";
+ function renderGuide(query=""){
+  const nav=$("guideNav"),content=$("guideContent");if(!nav||!content)return;
+  const q=String(query||"").trim().toLowerCase();
+  const matches=GUIDE_CHAPTERS.filter(ch=>!q||`${ch.title} ${ch.keywords} ${ch.html.replace(/<[^>]+>/g," ")}`.toLowerCase().includes(q));
+  if(!matches.some(ch=>ch.id===activeGuideChapter)&&matches.length)activeGuideChapter=matches[0].id;
+  nav.innerHTML=matches.map(ch=>`<button type="button" data-guide-id="${ch.id}" class="${ch.id===activeGuideChapter?"active":""}">${ch.title}</button>`).join("")||`<p class="muted">Brak wyników.</p>`;
+  const selected=GUIDE_CHAPTERS.find(ch=>ch.id===activeGuideChapter)||matches[0];
+  content.innerHTML=selected?selected.html:`<p>Nie znaleziono rozdziału pasującego do wyszukiwania.</p>`;
+  nav.querySelectorAll("button[data-guide-id]").forEach(btn=>btn.onclick=()=>{activeGuideChapter=btn.dataset.guideId;renderGuide($("guideSearch")?.value||"")});
  }
- function openGuide(id="start"){
-  activeGuideId=GUIDE_INDEX[id]?id:"start";
-  const modal=document.getElementById("guideModal"),content=document.getElementById("guideContent");if(!modal||!content)return;
-  content.innerHTML=GUIDE_INDEX[activeGuideId].html;renderGuideNav(document.getElementById("guideSearch")?.value||"");
-  const toggle=document.getElementById("tutorialTipsToggle");if(toggle)toggle.checked=tutorialPreference();
-  modal.classList.remove("hidden");document.body.classList.add("guide-open");
+ function openGameGuide(chapter="start"){
+  activeGuideChapter=GUIDE_CHAPTERS.some(c=>c.id===chapter)?chapter:"start";
+  const modal=$("guideModal");if(!modal)return;
+  modal.classList.remove("hidden");
+  if($("guideSearch"))$("guideSearch").value="";
+  if($("tutorialTipsToggle"))$("tutorialTipsToggle").checked=S?ensureHelpState().tipsEnabled:true;
+  renderGuide();
  }
- function closeGuide(){document.getElementById("guideModal")?.classList.add("hidden");document.body.classList.remove("guide-open")}
- window.openPSSGuide=openGuide;
-
- function showTutorialTip(key,title,text,chapter=key){
-  if(!S||!tutorialPreference()||tutorialSeen(key))return;
-  markTutorialSeen(key);
-  const box=document.getElementById("tutorialTip");if(!box)return;
-  document.getElementById("tutorialTipTitle").textContent=title;
-  document.getElementById("tutorialTipText").textContent=text;
-  const more=document.getElementById("tutorialTipMore");more.onclick=()=>{box.classList.add("hidden");openGuide(GUIDE_INDEX[chapter]?chapter:"start")};
-  box.classList.remove("hidden");
- }
-
- function tutorialStep(index){
+ function closeGameGuide(){$("guideModal")?.classList.add("hidden")}
+ function finishTutorial(){const h=ensureHelpState();if(h){h.onboardingDone=true;h.tutorialVersion=PATCH_1021;save()}closeModal();showContextTip("development","Punkty rozwoju","Na przycisku rozwoju pierwsza liczba oznacza +1 do cechy, a druga koszt w PR.","development")}
+ function runTutorialOnboarding(step=0){
   if(!S)return;
-  const steps=[
-   ["TUTORIAL 1/5","Centrum kariery",`Na głównym ekranie widzisz OVR, umiejętności, klub, rolę, budżet i bieżący sezon. <b>OVR jest podsumowaniem poziomu, ale nie zastępuje konkretnych cech.</b>`],
-   ["TUTORIAL 2/5","Regularna jazda ma znaczenie",`Rozwój zależy nie tylko od ligi. Młody zawodnik potrzebuje biegów. Regularne starty poziom niżej mogą dać więcej niż ławka w mocniejszej lidze, a jakość rywali wpływa na wartość doświadczenia.`],
-   ["TUTORIAL 3/5","Punkty rozwoju",`Przycisk przy umiejętności pokazuje <b>koszt podniesienia jej o dokładnie +1</b>. Zapis „+1 • 9 PR” oznacza wydatek 9 punktów rozwoju. Czerwony przycisk ostrzega, że rozwijasz cechę ponad jej aktualny naturalny próg i płacisz więcej.`],
-   ["TUTORIAL 4/5","Finanse i team",`Nie musisz wydawać pieniędzy co sezon. W sekcji „Baza twojego teamu” możesz w dowolnym momencie kupować dostępne usługi. Tanie opcje pojawiają się wcześniej, a duża infrastruktura dopiero wraz z rozwojem kariery.`],
-   ["TUTORIAL 5/5","Decyzje w biegach",`Procent przy decyzji oznacza realną szansę powodzenia <b>tego konkretnego manewru lub obrony</b>. Forma dnia, tor, rywale, sprzęt i aktualna pozycja mogą mocno zmieniać szanse.`]
+  const h=ensureHelpState();h.tutorialEnabled=true;
+  const slides=[
+   ["TUTORIAL 1/5","Kariera nie jest z góry napisana","OVR opisuje ogólny poziom, ale rozwój może mieć różne tempo, peak, plateau i regres. Regularna jazda i decyzje naprawdę zmieniają przebieg kariery."],
+   ["TUTORIAL 2/5","Patrz na liczbę biegów","Prestiż ligi to nie wszystko. Szczególnie jako junior porównuj poziom rywali z realną szansą jazdy — ławka w mocnej lidze nie zawsze rozwija lepiej niż regularne starty niżej."],
+   ["TUTORIAL 3/5","Punkty rozwoju","Przycisk „+1 • 5 PR” oznacza koszt 5 PR za podniesienie cechy dokładnie o 1. Czerwone zaznaczenie informuje, że rozwijasz ją ponad aktualny naturalny próg i płacisz więcej."],
+   ["TUTORIAL 4/5","Finanse i team","Usługi teamu są opcjonalne i krótkoterminowe, a inwestycje w bazę są stałe i mają koszty utrzymania. Możesz kupić kilka rzeczy w sezonie albo nie kupować nic."],
+   ["TUTORIAL 5/5","Decyzje w biegu","Pokazywany procent to szansa powodzenia konkretnego manewru lub obrony. Rywale, forma dnia, tor, setup i pozycja wpływają na tę wartość. Wynik ruletki poznasz dopiero po zatrzymaniu animacji."]
   ];
-  if(index>=steps.length){const st=ensureTutorialState();st.completed=true;save();showTutorialTip("guide-anytime","Przewodnik jest zawsze pod ręką","W każdej chwili możesz otworzyć pełny Przewodnik z górnego menu.","start");return}
-  const [kicker,title,text]=steps[index];
-  const opts=[{title:index===steps.length-1?"Zaczynam":"Dalej",desc:index===steps.length-1?"Przejdź do kariery.":"Następna wskazówka.",action:()=>{closeModal();tutorialStep(index+1)}}];
-  if(index===0)opts.push({title:"Pomiń tutorial",desc:"Wyłącz startowy tutorial i podpowiedzi kontekstowe. Przewodnik nadal będzie dostępny w menu.",action:()=>{setTutorialPreference(false);const st=ensureTutorialState();st.completed=true;save();closeModal()}});
-  showModal(kicker,title,text,opts);
+  const [kicker,title,text]=slides[step];
+  const options=[];
+  if(step<slides.length-1)options.push({title:"Dalej",desc:`Przejdź do kroku ${step+2}.`,action:()=>{closeModal();runTutorialOnboarding(step+1)}});
+  else options.push({title:"Zaczynam",desc:"Zamknij tutorial i rozpocznij karierę.",action:finishTutorial});
+  options.push({title:"Pomiń tutorial",desc:"Możesz uruchomić go ponownie z Przewodnika.",action:()=>{h.onboardingDone=true;save();closeModal()}});
+  showModal(kicker,title,text,options);
  }
- function restartTutorial(){
-  if(!S){setTutorialPreference(true);closeGuide();return}
-  S.tutorialEnabled=true;S.tutorialState={seen:[],completed:false};localStorage.setItem(TUTORIAL_PREF_KEY,"1");save();closeGuide();setTimeout(()=>tutorialStep(0),80);
+ function showContextTip(id,title,text,chapter="start"){
+  if(!S)return;const h=ensureHelpState();if(!h.tipsEnabled||h.seenTips[id])return;
+  h.seenTips[id]=true;activeTipChapter=chapter;save();
+  const box=$("tutorialTip");if(!box)return;
+  $("tutorialTipTitle").textContent=title;$("tutorialTipText").textContent=text;box.classList.remove("hidden");
+  setTimeout(()=>box.classList.add("tutorial-tip-visible"),20);
  }
+ function hideContextTip(){const box=$("tutorialTip");if(!box)return;box.classList.remove("tutorial-tip-visible");setTimeout(()=>box.classList.add("hidden"),180)}
 
- // --- Punkty rozwoju: etykieta pokazuje +1 oraz realny koszt ----------------
- const baseRenderSkills102Guide=renderSkills;
- renderSkills=function(){
-  const box=document.getElementById("skills");if(!box||!S?.skills){baseRenderSkills102Guide();return}
-  box.innerHTML=Object.entries(S.skills).map(([k,v])=>{
-   const value=Math.round(v),target=skillSoftTarget(k),cost=skillUpgradeCostFor(value,k),disabled=!canUpgradeSkill(value,k),over=value>=target;
-   const thresholdInfo=value===target-1?`<span class="skill-threshold-inline">próg ${target}</span>`:"";
-   const reason=disabled?skillUpgradeBlockReason(value,k):(over?`Powyżej naturalnego progu ${target}. Kolejny punkt kosztuje ${cost} PR.`:`Koszt podniesienia cechy o +1: ${cost} PR.`);
-   return `<div class="skill"><div class="skill-label"><span>${SKILLS[k]} ${thresholdInfo}</span><b>${value}</b></div><div class="skill-bar" aria-label="${SKILLS[k]}: ${value}/100"><i style="width:${value}%"></i></div><button class="plus ${over?"plus-over-threshold":""}" data-k="${k}" title="${reason}" ${disabled?"disabled":""}>+1 • ${cost} PR</button></div>`;
-  }).join("");
-  document.querySelectorAll(".plus").forEach(b=>b.onclick=()=>{showTutorialTip("development","Punkty rozwoju","Liczba po znaku • to koszt w PR. Każde kliknięcie zwiększa wybraną cechę tylko o +1. Czerwony przycisk oznacza koszt ponad naturalnym progiem.","development");upgradeSkill(b.dataset.k)});
+ // Tutorial po utworzeniu nowej kariery.
+ const createPlayer1021=createPlayer;
+ createPlayer=function(){
+  const tutorialEnabled=$("tutorialMode")?.checked!==false;
+  createPlayer1021();
+  if(!S)return;
+  const h=ensureHelpState();h.tutorialEnabled=tutorialEnabled;h.tipsEnabled=tutorialEnabled;h.onboardingDone=!tutorialEnabled;h.tutorialVersion=PATCH_1021;save();
+  if(tutorialEnabled)setTimeout(()=>runTutorialOnboarding(0),120);
  };
 
- // --- Team market: stały, wielokrotny wybór zamiast sezonowego eventu -------
- function ensureTeamMarket(){
-  if(!S)return null;S.teamMarket??={purchases:{},facilityBuiltYear:{}};S.teamMarket.purchases??={};S.teamMarket.facilityBuiltYear??={};return S.teamMarket;
+ // --------------------------------------------------------------------------
+ // 2. PUNKTY ROZWOJU — CZYTELNY KOSZT + WIĘKSZA CZCIONKA
+ // --------------------------------------------------------------------------
+ renderSkills=function(){
+  $("skills").innerHTML=Object.entries(S.skills).map(([k,v])=>{
+   const value=Math.round(v),target=skillSoftTarget(k),cost=skillUpgradeCostFor(value,k),disabled=!canUpgradeSkill(value,k),over=value>=target;
+   const thresholdInfo=value===target-1||over?`<span class="skill-threshold-inline">próg ${target}</span>`:"";
+   const reason=disabled?skillUpgradeBlockReason(value,k):(over?`Powyżej naturalnego progu — ten punkt kosztuje więcej. Wydasz ${cost} PR, aby zwiększyć cechę o 1.`:`Wydasz ${cost} PR, aby zwiększyć cechę o 1.`);
+   return `<div class="skill"><div class="skill-label"><span>${SKILLS[k]} ${thresholdInfo}</span><b>${value}</b></div><div class="skill-bar" aria-label="${SKILLS[k]}: ${value}/100"><i style="width:${value}%"></i></div><button class="plus ${over?"plus-over-threshold":""}" data-k="${k}" title="${reason}" ${disabled?"disabled":""}><span>+1</span><em>• ${cost} PR</em></button></div>`;
+  }).join("");
+  document.querySelectorAll(".plus").forEach(b=>b.onclick=()=>upgradeSkill(b.dataset.k));
+ };
+
+ // --------------------------------------------------------------------------
+ // 3. TEAM: STAŁY RYNEK, JASNE EFEKTY, BRAK CLOSE→OPEN PO ZAKUPIE
+ // --------------------------------------------------------------------------
+ function ensureTeamMarketState(){
+  if(!S)return null;
+  S.teamMarketState??={purchasesByYear:{},lastPurchaseYear:null,reminderNextYear:null,model:PATCH_1021};
+  S.teamMarketState.purchasesByYear??={};
+  if(S.teamMarketState.lastPurchaseYear==null&&Object.values(S.facilities||{}).some(v=>Number(v)>0))S.teamMarketState.lastPurchaseYear=S.pss102Rebuild?.moneySinkYear??S.year-1;
+  S.teamMarketState.model=PATCH_1021;
+  return S.teamMarketState;
  }
- function teamCareerTier(){
+ function teamMarketStage(){
   if(!S||S.league==="Etap szkolenia")return 0;
-  const o=overall(),rep=Number(S.reputation||0),salary=Number(S.salary||0),budget=Number(S.budget||0),earned=Number(S.totals?.earnings||0);
-  if(o>=81&&rep>=45&&(salary>=5000||budget>=650000||earned>=1500000))return 3;
-  if(o>=69&&rep>=23&&(salary>=2600||budget>=220000||earned>=400000))return 2;
+  const level=leagueByName(S.league)?.level||3,budget=Math.max(0,S.budget||0),ovr=overall(),rep=S.reputation||0;
+  if(ovr>=82||rep>=70||(budget>=1500000&&ovr>=68)||(level===1&&ovr>=78))return 3;
+  if(ovr>=70||rep>=42||(budget>=450000&&ovr>=62)||(level<=2&&ovr>=68))return 2;
   return 1;
  }
- function teamTierName(tier){return ["szkółka / początek","młody zawodnik","profesjonalny team","czołówka / rozbudowany team"][tier]||"team"}
- function serviceBought(id){return ensureTeamMarket().purchases[`${S.year}:${id}`]||0}
- function markServiceBought(id){const st=ensureTeamMarket(),k=`${S.year}:${id}`;st.purchases[k]=(st.purchases[k]||0)+1}
- function teamServiceOffers(){
-  const tier=teamCareerTier(),m=[.72,1,1.35,1.8][tier];
-  const price=base=>Math.max(3000,Math.round(base*m/1000)*1000);
-  const offers=[
-   {id:"setup-service",min:0,base:8000,title:"Serwis i konsultacja ustawień",desc:"Podstawowa praca nad motocyklem i setupem. Niewielka, pośrednia korzyść bez gwarancji wzrostu.",apply:()=>{S.equipment=clamp(S.equipment+1,0,100);tryNaturalGrowth("setup",1);S.professionalism+=1}},
-   {id:"video",min:0,base:6500,title:"Analiza wideo",desc:"Analiza startów, pierwszego łuku i jazdy na dystansie. Pomaga wyciągać wnioski z obecnego poziomu.",apply:()=>{tryNaturalGrowth(pick(["starts","corner","technique","distance"]),1);S.professionalism+=1}},
-   {id:"physio",min:0,base:9000,title:"Fizjoterapia i regeneracja",desc:"Mniejsze obciążenie organizmu i niższe ryzyko drobnych problemów. Nie daje automatycznie punktu Kondycji.",apply:()=>{S.injuryRisk=Math.max(1,S.injuryRisk-2);S.morale+=1;applyDevelopmentModifier({id:`team-physio-${S.year}`,label:"dodatkowa regeneracja",duration:1,declineProtection:.18,formBonus:.25,fitnessGrowthMult:.92})}},
-   {id:"start-session",min:1,base:12000,title:"Dodatkowy trening startowy",desc:"Krótki blok pracy nad reakcją i pierwszym łukiem. Naturalny wzrost nadal zależy od potencjału i etapu kariery.",apply:()=>{tryNaturalGrowth("starts",1);if(Math.random()<.45)tryNaturalGrowth("corner",1);S.professionalism+=1}},
-   {id:"private-track",min:2,base:33000,title:"Prywatne testy torowe",desc:"Więcej czasu na torze, kilka różnych prób i praca nad konkretnymi elementami technicznymi.",apply:()=>{for(let i=0;i<2;i++)tryNaturalGrowth(pick(["starts","corner","technique","distance","overtaking"]),1);S.professionalism+=1}},
-   {id:"tuner",min:2,base:52000,title:"Program tunerski",desc:"Dodatkowy serwis silnika i praca nad ustawieniami. Korzyści maleją wraz z poziomem sprzętu.",apply:()=>{S.equipment=clamp(S.equipment+(S.equipment<80?2:1),0,100);tryNaturalGrowth("setup",1)}},
-   {id:"pro-program",min:3,base:145000,title:"Program profesjonalnego teamu",desc:"Dodatkowy mechanik, dane, logistyka i regeneracja na część sezonu. Pomaga przygotowaniu, ale nie kupuje OVR.",apply:()=>{S.equipment=clamp(S.equipment+1,0,100);S.devPoints+=1;S.injuryRisk=Math.max(1,S.injuryRisk-2);applyDevelopmentModifier({id:`pro-team-${S.year}`,label:"program profesjonalnego teamu",duration:1,growthMult:1.025,teamBonus:.8,declineProtection:.18})}}
+ function teamStageLabel(stage){return stage===3?"czołówka / rozbudowany team":stage===2?"profesjonalny team":stage===1?"rozwijający się zawodnik":"etap szkolenia"}
+ function teamServicePrice(min,max){const scale=clamp((overall()-48)/38,0,1);return Math.round((min+(max-min)*scale)/1000)*1000}
+ function teamServices(){
+  const stage=teamMarketStage();
+  const list=[
+   {id:"track",name:"Prywatne testy torowe",cost:teamServicePrice(18000,62000),effect:"Wspierają rozwój Startu, Pierwszego łuku i Techniki oraz ułatwiają pracę nad powtarzalnością.",duration:"do końca sezonu",limit:"1× na sezon",apply:()=>{applyDevelopmentModifier({id:`team-track-${S.year}`,label:"prywatne testy torowe",duration:1,skillGrowth:{starts:1.12,corner:1.12,technique:1.08},growthMult:1.02});S.professionalism+=1}},
+   {id:"tuner",name:"Program tunerski",cost:teamServicePrice(24000,92000),effect:"Poprawia przygotowanie motocykla i ustawienia. Zmniejsza ryzyko nietrafionego setupu; korzyści maleją przy bardzo mocnym sprzęcie.",duration:"do końca sezonu",limit:"1× na sezon",apply:()=>{equipmentUpgradeGain(S.equipment<80?2:1);applyDevelopmentModifier({id:`team-tuner-${S.year}`,label:"program tunerski",duration:1,skillGrowth:{setup:1.14},teamBonus:.45})}},
+   {id:"recovery",name:"Fizjoterapia i regeneracja",cost:teamServicePrice(15000,56000),effect:"Obniża ryzyko przeciążenia i pomaga utrzymywać świeżość. Nie podnosi automatycznie Kondycji.",duration:"do końca sezonu",limit:"1× na sezon",apply:()=>{S.injuryRisk-=3;S.morale+=2;applyDevelopmentModifier({id:`team-recovery-${S.year}`,label:"regeneracja teamu",duration:1,declineProtection:.16,formBonus:.25,fitnessGrowthMult:.9})}}
   ];
-  return offers.filter(o=>tier>=o.min&&!serviceBought(o.id)).map(o=>({...o,cost:price(o.base)}));
+  if(stage>=2)list.push({id:"pro",name:"Program profesjonalnego teamu",cost:teamServicePrice(95000,265000),effect:"Dodatkowy mechanik, analiza danych, logistyka i regeneracja. Pomaga przygotowaniu i utrzymaniu poziomu, ale nie kupuje bezpośrednio OVR.",duration:"do końca sezonu",limit:"1× na sezon",apply:()=>{S.devPoints+=2;S.injuryRisk-=2;applyDevelopmentModifier({id:`team-pro-${S.year}`,label:"profesjonalny team",duration:1,growthMult:1.035,skillGrowth:{setup:1.09,technique:1.06},teamBonus:.85,declineProtection:.18})}});
+  return list;
  }
- function facilityShopOffers(){
-  const tier=teamCareerTier(),st=ensureTeamMarket();if(tier<2)return [];
-  return Object.keys(FACILITY_DEFS).filter(key=>facilityLevel(key)<FACILITY_DEFS[key].maxLevel&&st.facilityBuiltYear[key]!==S.year).map(key=>{
-   const def=FACILITY_DEFS[key],cost=facilityBuildCost(key),level=facilityLevel(key);
-   return {key,cost,title:`${def.name} — poziom ${level+1}`,desc:`Stała inwestycja: ${def.desc} Utrzymanie po zakupie: ${money(def.maintenance)} za poziom/sezon.`};
-  }).filter(o=>S.budget>=o.cost);
+ function facilityAvailableForStage(key,stage){
+  const level=facilityLevel(key);
+  if(stage<=1)return false;
+  if(stage===2)return level===0;
+  return true;
  }
- function buyTeamService(o){
-  if(S.budget<o.cost){alert("Nie masz wystarczających środków.");return}
-  S.budget-=o.cost;markServiceBought(o.id);o.apply();addHistory(`Team: ${o.title}`,`Koszt ${money(o.cost)}. ${o.desc}`);normalize();save();render();closeModal();setTimeout(openTeamMarket,70);
+ function teamPurchaseSet(){const st=ensureTeamMarketState();st.purchasesByYear[S.year]??=[];return new Set(st.purchasesByYear[S.year])}
+ function markTeamPurchase(id){const st=ensureTeamMarketState();st.purchasesByYear[S.year]??=[];if(!st.purchasesByYear[S.year].includes(id))st.purchasesByYear[S.year].push(id);st.lastPurchaseYear=S.year;st.reminderNextYear=S.year+2;if(S.pss102Rebuild)S.pss102Rebuild.moneySinkYear=S.year}
+ function teamCardHtml({badge,name,cost,effect,duration,limit,extra="",bought=false,locked=false}){
+  return `<span class="team-offer-badge">${badge}</span><strong>${name}${Number.isFinite(cost)?` — ${money(cost)}`:""}</strong><small><b>Efekt:</b> ${effect}<br><b>Działa:</b> ${duration}${limit?` • <b>Limit:</b> ${limit}`:""}${extra?`<br>${extra}`:""}${bought?`<br><b class="team-bought-label">Kupiono ✓</b>`:""}</small>`;
  }
- function buyTeamFacility(o){
-  if(!buildFacility(o.key))return;
-  ensureTeamMarket().facilityBuiltYear[o.key]=S.year;save();render();closeModal();setTimeout(openTeamMarket,70);
+ let teamMarketCloseCallback=null;
+ function renderTeamMarketModal(){
+  if(!S)return;
+  const stage=teamMarketStage(),purchased=teamPurchaseSet(),modalCard=document.querySelector(".modal-card"),opts=$("modalOptions"),text=$("modalText");
+  $("modalKicker").textContent="TEAM I USŁUGI";$("modalTitle").textContent="ZARZĄDZAJ SWOIM ZAPLECZEM";
+  if(modalCard)modalCard.classList.add("modal-card-wide");if(opts)opts.classList.add("modal-options-grid");
+  text.innerHTML=`Budżet: <b>${money(S.budget)}</b> • etap: <b>${teamStageLabel(stage)}</b>. Możesz kupować różne pozycje niezależnie od siebie. Usługi są krótkoterminowe, a inwestycje w bazę pozostają na stałe.`;
+  opts.innerHTML="";
+  const cards=[];
+  for(const service of teamServices()){
+   const bought=purchased.has(service.id),affordable=S.budget>=service.cost;
+   cards.push({html:teamCardHtml({badge:"USŁUGA",name:service.name,cost:service.cost,effect:service.effect,duration:service.duration,limit:service.limit,bought}),disabled:bought||!affordable,action:()=>{
+    if(bought||S.budget<service.cost)return;
+    S.budget-=service.cost;service.apply();markTeamPurchase(service.id);addHistory(`Usługa teamu: ${service.name}`,`Koszt: ${money(service.cost)}. ${service.effect}`);normalize();save();render();renderTeamMarketModal();
+   }});
+  }
+  for(const [key,def] of Object.entries(FACILITY_DEFS)){
+   const level=facilityLevel(key);if(level>=def.maxLevel||!facilityAvailableForStage(key,stage))continue;
+   const cost=facilityBuildCost(key),affordable=S.budget>=cost;
+   cards.push({html:teamCardHtml({badge:"INWESTYCJA",name:`${def.name} — poziom ${level+1}`,cost,effect:def.desc,duration:"stały efekt",limit:"",extra:`<b>Poziom:</b> ${level}/${def.maxLevel} → ${level+1}/${def.maxLevel} • <b>Utrzymanie:</b> ${money(def.maintenance)} za poziom/sezon<br>${def.effect.join(" • ")}`}),disabled:!affordable,action:()=>{
+    if(buildFacility(key)){markTeamPurchase(`facility:${key}:${level+1}`);save();render();renderTeamMarketModal()}
+   }});
+  }
+  if(!cards.length){const p=document.createElement("p");p.className="muted team-market-empty";p.textContent="Na tym etapie kariery nie ma nowych opcji do kupienia.";opts.appendChild(p)}
+  cards.forEach(card=>{const b=document.createElement("button");b.className="option team-offer-card";b.innerHTML=card.html;b.disabled=!!card.disabled;b.onclick=()=>{if(b.disabled)return;card.action()};opts.appendChild(b)});
+  const close=document.createElement("button");close.className="option team-market-close";close.innerHTML="<strong>Zamknij</strong><small>Wróć do centrum kariery. Brak zakupu nie ma żadnej kary.</small>";close.onclick=()=>{const cb=teamMarketCloseCallback;teamMarketCloseCallback=null;closeModal();if(cb)deferSeasonStep(cb)};opts.appendChild(close);
  }
- function openTeamMarket(){
-  if(!S)return;showTutorialTip("team","Team nie jest już wyborem „albo–albo”","Możesz kupić kilka różnych usług w jednym sezonie albo nic. Duże inwestycje pojawiają się dopiero wraz z rozwojem kariery.","team");
-  const tier=teamCareerTier(),services=teamServiceOffers(),facilities=facilityShopOffers(),options=[];
-  services.forEach(o=>options.push({title:`${o.title} — ${money(o.cost)}`,desc:o.desc,action:()=>buyTeamService(o)}));
-  facilities.forEach(o=>options.push({title:`INWESTYCJA: ${o.title} — ${money(o.cost)}`,desc:o.desc,action:()=>buyTeamFacility(o)}));
-  options.push({title:"Zamknij",desc:"Wróć do centrum kariery. Brak zakupu nie ma żadnej kary.",action:()=>closeModal()});
-  const unlock=tier<2?" Duża infrastruktura nie jest jeszcze dostępna — najpierw zbuduj pozycję sportową i finansową.":facilities.length?" Dostępne są także stałe inwestycje w bazę.":" Stałe inwestycje pojawią się, gdy spełnisz warunki i będziesz mieć środki na pełny koszt.";
-  showModal("TEAM I USŁUGI","Zarządzaj swoim zapleczem",`Budżet: <b>${money(S.budget)}</b> • etap: <b>${teamTierName(tier)}</b>. Możesz kupować różne pozycje niezależnie od siebie; usługi jednorazowe są dostępne maksymalnie raz na sezon.${unlock}`,options);
+ function openTeamMarket(onClose=null){
+  if(!S)return;teamMarketCloseCallback=onClose;
+  showModal("TEAM I USŁUGI","Zarządzaj swoim zapleczem","",[]);
+  renderTeamMarketModal();
+  showContextTip("team-market","Team i usługi","Usługi są krótkoterminowe, a inwestycje w bazę stałe. Każda karta mówi teraz wprost, co dostajesz za pieniądze.","team");
  }
- window.openPSSTeamMarket=openTeamMarket;
+ function shouldRemindTeam(){
+  const st=ensureTeamMarketState(),seasons=[...(S.careerStats?.seasons||[])];if(S.league==="Etap szkolenia"||seasons.length<2||S.budget<15000)return false;
+  const firstYear=seasons.length?Math.min(...seasons.map(x=>x.year)):S.year;
+  const last=st.lastPurchaseYear??firstYear;
+  if(S.year-last<2)return false;
+  if(st.reminderNextYear!=null&&S.year<st.reminderNextYear)return false;
+  return true;
+ }
+ budgetManagement=function(next){
+  if(S.budgetManagementCompletedYear===S.year){next();return}
+  S.budgetManagementCompletedYear=S.year;save();
+  if(!shouldRemindTeam()){next();return}
+  showModal("PRZYPOMNIENIE","Warto zajrzeć do swojego teamu",`Od co najmniej dwóch sezonów nie korzystasz z dodatkowych usług ani nie rozbudowujesz bazy. Nie jest to obowiązkowe, ale przy odpowiednim budżecie może pomóc w przygotowaniu, rozwoju lub utrzymaniu poziomu.`,[
+   {title:"Zarządzaj teamem",desc:"Otwórz usługi i inwestycje bez przerywania przepływu sezonu.",action:()=>{openTeamMarket(next)}},
+   {title:"Nie, dziękuję",desc:"Pomiń. Gra nie przypomni o tym ponownie przez dwa sezony.",action:()=>{const st=ensureTeamMarketState();st.reminderNextYear=S.year+2;save();closeModal();deferSeasonStep(next)}}
+  ]);
+ };
+ function updateTeamMarketPanel(){
+  if(!S)return;const hint=$("teamMarketHint"),btn=$("teamMarketBtn"),stage=teamMarketStage();if(hint)hint.textContent=stage===0?"Profesjonalne usługi odblokują się po wejściu do seniorskiego trybu kariery.":`Etap: ${teamStageLabel(stage)}. Usługi są opcjonalne; możesz kupić kilka albo żadnej.`;if(btn)btn.disabled=stage===0;
+ }
 
- // Usuwamy obowiązkowy modal inwestycyjny z przepływu sezonu.
- budgetManagement=function(next){S.budgetManagementCompletedYear=S.year;save();next()};
-
- const baseRenderFacilities102Guide=renderFacilities;
- renderFacilities=function(){
-  baseRenderFacilities102Guide();
-  const panel=document.getElementById("teamMarketPanel"),hint=document.getElementById("teamMarketHint");if(!panel||!hint||!S)return;
-  const tier=teamCareerTier();panel.classList.toggle("is-rookie",tier<=1);panel.classList.toggle("is-pro",tier>=2);
-  hint.textContent=tier<=1?"Na tym etapie dostępne są głównie niedrogie usługi jednorazowe. Duża infrastruktura odblokuje się później.":tier===2?"Możesz łączyć usługi z pierwszymi dużymi inwestycjami w profesjonalne zaplecze.":"Masz dostęp do pełniejszego rynku usług i dużych inwestycji teamu.";
+ // --------------------------------------------------------------------------
+ // 4. FINANSE TURNIEJOWE — SZCZEGÓŁY DOPIERO W PÓŹNIEJSZYM INFO
+ // --------------------------------------------------------------------------
+ function compactFinanceLine(c){
+  const f=c?.finance;if(!f||!f.total)return "";
+  if(["SGP","SEC","IMP","SGP2"].includes(f.key))return `Rundy ${f.roundsParticipated}/${f.roundsExpected} • wygrane ${f.wins} • podia ${f.podiums} • gratyfikacja ${money(f.total)}`;
+  return `Gratyfikacja ${money(f.total)}`;
+ }
+ renderCompetitions=function(){
+  const box=$("competitionList");if(!box)return;
+  if(!S.competitions.length){box.innerHTML='<p class="serif muted">Wyniki zawodów młodzieżowych i indywidualnych pojawią się po sezonie.</p>';return}
+  box.innerHTML=S.competitions.map(c=>`<div class="competition-row"><div><strong>${c.name}</strong><small>${c.stage||""}${compactFinanceLine(c)?`<br><span class="competition-finance-inline">${compactFinanceLine(c)}</span>`:""}</small></div><b>${c.result}</b><span>${c.points!==undefined?c.points+" pkt":""}</span></div>`).join("");
  };
 
- // --- Kontekstowe podpowiedzi przy pierwszym kontakcie z systemem -----------
- const baseShowModal102Guide=showModal;
- showModal=function(kicker,title,text,options){
-  baseShowModal102Guide(kicker,title,text,options);
-  if(!S||!tutorialPreference()||/^TUTORIAL/i.test(String(kicker)))return;
-  const k=String(kicker||"").toUpperCase(),t=String(title||"").toUpperCase();
-  setTimeout(()=>{
-   if(k.includes("RYNEK TRANSFEROWY"))showTutorialTip("transfers","Czytaj prognozę jazdy","Oferta i rola to nie wszystko. Prognoza jazdy pokazuje, jak realna jest regularna obecność w składzie.","transfers");
-   else if(k.includes("PIERWSZE OKRĄŻENIE")||k.includes("KOŃCÓWKA BIEGU")||k.includes("DECYDUJĄCY BIEG")||k.includes("START I PIERWSZY ŁUK"))showTutorialTip("races","Procent dotyczy konkretnej decyzji","Sukces oznacza powodzenie wybranego manewru lub obrony. Szansa jest liczona z aktualnego kontekstu biegu.","races");
-   else if(k.includes("POWOŁANIE DO REPREZENTACJI"))showTutorialTip("national","Powołanie nie zależy od samego OVR","Znaczenie mają również forma, średnia, reputacja i aktualna konkurencja o miejsce w kadrze.","national");
-   else if(k.includes("WYNIK ZAWODÓW")||t.includes("SGP")||t.includes("SEC"))showTutorialTip("competitions","Turniej czy cykl?","Nie każda impreza jest cyklem. Pełne rozliczenie sezonowe dotyczy tylko jawnie wielorundowych rozgrywek.","competitions");
-  },120);
+ // --------------------------------------------------------------------------
+ // 5. KWALIFIKACJE: „ELIMINACJE SGP CHALLENGE” + ARCHIWUM
+ // --------------------------------------------------------------------------
+ function qualifierArchiveKey(series){return series==="SGP"?"SGP Challenge Qualifier":"SEC Qualifier"}
+ function archiveQualifierAttempt(series,r){
+  if(!S?.careerStats||!r)return;S.careerStats.competitionArchive??=[];
+  const key=qualifierArchiveKey(series),name=series==="SGP"?"Eliminacje SGP Challenge":"Eliminacje SEC",city=r.track?.city||"";
+  const record={year:S.year,key,name,place:Number.isFinite(r.place)?r.place:null,result:r.advanced?`${r.place}. miejsce — awans`:`${r.place}. miejsce — bez awansu`,points:null,stage:"eliminacje",qualification:"",average:null,heats:5,hostCity:city,advanced:!!r.advanced};
+  const idx=S.careerStats.competitionArchive.findIndex(x=>x.year===record.year&&x.key===key&&x.hostCity===city);if(idx>=0)S.careerStats.competitionArchive[idx]=record;else S.careerStats.competitionArchive.push(record);
+ }
+ const simulateInternationalQualifier1021=simulateInternationalQualifier;
+ simulateInternationalQualifier=function(series,basePph){const r=simulateInternationalQualifier1021(series,basePph);archiveQualifierAttempt(series,r);return r};
+ const simulateSECChallengeQualification1021=simulateSECChallengeQualification;
+ simulateSECChallengeQualification=function(basePph){const r=simulateSECChallengeQualification1021(basePph);if(S?.careerStats&&r){S.careerStats.competitionArchive??=[];const rec={year:S.year,key:"SEC Challenge",name:"SEC Challenge",place:r.place,result:r.advanced?`${r.place}. miejsce — awans do SEC`:`${r.place}. miejsce — bez awansu`,stage:"turniej kwalifikacyjny",qualification:"",heats:5,hostCity:r.track?.city||""};const i=S.careerStats.competitionArchive.findIndex(x=>x.year===rec.year&&x.key===rec.key);if(i>=0)S.careerStats.competitionArchive[i]=rec;else S.careerStats.competitionArchive.push(rec)}return r};
+
+ // Zachowuj dane rund w archiwum — potrzebne do zwartej statystyki kariery.
+ const archiveCompetitionResults1021=archiveCompetitionResults;
+ archiveCompetitionResults=function(year,entries){
+  archiveCompetitionResults1021(year,entries);
+  const archive=S.careerStats?.competitionArchive||[];
+  for(const entry of entries||[]){
+   const key=canonicalCompetitionKey(entry),rec=archive.find(x=>x.year===year&&x.key===key&&x.name===entry.name);if(!rec)continue;
+   if(Array.isArray(entry.roundData))rec.roundData=entry.roundData.map(x=>typeof x==="object"?{...x}:x);
+   else if(Array.isArray(entry.details)&&entry.details.some(x=>typeof x==="number"||x&&typeof x==="object"))rec.roundData=entry.details.map(x=>typeof x==="object"?{...x}:x);
+   if(Array.isArray(entry.roundAchievements))rec.roundAchievements=entry.roundAchievements.map(x=>({...x}));
+   if(Number.isFinite(entry.roundPlace))rec.roundPlace=entry.roundPlace;
+   if(Number.isFinite(entry.finalPlace))rec.finalPlace=entry.finalPlace;
+   if(entry.hostCity)rec.hostCity=entry.hostCity;
+   if(entry.finance)rec.finance={...entry.finance};
+   rec.qualification=String(rec.qualification||"").replace(/eliminacjach SGP(?! Challenge)/gi,"eliminacjach SGP Challenge");
+  }
  };
 
- // --- finalne renderowanie / start nowej kariery ----------------------------
- const baseCreatePlayer102Guide=createPlayer;
- createPlayer=function(){
-  const enabled=document.getElementById("tutorialMode")?.checked!==false;
-  localStorage.setItem(TUTORIAL_PREF_KEY,enabled?"1":"0");
-  baseCreatePlayer102Guide();
-  S.tutorialEnabled=enabled;S.tutorialState={seen:[],completed:!enabled};ensureTeamMarket();save();render();
-  if(enabled)setTimeout(()=>tutorialStep(0),140);
+ function repairLegacyDMSJFinance(){
+  if(!S||S.pss1021?.dmsjFinanceRepairDone)return;S.pss1021??={};
+  const archive=S.careerStats?.competitionArchive||[],history=S.history||[];let corrected=0,totalDelta=0;
+  for(const rec of archive.filter(r=>r.key==="DMŚJ"||/Drużynowe Mistrzostwa Świata Juniorów/.test(r.name||""))){
+   const h=history.find(x=>x.year===rec.year&&x.title==="Nagroda finansowa"&&/Drużynowe Mistrzostwa Świata Juniorów/.test(x.text||""));if(!h)continue;
+   const m=String(h.text).match(/:\s*([0-9\s]+)\s*zł/);if(!m)continue;const paid=Number(m[1].replace(/\s/g,""));if(!Number.isFinite(paid)||paid<60000)continue;
+   const place=Number(rec.place||99),heats=Number(rec.heats||5),expected=3500+Math.min(4200,heats*700)+(place===1?18000:place===2?12000:place===3?8000:0);
+   const delta=Math.max(0,paid-expected);if(!delta)continue;S.budget-=delta;if(S.totals?.earnings!=null)S.totals.earnings=Math.max(0,S.totals.earnings-delta);
+   h.text=String(h.text).replace(/:\s*[0-9\s]+\s*zł/,`: ${money(expected)}`);corrected++;totalDelta+=delta;
+  }
+  S.pss1021.dmsjFinanceRepairDone=true;if(corrected)addHistory("Korekta nagród DMŚJ",`Skorygowano ${corrected} błędne rozliczenie${corrected===1?"":"a"} juniorskiej imprezy reprezentacyjnej. Z budżetu usunięto łącznie ${money(totalDelta)} naliczone wcześniej przez błędną logikę cyklu.`);
+ }
+ function migrateQualifierArchive(){
+  if(!S?.careerStats)return;S.careerStats.competitionArchive??=[];const archive=S.careerStats.competitionArchive;
+  for(const rec of [...archive]){
+   rec.qualification=String(rec.qualification||"").replace(/eliminacjach SGP(?! Challenge)/gi,"eliminacjach SGP Challenge");
+   if(rec.key!=="GP Challenge"||!rec.qualification)continue;
+   const m=rec.qualification.match(/(\d+)\.\s*miejsce w eliminacjach SGP Challenge(?: w ([^.]+))?/i);if(!m)continue;
+   if(archive.some(x=>x.year===rec.year&&x.key==="SGP Challenge Qualifier"))continue;
+   archive.push({year:rec.year,key:"SGP Challenge Qualifier",name:"Eliminacje SGP Challenge",place:Number(m[1]),result:`${m[1]}. miejsce — awans do Grand Prix Challenge`,stage:"eliminacje",qualification:"",heats:5,hostCity:m[2]||""});
+  }
+ }
+
+ // --------------------------------------------------------------------------
+ // 6. PODSUMOWANIE OSIĄGNIĘĆ — WIĘCEJ DANYCH, ALE BEZ ROZWLEKANIA
+ // --------------------------------------------------------------------------
+ function summaryCompetitionKey(rec){
+  const key=rec.key||canonicalCompetitionKey(rec);
+  if(key==="IMP Wild Card")return "IMP";
+  if(key==="SGP Wild Card")return "SGP";
+  if(key==="SEC Wild Card")return "SEC";
+  return key;
+ }
+ function summaryCompetitionName(key){return {
+  SGP:"Indywidualne Mistrzostwa Świata",SGP2:"Indywidualne Mistrzostwa Świata Juniorów — SGP2",SEC:"Speedway Euro Championship",IMP:"Indywidualne Mistrzostwa Polski",MIMP:"Młodzieżowe Indywidualne Mistrzostwa Polski",DMPJ:"Drużynowe Mistrzostwa Polski Juniorów",DPŚ:"Drużynowy Puchar Świata",DME:"Drużynowe Mistrzostwa Europy",DMŚJ:"Drużynowe Mistrzostwa Świata Juniorów",SoN:"Speedway of Nations","GP Challenge":"Grand Prix Challenge","SGP Challenge Qualifier":"Eliminacje SGP Challenge","SEC Qualifier":"Eliminacje SEC","SEC Challenge":"SEC Challenge"
+ }[key]||championshipName(key)}
+ function roundPlacesFromArchive(rec){
+  if(["IMP Wild Card","SGP Wild Card","SEC Wild Card"].includes(rec.key)){
+   const p=rec.key==="IMP Wild Card"?(Number(rec.finalPlace)||Number(rec.roundPlace)):Number(rec.roundPlace||rec.place);return Number.isFinite(p)&&p>0?[p]:[];
+  }
+  const data=rec.roundData;
+  if(Array.isArray(data)&&data.length)return data.map(x=>typeof x==="number"?x:Number(x?.roundPlace||x?.place||x?.finalPlace)).filter(p=>Number.isFinite(p)&&p>=1&&p<=16);
+  return [];
+ }
+ function financeRoundStats(rec,key){
+  const own=rec.finance;if(own&&["SGP","SEC","IMP","SGP2"].includes(own.key))return {rounds:own.roundsParticipated||0,wins:own.wins||0,podiums:own.podiums||0};
+  const rows=S.pss102Rebuild?.cycleFinance||[];const f=rows.find(x=>x.year===rec.year&&x.key===key);return f?{rounds:f.roundsParticipated||0,wins:f.wins||0,podiums:f.podiums||0}:null;
+ }
+ function dmpjBest(records){
+  const finals=records.filter(r=>Number.isFinite(r.place));
+  if(finals.length){const p=Math.min(...finals.map(r=>r.place)),years=finals.filter(r=>r.place===p).map(r=>r.year);return {label:`${p}. miejsce`,years,count:years.length,rank:100-p}}
+  const rank={"bez powołania":0,"eliminacje":1,"ćwierćfinały":2,"półfinały":3,"finał":4};
+  const bestRank=Math.max(...records.map(r=>rank[String(r.stage||"").toLowerCase()]??0));const labels=["bez powołania","eliminacje","ćwierćfinał","półfinał","finał"];const years=records.filter(r=>(rank[String(r.stage||"").toLowerCase()]??0)===bestRank).map(r=>r.year);return {label:labels[bestRank]||"eliminacje",years,count:years.length,rank:bestRank};
+ }
+ championshipSummaryData=function(){
+  migrateQualifierArchive();
+  const archive=S.careerStats?.competitionArchive||[],grouped={};
+  for(const rec of archive){const key=summaryCompetitionKey(rec);if(!key)continue;(grouped[key]??=[]).push(rec)}
+  const cycleKeys=new Set(["SGP","SGP2","SEC","IMP"]);
+  return Object.entries(grouped).map(([key,records])=>{
+   const years=[...new Set(records.map(r=>r.year))].sort((a,b)=>a-b),placed=records.filter(r=>Number.isFinite(r.place)&&!["SGP Wild Card","SEC Wild Card","IMP Wild Card"].includes(r.key));
+   const medals=placed.filter(r=>r.place<=3),bestPlace=placed.length?Math.min(...placed.map(r=>r.place)):null,bestYears=bestPlace!=null?placed.filter(r=>r.place===bestPlace).map(r=>r.year):[];
+   let rounds=0,wins=0,podiums=0,wildcards=0;
+   if(cycleKeys.has(key))for(const rec of records){if(/Wild Card/.test(rec.key||""))wildcards++;const places=roundPlacesFromArchive(rec);if(places.length){rounds+=places.length;wins+=places.filter(p=>p===1).length;podiums+=places.filter(p=>p<=3).length}else{const f=financeRoundStats(rec,key);if(f){rounds+=f.rounds;wins+=f.wins;podiums+=f.podiums}}}
+   const latestQualification=[...records].sort((a,b)=>b.year-a.year).find(r=>r.qualification)?.qualification||"";
+   return {key,name:summaryCompetitionName(key),records,appearances:years.length,years,medals,best:bestPlace!=null?{place:bestPlace,years:bestYears}:null,latestQualification,cycle:cycleKeys.has(key),rounds,wins,podiums,wildcards,dmpj:key==="DMPJ"?dmpjBest(records):null};
+  }).sort((a,b)=>{const order=["SGP","SGP2","SEC","IMP","MIMP","DPŚ","SoN","DME","DMŚJ","DMPJ","SGP Challenge Qualifier","GP Challenge","SEC Qualifier","SEC Challenge"];const ai=order.indexOf(a.key),bi=order.indexOf(b.key);return (ai<0?999:ai)-(bi<0?999:bi)});
+ };
+ function summaryCategory(key){if(["SGP","SGP2","SEC","IMP","MIMP","DPŚ","SoN","DME","DMŚJ","DMPJ"].includes(key))return "championship";if(["SGP Challenge Qualifier","GP Challenge","SEC Qualifier","SEC Challenge"].includes(key))return "qualifying";return "prestige"}
+ championshipRowsHtml=function(items){
+  if(!items.length)return `<p class="muted">Brak zapisanych startów.</p>`;
+  return `<div class="championship-summary">${items.map(item=>{
+   const medalText=medalBreakdown(item.medals);
+   if(item.cycle){
+    const best=item.best?`max ${item.best.place}. (${item.best.years.join(", ")})`:"bez miejsca w generalce";
+    const right=medalText||best;
+    const roundText=item.rounds?`rundy: ${item.rounds} • wygrane: ${item.wins} • podia: ${item.podiums}`:"rundy: brak pełnych danych";
+    return `<div class="championship-summary-row"><strong>${item.name}</strong><span>${right}</span><small>Sezony: ${item.appearances} • ${roundText}${item.wildcards?` • dzikie karty: ${item.wildcards}`:""}${medalText?` • ${best}`:""}</small></div>`;
+   }
+   if(item.key==="DMPJ"){
+    const b=item.dmpj,repeat=b?.count>1?`${b.count}× (${b.years.join(", ")})`:`${b?.years?.[0]||"—"}`;
+    return `<div class="championship-summary-row"><strong>${item.name}</strong><span>Najlepszy wynik: ${b?.label||"—"}</span><small>Starty: ${item.appearances}${b?` • ${repeat}`:""}</small></div>`;
+   }
+   const bestText=item.best?`Najwyższe miejsce: ${item.best.place}. — ${item.best.years.join(", ")}`:"Brak sklasyfikowanego wyniku";
+   return `<div class="championship-summary-row"><strong>${item.name}</strong><span>${medalText||bestText}</span><small>Starty: ${item.appearances}${medalText?` • ${bestText}`:""}${item.latestQualification?` • ostatnio: ${String(item.latestQualification).replace(/eliminacjach SGP(?! Challenge)/gi,"eliminacjach SGP Challenge")}`:""}</small></div>`;
+  }).join("")}</div>`;
+ };
+ championshipSummaryHtml=function(){
+  const data=championshipSummaryData();if(!data.length)return `<p class="muted">Brak zapisanych startów w dodatkowych rozgrywkach.</p>`;
+  return `<div class="competition-summary-groups"><div><h4>Imprezy mistrzowskie</h4>${championshipRowsHtml(data.filter(x=>summaryCategory(x.key)==="championship"))}</div><div><h4>Turnieje kwalifikacyjne</h4>${championshipRowsHtml(data.filter(x=>summaryCategory(x.key)==="qualifying"))}</div><div><h4>Turnieje prestiżowe i memoriały</h4>${championshipRowsHtml(data.filter(x=>summaryCategory(x.key)==="prestige"))}</div></div>`;
  };
 
- const baseRender102Guide=render;
- render=function(){baseRender102Guide();if(S){ensureTutorialState();ensureTeamMarket();renderFacilities();const toggle=document.getElementById("tutorialTipsToggle");if(toggle)toggle.checked=tutorialPreference()}};
+ // --------------------------------------------------------------------------
+ // 7. KONIEC KARIERY — POWÓD WYNIKA Z DANYCH, NIE Z AUTOMATYCZNEGO „ZDROWIA”
+ // --------------------------------------------------------------------------
+ function retirementSignals(nextAge=S.age+1){
+  ensureHealthStats();const seasons=[...(S.careerStats?.seasons||[])].sort((a,b)=>a.year-b.year),latest=seasons.at(-1)||null,prev=seasons.slice(-5,-1);
+  const prevPeak=prev.length?Math.max(...prev.map(x=>Number(x.overall)||0)):Number(latest?.overall||overall()),latestOvr=Number(latest?.overall||overall()),ovrDrop=Math.max(0,prevPeak-latestOvr);
+  const prevBestAvg=prev.length?Math.max(...prev.map(x=>Number(x.average)||0)):Number(latest?.average||0),latestAvg=Number(latest?.average||0),avgDrop=Math.max(0,prevBestAvg-latestAvg);
+  const prevHeatAvg=prev.length?prev.reduce((s,x)=>s+(Number(x.heats)||0),0)/prev.length:Number(latest?.heats||0),latestHeats=Number(latest?.heats||0),heatDrop=Math.max(0,prevHeatAvg-latestHeats);
+  const history=S.healthStats?.history||[],recentInjuryWeeks=history.filter(x=>x.year>=S.year-2).reduce((s,x)=>s+(Number(x.weeks)||0),0),careerHeats=S.totals?.heats||0,recent=seasons.slice(-4),recentHeatAvg=recent.length?recent.reduce((s,x)=>s+(Number(x.heats)||0),0)/recent.length:0;
+  const sportEligible=nextAge>=35&&ovrDrop>=3&&(ovrDrop>=6||avgDrop>=.22||heatDrop>=22)&&(latestOvr<82||latestAvg<1.65||S.chance<30);
+  const sportScore=sportEligible?ovrDrop*1.25+avgDrop*7+Math.min(3,heatDrop/18)+(latestOvr<75?2:0):0;
+  const healthScore=(nextAge>=37?1:0)+(S.healthStats.seriousInjuries||0)*1.6+Math.max(0,(S.injuryRisk-18)/7)+Math.max(0,(62-S.skills.fitness)/8)+recentInjuryWeeks/14;
+  const healthEligible=nextAge>=37&&healthScore>=4.3;
+  const marketScore=(nextAge>=38&&S.chance<25&&latestHeats<55&&latestOvr<78)?2+(25-S.chance)/8+(55-latestHeats)/25+(78-latestOvr)/6:0;
+  const overloadScore=(nextAge>=39&&recentHeatAvg>=92&&careerHeats>=1450)?2+(recentHeatAvg-92)/18+(careerHeats-1450)/550:0;
+  const motivationScore=(nextAge>=41&&seasons.length>=22)?1.5+(nextAge-41)*.35+(S.careerStats?.titles?.length||0)*.08:0;
+  return {seasons,latest,ovrDrop,avgDrop,heatDrop,prevPeak,prevBestAvg,latestOvr,latestAvg,latestHeats,recentHeatAvg,careerHeats,sportEligible,sportScore,healthEligible,healthScore,marketScore,overloadScore,motivationScore};
+ }
+ function weightedCause(candidates){const total=candidates.reduce((s,x)=>s+x.weight,0);let r=Math.random()*total;for(const c of candidates){r-=c.weight;if(r<=0)return c}return candidates.at(-1)}
+ function forcedCareerEndCause(nextAge){
+  const sig=retirementSignals(nextAge),c=[];
+  if(sig.sportEligible)c.push({id:"sport",weight:sig.sportScore});
+  if(sig.healthEligible)c.push({id:"health",weight:sig.healthScore*.72});
+  if(sig.marketScore>0)c.push({id:"market",weight:sig.marketScore});
+  if(sig.overloadScore>0)c.push({id:"overload",weight:sig.overloadScore*.8});
+  if(sig.motivationScore>0)c.push({id:"motivation",weight:sig.motivationScore*.55});
+  if(!c.length)return null;
+  const strongest=Math.max(...c.map(x=>x.weight)),ageBase=nextAge<37?0:Math.max(0,(nextAge-36)*2.2),chance=clamp(ageBase+strongest*4.2+(nextAge>=45?8:0),sig.sportScore>=10?28:4,nextAge>=48?72:52);
+  if(Math.random()*100>=chance)return null;
+  const cause=weightedCause(c),fmt=n=>Number(n||0).toFixed(3).replace(".",",");
+  if(cause.id==="sport")return {kicker:"FORMA SPORTOWA",title:"Poziom wyraźnie odjechał",reason:"Trwały spadek poziomu sportowego",text:`To nie jest losowy komunikat. W ostatnich sezonach OVR spadł z okolic <b>${sig.prevPeak}</b> do <b>${sig.latestOvr}</b>${sig.avgDrop>=.15?`, a najlepsza niedawna średnia ${fmt(sig.prevBestAvg)} zeszła do ${fmt(sig.latestAvg)}`:""}. Coraz trudniej utrzymać tempo wymagane do regularnych startów.`};
+  if(cause.id==="market")return {kicker:"RYNEK I SKŁAD",title:"Miejsca w składzie jest coraz mniej",reason:"Utrata sportowej pozycji na rynku",text:`Ostatni sezon to ${sig.latestHeats} biegów, OVR ${sig.latestOvr}, a aktualna szansa na skład wynosi około ${Math.round(S.chance)}%. Rynek coraz wyraźniej spycha cię do roli głębokiej rezerwy.`};
+  if(cause.id==="overload")return {kicker:"ZMĘCZENIE KARIERĄ",title:"Organizm wystawia rachunek za lata ścigania",reason:"Wieloletnie przeciążenie karierą",text:`W czterech ostatnich sezonach jeździłeś średnio około ${Math.round(sig.recentHeatAvg)} biegów rocznie, a w całej karierze uzbierało się już ${sig.careerHeats}. Coraz trudniej połączyć przygotowanie, regenerację i kolejne starty.`};
+  if(cause.id==="motivation")return {kicker:"DECYZJA O PRZYSZŁOŚCI",title:"Czujesz, że to właściwy moment",reason:"Utrata motywacji po długiej karierze",text:`Za tobą ${sig.seasons.length} zapisanych sezonów. Po tak długiej karierze codzienna presja przygotowań i podróży zaczyna ważyć więcej niż kolejny rok ścigania.`};
+  return {kicker:"ZDROWIE",title:"Kumulacja urazów nie pozwala już ryzykować",reason:"Zdrowie nie pozwala na dalsze starty",text:`Decyzja wynika z realnej historii zdrowia: poważne urazy: <b>${S.healthStats.seriousInjuries||0}</b>, ostatnie obciążenie urazami: <b>${Math.round((S.healthStats.history||[]).filter(x=>x.year>=S.year-2).reduce((s,x)=>s+(x.weeks||0),0))} tyg.</b>, ryzyko urazu: <b>${Math.round(S.injuryRisk)}%</b>.`};
+ }
+ postSeasonHealthGate=function(next){
+  if(S.finalSeason){endCareer("Zapowiedziany ostatni sezon");return}
+  const nextAge=S.age+1;
+  if(nextAge>=50){showModal("KONIEC KARIERY","To był twój ostatni sezon",`Po osiągnięciu 50 lat kończysz zawodową karierę.`,[{title:"Przejdź dalej",desc:"Zakończ karierę i otwórz jej podsumowanie.",action:()=>{closeModal();endCareer("Osiągasz maksymalny wiek kariery")}}]);return}
+  const cause=forcedCareerEndCause(nextAge);
+  if(cause){showModal(cause.kicker,cause.title,cause.text,[{title:"Zakończ karierę",desc:"Przejdź do podsumowania całej kariery.",action:()=>{closeModal();endCareer(cause.reason)}}]);return}
+  S.healthGatePassedYear=S.year;next();
+ };
+ retirementDecision=function(next){
+  if(S.age<37){next();return}
+  if(S.age>=50){endCareer("Osiągasz maksymalny wiek kariery");return}
+  const sig=retirementSignals(S.age),strong=sig.latestOvr>=78&&sig.latestAvg>=1.70;
+  showModal("DECYZJA O PRZYSZŁOŚCI","Co robisz po kolejnym sezonie?",`Masz ${S.age} lat. OVR: <b>${sig.latestOvr}</b>${sig.latestAvg?` • ostatnia średnia: <b>${sig.latestAvg.toFixed(3).replace(".",",")}</b>`:""} • ryzyko urazu: <b>${Math.round(S.injuryRisk)}%</b>.`,[
+   {title:"Jadę dalej",desc:"Podpisujesz kontrakt na kolejny sezon, jeśli rynek daje taką możliwość.",action:()=>{closeModal();next()}},
+   {title:"Jeszcze jeden sezon",desc:"Deklarujesz ostatni rok. Po nim kariera zakończy się automatycznie.",action:()=>{S.finalSeason=true;closeModal();next()}},
+   {title:strong?"Kończę na własnych warunkach":"Kończę karierę",desc:strong?"Odchodzisz, będąc nadal konkurencyjnym.":"Podejmujesz świadomą decyzję o zakończeniu kariery.",action:()=>{closeModal();endCareer(strong?"Zakończenie kariery na własnych warunkach":"Dobrowolna decyzja")}}
+  ]);
+ };
 
- // --- UI bindings ------------------------------------------------------------
- const guideBtn=document.getElementById("guideBtn");if(guideBtn)guideBtn.onclick=()=>openGuide("start");
- const devHelp=document.getElementById("devHelpBtn");if(devHelp)devHelp.onclick=()=>openGuide("development");
- const teamBtn=document.getElementById("teamMarketBtn");if(teamBtn)teamBtn.onclick=openTeamMarket;
- const guideClose=document.getElementById("guideCloseBtn");if(guideClose)guideClose.onclick=closeGuide;
- const guideModal=document.getElementById("guideModal");if(guideModal)guideModal.onclick=e=>{if(e.target===guideModal)closeGuide()};
- const search=document.getElementById("guideSearch");if(search)search.oninput=e=>renderGuideNav(e.target.value);
- const tipsToggle=document.getElementById("tutorialTipsToggle");if(tipsToggle)tipsToggle.onchange=e=>setTutorialPreference(e.target.checked);
- const restart=document.getElementById("restartTutorialBtn");if(restart)restart.onclick=restartTutorial;
- const tipClose=document.getElementById("tutorialTipClose");if(tipClose)tipClose.onclick=()=>document.getElementById("tutorialTip")?.classList.add("hidden");
- document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!document.getElementById("guideModal")?.classList.contains("hidden"))closeGuide()});
- const startToggle=document.getElementById("tutorialMode");if(startToggle){startToggle.checked=tutorialPreference();startToggle.onchange=e=>localStorage.setItem(TUTORIAL_PREF_KEY,e.target.checked?"1":"0")}
+ // Delikatna „faktura” sezonu tylko wtedy, gdy wynika z formy/aktualnej fazy kariery.
+ function applyContextualSeasonTexture(pph){
+  S.pss1021??={};if(S.pss1021.textureYear===S.year)return;S.pss1021.textureYear=S.year;
+  const dna=careerDNA(),phase=careerPhaseState(),peak=dna.peakAge||31,plateau=dna.peakWidth||1,expected=clamp(.98+(overall()-55)*.027,1.0,2.08),delta=Number(pph||0)-expected,keys=Object.keys(S.skills);
+  let changes=0;
+  if((phase.type==="slump"||delta<-.42)&&Math.random()<.45){for(let i=0;i<rand(2,4);i++){const k=pick(keys.filter(x=>S.skills[x]>45));if(k){S.skills[k]-=1;changes--}}}
+  else if((["surge","breakthrough","secondWind"].includes(phase.type)||delta>.48)&&(S.age<=peak+plateau||phase.type==="secondWind")&&Math.random()<.34){for(let i=0;i<rand(2,4);i++){const k=pick(keys.filter(x=>S.skills[x]<Math.min(96,skillSoftTarget(x)+1)));if(k){S.skills[k]+=1;changes++}}}
+  if(changes){normalize();S.careerStats.bestOverall=Math.max(S.careerStats.bestOverall||0,overall());addHistory("Sezonowa zmiana dyspozycji",changes>0?"Bardzo mocny sezon zostawia niewielki, trwały ślad w kilku elementach jazdy.":"Słabsza dyspozycja i trudniejszy sezon odbijają się na kilku elementach przygotowania.")}
+ }
+ const markSeasonSettled1021=markSeasonSettled;
+ markSeasonSettled=function(pph){markSeasonSettled1021(pph);applyContextualSeasonTexture(pph);save()};
 
- // Ponownie renderujemy istniejący zapis po zainstalowaniu patcha.
- if(S){ensureTutorialState();ensureTeamMarket();normalize();save();render()}
- else{renderGuideNav()}
+ // --------------------------------------------------------------------------
+ // 8. KONIEC KARIERY — TRZY OPCJE W POP-UPIE
+ // --------------------------------------------------------------------------
+ const endCareer1021=endCareer;
+ endCareer=function(reason="Decyzja zawodnika"){if(S)S.retirementReason=reason;return endCareer1021(reason)};
+ showCareerEndSupportPopup=function(){
+  const card=$("careerSummaryCard");
+  showModal("KONIEC KARIERY","Rozegrałeś całą karierę!",`Kariera dobiegła końca. Możesz najpierw obejrzeć pełne podsumowanie, rozpocząć nową rozgrywkę albo wesprzeć dalszy rozwój projektu symboliczną kawą. ☕`,[
+   {title:"Przejdź do podsumowania",desc:"Zobacz osiągnięcia, statystyki i historię sezon po sezonie.",action:()=>{closeModal();card?.scrollIntoView?.({behavior:"smooth",block:"start"})}},
+   {title:"Nowa kariera",desc:"Usuń bieżący zapis i rozpocznij nową historię.",action:()=>{closeModal();if(confirm("Rozpocząć nową karierę? Obecny zapis zostanie usunięty."))clearCareerSavesAndReload()}},
+   {title:"Postaw kawę! ☕",desc:"Dobrowolnie wesprzyj rozwój Polish Speedway Simulator.",action:()=>{window.open("https://www.naffy.io/piotr-bak-qwihy/postaw-kawe","_blank","noopener,noreferrer");closeModal();card?.scrollIntoView?.({behavior:"smooth",block:"start"})}}
+  ]);
+ };
+
+ // --------------------------------------------------------------------------
+ // 9. UI / PODPIĘCIE ELEMENTÓW
+ // --------------------------------------------------------------------------
+ const render1021=render;
+ render=function(){render1021();if(S){ensureHelpState();ensureTeamMarketState();updateTeamMarketPanel()}};
+ if($("guideBtn"))$("guideBtn").onclick=()=>openGameGuide("start");
+ if($("guideCloseBtn"))$("guideCloseBtn").onclick=closeGameGuide;
+ if($("guideSearch"))$("guideSearch").oninput=e=>renderGuide(e.target.value);
+ if($("restartTutorialBtn"))$("restartTutorialBtn").onclick=()=>{if(!S){closeGameGuide();alert("Najpierw rozpocznij karierę.");return}closeGameGuide();const h=ensureHelpState();h.onboardingDone=false;save();runTutorialOnboarding(0)};
+ if($("tutorialTipsToggle"))$("tutorialTipsToggle").onchange=e=>{if(S){ensureHelpState().tipsEnabled=!!e.target.checked;save()}localStorage.setItem("pss_tips_enabled",e.target.checked?"1":"0")};
+ if($("tutorialTipClose"))$("tutorialTipClose").onclick=hideContextTip;
+ if($("tutorialTipMore"))$("tutorialTipMore").onclick=()=>{hideContextTip();openGameGuide(activeTipChapter)};
+ if($("devHelpBtn"))$("devHelpBtn").onclick=()=>openGameGuide("development");
+ if($("teamMarketBtn"))$("teamMarketBtn").onclick=()=>openTeamMarket();
+
+ // Migracje aktualnego zapisu po załadowaniu.
+ if(S){
+  ensureHelpState();ensureTeamMarketState();repairLegacyDMSJFinance();migrateQualifierArchive();
+  if(S.helpState.tipsEnabled===undefined)S.helpState.tipsEnabled=localStorage.getItem("pss_tips_enabled")!=="0";
+  save();render();
+ }
 })();
