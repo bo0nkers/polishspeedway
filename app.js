@@ -2076,10 +2076,11 @@ function createPlayer(){
  $("newsBox").innerHTML=`<p class="eyebrow">PRZED LICENCJĄ</p><h3>${background.title.toUpperCase()}</h3><p>${background.text}</p><p><b>Zaplecze:</b> ${support.title}. Budżet początkowy: ${money(S.budget)}.</p>${openingReport?`<div class="guidance-report"><span>RAPORT SZKÓŁKI</span><p>${openingReport.text}</p></div>`:""}`;
  save();
 }
-function save(){localStorage.setItem("pss_v1023",JSON.stringify(S))}
+function save(){localStorage.setItem("pss_v1024",JSON.stringify(S))}
 function load(){
  try{
-  const newest=localStorage.getItem("pss_v1023");
+  const newest=localStorage.getItem("pss_v1024");
+  const previousV1023=localStorage.getItem("pss_v1023");
   const previousV1022=localStorage.getItem("pss_v1022");
   const previousV1021=localStorage.getItem("pss_v1021");
   const previousV102=localStorage.getItem("pss_v102");
@@ -2087,12 +2088,13 @@ function load(){
   const previousVersion=localStorage.getItem("pss_v100");
   const previousBrand=localStorage.getItem("pzs_v200");
   if(newest)return JSON.parse(newest);
-  if(previousV1022){localStorage.setItem("pss_v1023",previousV1022); return JSON.parse(previousV1022);}
-  if(previousV1021){localStorage.setItem("pss_v1023",previousV1021); return JSON.parse(previousV1021);}
-  if(previousV102){localStorage.setItem("pss_v1023",previousV102); return JSON.parse(previousV102);}
-  if(previousV101){localStorage.setItem("pss_v1023",previousV101); return JSON.parse(previousV101);}
-  if(previousVersion){localStorage.setItem("pss_v1023",previousVersion); return JSON.parse(previousVersion);}
-  if(previousBrand){localStorage.setItem("pss_v1023",previousBrand); return JSON.parse(previousBrand);}
+  if(previousV1023){localStorage.setItem("pss_v1024",previousV1023); return JSON.parse(previousV1023);}
+  if(previousV1022){localStorage.setItem("pss_v1024",previousV1022); return JSON.parse(previousV1022);}
+  if(previousV1021){localStorage.setItem("pss_v1024",previousV1021); return JSON.parse(previousV1021);}
+  if(previousV102){localStorage.setItem("pss_v1024",previousV102); return JSON.parse(previousV102);}
+  if(previousV101){localStorage.setItem("pss_v1024",previousV101); return JSON.parse(previousV101);}
+  if(previousVersion){localStorage.setItem("pss_v1024",previousVersion); return JSON.parse(previousVersion);}
+  if(previousBrand){localStorage.setItem("pss_v1024",previousBrand); return JSON.parse(previousBrand);}
   const v1361=localStorage.getItem("pzs_v1361");
   if(v1361)return JSON.parse(v1361);
   const v136=localStorage.getItem("pzs_v136");
@@ -8685,7 +8687,7 @@ createPlayer=function(){
 };
 
 function clearCareerSavesAndReload(){
- const keys=["pss_v1023","pss_v1022","pss_v1021","pss_v102","pss_v101","pss_v100","pzs_v200","pzs_v1361","pzs_v136","pzs_v135","pzs_v134","pzs_v1331","pzs_v133","pzs_v132","pzs_v131","pzs_v1301","pzs_v130","pzs_v129","pzs_v128","pzs_v127","pzs_v126","pzs_v1252","pzs_v1251","pzs_v125","pzs_v124","pzs_v123","pzs_v122","pzs_v121","pzs_v120","pzs_v119","pzs_v118","pzs_v117","pzs_v116","pzs_v115","pzs_v114","pzs_v113","pzs_v112","pzs_v111","pzs_v110","pzs_v109","pzs_v108","pzs_v107","pzs_v106","pzs_v105","pzs_v104","pzs_v103","pzs_v102","pzs_v101","pzs_v100","pzs_v305","pzs_v304","pzs_v303","pzs_v302","pzs_v301","pzs_final30","pzs_v30","pzs_v29","pzs_v28","pzs_v27","pzs_v26","pzs_v25","pzs_v24","pzs_v23","pzs_v22","pzs_v2"];
+ const keys=["pss_v1024","pss_v1023","pss_v1022","pss_v1021","pss_v102","pss_v101","pss_v100","pzs_v200","pzs_v1361","pzs_v136","pzs_v135","pzs_v134","pzs_v1331","pzs_v133","pzs_v132","pzs_v131","pzs_v1301","pzs_v130","pzs_v129","pzs_v128","pzs_v127","pzs_v126","pzs_v1252","pzs_v1251","pzs_v125","pzs_v124","pzs_v123","pzs_v122","pzs_v121","pzs_v120","pzs_v119","pzs_v118","pzs_v117","pzs_v116","pzs_v115","pzs_v114","pzs_v113","pzs_v112","pzs_v111","pzs_v110","pzs_v109","pzs_v108","pzs_v107","pzs_v106","pzs_v105","pzs_v104","pzs_v103","pzs_v102","pzs_v101","pzs_v100","pzs_v305","pzs_v304","pzs_v303","pzs_v302","pzs_v301","pzs_final30","pzs_v30","pzs_v29","pzs_v28","pzs_v27","pzs_v26","pzs_v25","pzs_v24","pzs_v23","pzs_v22","pzs_v2"];
  keys.forEach(k=>localStorage.removeItem(k));location.reload();
 }
 function showCareerEndSupportPopup(){
@@ -10730,4 +10732,335 @@ const saved=load();if(saved){S=saved;S.seasonFlowActive=false;normalize();repair
   if(result&&result.key==="SGP2"&&Number(result.place)<=3)return {kind:result.place===1?"MISTRZ ŚWIATA JUNIORÓW":"MEDAL SGP2",title:capitalizeFirstText(result.result||`${result.place}. miejsce`),subtitle:"Podium Indywidualnych Mistrzostw Świata Juniorów."};
   return competitionCelebration1023b(result);
  };
+})();
+
+// ============================================================================
+// Polish Speedway Simulator 1.02.4 — SoN, podsumowania, progresja i UX
+// ============================================================================
+(() => {
+ const PATCH_1024=1;
+
+ // --------------------------------------------------------------------------
+ // 1. KALENDARZ: DPŚ CO 3 LATA (2023, 2026, 2029...), SoN W POZOSTAŁYCH
+ // --------------------------------------------------------------------------
+ const simulateNationalTeamCompetitions1024Base=simulateNationalTeamCompetitions;
+ function pss1024SeniorSelectionScore(basePph){
+  const level=leagueByName(S.league)?.level||3;
+  const leagueBonus=level===1?3:level===2?0:-3;
+  const form=(currentFormRating()-overall())*.18;
+  return overall()+leagueBonus+(Number(basePph||0)-1.55)*7+form+(S.reputation||0)*.025;
+ }
+ function pss1024RepresentativeRideCount(name,score){
+  if(name==="Drużynowy Puchar Świata"){if(score>=91)return 5;if(score>=87)return 4;return 3}
+  if(name==="Speedway of Nations"){if(score>=90)return 6;if(score>=86)return 5;if(score>=82)return 3;return 2}
+  if(score>=89)return 5;if(score>=85)return 4;if(score>=81)return 3;return 2;
+ }
+ simulateNationalTeamCompetitions=function(basePph){
+  const out=simulateNationalTeamCompetitions1024Base(basePph)||[];
+  S.pendingTeamCompetitions=(S.pendingTeamCompetitions||[]).filter(e=>!["Drużynowy Puchar Świata","Speedway of Nations"].includes(e.name));
+  const score=pss1024SeniorSelectionScore(basePph);
+  const worldCupYear=((S.year-2023)%3+3)%3===0;
+  if(S.age>=18){
+   if(worldCupYear&&score>=86){
+    const chance=clamp(18+(score-86)*6,10,92);
+    if(Math.random()*100<chance)S.pendingTeamCompetitions.push({name:"Drużynowy Puchar Świata",fieldMean:87,world:true,playerHeats:pss1024RepresentativeRideCount("Drużynowy Puchar Świata",score),selectionScore:score});
+   }else if(!worldCupYear&&score>=82){
+    const chance=clamp(24+(score-82)*6.5,12,94);
+    if(Math.random()*100<chance)S.pendingTeamCompetitions.push({name:"Speedway of Nations",format:"son1024",selectionScore:score});
+   }
+  }
+  return out;
+ };
+
+ // --------------------------------------------------------------------------
+ // 2. MŁODY ZAWODNIK: BRAK NIEWIDZIALNEGO REGRESU PRZED PEAKIEM
+ // --------------------------------------------------------------------------
+ const curveDrivenSkillDecay1024Base=curveDrivenSkillDecay;
+ curveDrivenSkillDecay=function(){
+  const dna=careerDNA(),phase=careerPhaseState(),peak=dna.peakAge||31;
+  // Przed peakiem wyprzedzenie krzywej ma hamować kolejny rozwój, a nie zabierać
+  // już zdobyte umiejętności. Realny minus może wynikać z jawnego kryzysu/slumpu.
+  if(S.age<=peak){
+   if(phase.type==="slump"&&Math.random()<.28){
+    const keys=Object.keys(S.skills).filter(k=>S.skills[k]>48);
+    const key=pick(keys);if(key)S.skills[key]-=1;
+   }
+   return;
+  }
+  return curveDrivenSkillDecay1024Base();
+ };
+ const careerDecline1024Base=careerDecline;
+ careerDecline=function(){
+  const dna=careerDNA(),phase=careerPhaseState(),peak=dna.peakAge||31;
+  if(S.age<=peak&&phase.type!=="slump")return;
+  return careerDecline1024Base();
+ };
+
+ // --------------------------------------------------------------------------
+ // 3. WYNIKI: LEKKA TYPOGRAFIA, DZIKA KARTA BEZ „OKOŁO”, FAJERWERK PIERWSZY
+ // --------------------------------------------------------------------------
+ const qualificationCelebration1024Base=qualificationCelebration;
+ qualificationCelebration=function(event){
+  if(event?.key==="SGP2"&&S.sgp2AdvanceCelebratedYear===S.year)return null;
+  return qualificationCelebration1024Base(event);
+ };
+ function pss1024CycleStats(result){
+  const key=canonicalCompetitionKey(result);
+  if(!["SGP","SEC","IMP","SGP2"].includes(key))return null;
+  const api=globalThis.PSSCompetitionFinance;
+  const expected=api?.expectedRounds?api.expectedRounds(result,key):(key==="IMP"||key==="SGP2"?3:key==="SEC"?4:10);
+  const places=api?.roundPlacesForResult?api.roundPlacesForResult(result,key):[];
+  const rounds=places.length||Math.min(expected,Number(String(result.stage||"").match(/(\d+)/)?.[1]||expected));
+  return {expected,rounds,wins:places.filter(p=>p===1).length,podiums:places.filter(p=>p<=3).length,best:places.length?Math.min(...places):null};
+ }
+ function pss1024CleanWildcardRoundText(result){
+  let txt=String(result?.result||"")
+   .replace(/\s*Punkty z tej rundy liczą się do klasyfikacji generalnej;?\s*kończysz cykl na około\s*\d+\.?\s*miejscu\.?/i,"")
+   .replace(/\s*Punkty z tej rundy liczą się do klasyfikacji generalnej\.?/i,"")
+   .trim();
+  if(!txt&&Number.isFinite(Number(result?.roundPlace||result?.place)))txt=`${Number(result.roundPlace||result.place)}. miejsce w rundzie`;
+  txt=txt.replace(/\s+/g," ").replace(/\s*;\s*/g,"; ");
+  return ensureSentence(txt||"Runda zakończona");
+ }
+ function pss1024GeneralClassificationPopup(result,next){
+  const key=String(result?.key||"");
+  if(!["IMP Wild Card","SEC Wild Card"].includes(key)||!Number.isFinite(Number(result.generalPlace))){next?.();return}
+  const series=key.startsWith("IMP")?"IMP":"SEC",place=Number(result.generalPlace),points=Number(result.generalClassificationPoints??result.points??0);
+  showModal("KLASYFIKACJA GENERALNA",series,`Po przeliczeniu klasyfikacji całego cyklu zajmujesz <b>${place}. miejsce</b> z dorobkiem <b>${points} pkt.</b>`,[
+   {title:"Kontynuuj",desc:"Przejdź dalej.",action:()=>{closeModal();next?.()}}
+  ]);
+ }
+ showCompetitionResult=function(result,next){
+  globalThis.PSSCompetitionFinance?.ensureCompetitionReward?.(result);
+  const key=String(result?.key||"");
+  const advancedSgp2=key==="SGP2 Qualifier"&&!!result?.advanced;
+  if(advancedSgp2)S.sgp2AdvanceCelebratedYear=S.year;
+  const openResult=()=>{
+   const healthNote=postCompetitionHealthExposure(result);
+   const wildcard=["IMP Wild Card","SEC Wild Card"].includes(key);
+   const resultText=wildcard?pss1024CleanWildcardRoundText(result):ensureSentence((result?.result||"Zawody zakończone")+healthNote);
+   const stats=pss1024CycleStats(result);
+   let second="";
+   if(stats){
+    second=`<span class="competition-result-stats">${stats.rounds}/${stats.expected} rund • ${stats.wins} ${stats.wins===1?"zwycięstwo":"zwycięstw"} • ${stats.podiums} ${stats.podiums===1?"podium":"podiów"}${stats.best?` • najlepsza runda: ${stats.best}. miejsce`:""} • ${result.points} pkt.</span>`;
+   }else if(wildcard){
+    second=`<span class="competition-result-stats">Punkty z tej rundy liczą się do klasyfikacji generalnej ${key.startsWith("IMP")?"IMP":"SEC"}.${result?.points!=null?` Twój dorobek: ${result.points} pkt.`:""}</span>`;
+   }else if(result?.points!=null){
+    second=`<span class="competition-result-stats">Twój dorobek: ${result.points} pkt.</span>`;
+   }
+   showModal("WYNIK ZAWODÓW",result?.name||"Zawody",`<b>${resultText}</b>${second}`,[
+    {title:"Kontynuuj",desc:"Przejdź dalej.",action:()=>{closeModal();pss1024GeneralClassificationPopup(result,next)}}
+   ]);
+  };
+  let c=competitionCelebration(result);
+  if(advancedSgp2)c={kind:"AWANS DO SGP2",title:"Indywidualne Mistrzostwa Świata Juniorów",subtitle:`${result.place}. miejsce w kwalifikacjach SGP2 w ${cityLocative(result.hostCity)}.`};
+  if(c)showAchievementCelebration(c.kind,c.title,c.subtitle,openResult);else openResult();
+ };
+
+ // --------------------------------------------------------------------------
+ // 4. PODSUMOWANIE SEZONU: KOMPAKTOWE WIERSZE, SORTOWANIE PRESTIŻEM
+ // --------------------------------------------------------------------------
+ function pss1024CompetitionRank(c){
+  const k=canonicalCompetitionKey(c),name=String(c?.name||"");
+  const map={SGP:10,SoN:12,"DPŚ":11,SEC:20,DME:21,IMP:30,"IMP Wild Card":31,SGP2:40,"DMŚJ":41,MIMP:50,DMPJ:51,"GP Challenge":60,"SGP Challenge Qualifier":61,"SEC Challenge":62,"SEC Qualifier":63,"SGP2 Qualifier":64,"Złoty Kask":70,"Kryterium Asów":71,"Srebrny Kask":80,"Brązowy Kask":81,"Memoriał Jancarza":90,"Memoriał Smoczyka":91};
+  if(map[k]!=null)return map[k];
+  if(/Speedway Grand Prix|Indywidualne Mistrzostwa Świata$/i.test(name))return 10;
+  if(/Speedway of Nations/i.test(name))return 12;
+  if(/Drużynowy Puchar Świata/i.test(name))return 11;
+  if(/Euro Championship|Mistrzostwa Europy/i.test(name))return 20;
+  if(/Mistrzostwa Polski/i.test(name))return 30;
+  if(/Świata Juniorów|SGP2/i.test(name))return 40;
+  if(/Challenge|Eliminacje|Kwalifikacje/i.test(name))return 60;
+  if(/Złoty Kask|Kryterium/i.test(name))return 70;
+  if(/Srebrny Kask|Brązowy Kask/i.test(name))return 80;
+  if(/Memoriał/i.test(name))return 90;
+  return 95;
+ }
+ function pss1024CompetitionGroup(rank){
+  if(rank<30)return "Mistrzostwa świata i reprezentacja";
+  if(rank<60)return "Mistrzostwa krajowe i juniorskie";
+  if(rank<70)return "Kwalifikacje";
+  return "Turnieje prestiżowe";
+ }
+ function pss1024ShortResult(c){
+  const key=String(c?.key||"");
+  let text=String(c?.result||"").trim();
+  text=text.replace(/\s*Punkty z tej rundy.*$/i,"").replace(/\s*\([^)]*pkt\.?\)\s*$/i,"").trim();
+  if(key==="SGP2 Qualifier"&&c.advanced)return `${c.place}. miejsce • awans`;
+  if(key==="IMP Wild Card")return `${c.roundPlace||c.place}. miejsce w rundzie • punkty do generalnej`;
+  if(key==="SEC Wild Card")return `${c.roundPlace||c.place}. miejsce w rundzie • punkty do generalnej`;
+  if(text)return text.replace(/[.]$/,'');
+  if(Number.isFinite(Number(c?.place)))return `${Number(c.place)}. miejsce`;
+  return "udział";
+ }
+ function pss1024CompetitionLabel(c){
+  const key=canonicalCompetitionKey(c);
+  const labels={SGP:"IMŚ / SGP",SEC:"IME / SEC",IMP:"IMP",SGP2:"IMŚJ / SGP2",SoN:"Speedway of Nations","DPŚ":"Drużynowy Puchar Świata",DME:"DME","DMŚJ":"DMŚJ",MIMP:"MIMP",DMPJ:"DMPJ","SGP2 Qualifier":"Kwalifikacje SGP2","SGP Challenge Qualifier":"Eliminacje SGP Challenge","GP Challenge":"Grand Prix Challenge","SEC Qualifier":"Eliminacje SEC","SEC Challenge":"SEC Challenge","IMP Wild Card":"IMP — dzika karta"};
+  return labels[key]||String(c?.name||key||"Zawody");
+ }
+ competitionsSummary=function(results){
+  const rows=(results||[]).filter(Boolean).map((c,i)=>({c,i,rank:pss1024CompetitionRank(c)})).sort((a,b)=>a.rank-b.rank||a.i-b.i);
+  if(!rows.length)return `<span class="muted">brak dodatkowych startów.</span>`;
+  const groups=[];let current=null;
+  for(const row of rows){
+   const group=pss1024CompetitionGroup(row.rank);
+   if(!current||current.name!==group){current={name:group,items:[]};groups.push(current)}
+   current.items.push(row.c);
+  }
+  return `<div class="season-competition-summary">${groups.map(g=>`<div class="season-competition-group"><div class="season-competition-group-title">${g.name}</div>${g.items.map(c=>{
+   const reward=Number(c?.finance?.total||0),pts=c?.points!=null?`${c.points} pkt.`:"",res=pss1024ShortResult(c);
+   return `<div class="season-competition-row"><span class="season-competition-name">${pss1024CompetitionLabel(c)}</span><span class="season-competition-result">${res}${pts?` • ${pts}`:""}</span>${reward?`<span class="season-competition-money">+${money(reward)}</span>`:`<span class="season-competition-money"></span>`}</div>`;
+  }).join("")}</div>`).join("")}</div>`;
+ };
+
+ // --------------------------------------------------------------------------
+ // 5. SPEEDWAY OF NATIONS 1.02.4 — PEŁNE BIEGI, 21 BIEGÓW + BARAŻ + FINAŁ
+ // --------------------------------------------------------------------------
+ const PSS1024_SON_BASE={"Australia":86,"Wielka Brytania":85,"Dania":84,"Szwecja":83,"Polska":85,"Łotwa":79,"Niemcy":78,"Czechy":77,"Słowenia":74,"Finlandia":72,"Ukraina":72,"USA":72};
+ function pss1024SoNOpponents(){
+  const tierA=["Australia","Wielka Brytania","Dania","Szwecja"],tierB=["Łotwa","Niemcy","Czechy"],tierC=["Słowenia","Finlandia","Ukraina","USA"];
+  const b=[...tierB].sort(()=>Math.random()-.5),out=[...tierA,b[0],Math.random()<.72?b[1]:pick(tierC)];
+  return [...new Set(out)].slice(0,6);
+ }
+ function pss1024SoNRoster(nation){
+  const base=PSS1024_SON_BASE[nation]||75;
+  let ratings=[0,1,2].map(i=>clamp(Math.round(base+rand(-4,4)+rand(-2,2)-i*.7),63,94));
+  if(nation==="Polska")ratings=[overall(),clamp(Math.round(base+rand(-3,3)),70,94),clamp(Math.round(base-3+rand(-3,3)),67,91)];
+  return ratings.map((rating,i)=>({nation,id:`${nation}-${i}`,rating,player:nation==="Polska"&&i===0,label:nation==="Polska"&&i===0?S.name:`${nationalityRiderLabel(nation)} ${i+1}`}));
+ }
+ function pss1024SoNBuildEvent(event={}){
+  const nations=["Polska",...pss1024SoNOpponents()],rosters=Object.fromEntries(nations.map(n=>[n,pss1024SoNRoster(n)]));
+  const pol=rosters.Polska.slice().sort((a,b)=>b.rating-a.rating),playerRank=pol.findIndex(r=>r.player)+1,primary=playerRank<=2;
+  const playerStarts=primary?6:rand(1,3),opps=nations.slice(1),playerOpponents=primary?[...opps]:[...opps].sort(()=>Math.random()-.5).slice(0,playerStarts);
+  const means=Object.fromEntries(nations.map(n=>[n,Math.round(rosters[n].reduce((s,r)=>s+r.rating,0)/3*10)/10]));
+  return {...event,nations,rosters,means,playerRank,primary,playerStarts,playerOpponents,hostCity:event.hostCity||pick(["Vojens","Manchester","Wrocław","Toruń","Målilla"])};
+ }
+ function pss1024SoNSchedule(nations){
+  const polPairs=nations.filter(n=>n!=="Polska").map(n=>["Polska",n]).sort(()=>Math.random()-.5);
+  const other=[];for(let i=1;i<nations.length;i++)for(let j=i+1;j<nations.length;j++)other.push([nations[i],nations[j]]);
+  other.sort(()=>Math.random()-.5);
+  const templates=[[2,6,9,13,17,20],[3,6,10,13,17,21],[2,5,9,13,18,21],[1,5,8,12,16,20]],targets=pick(templates);
+  const schedule=Array(21).fill(null);targets.forEach((pos,i)=>schedule[pos-1]=polPairs[i]);let k=0;
+  for(let i=0;i<schedule.length;i++)if(!schedule[i])schedule[i]=other[k++];
+  return schedule;
+ }
+ function pss1024SoNPair(ev,nation,usePlayer=false){
+  const roster=ev.rosters[nation];
+  if(nation!=="Polska")return roster.slice().sort((a,b)=>b.rating-a.rating).slice(0,2);
+  const player=roster.find(r=>r.player),others=roster.filter(r=>!r.player).sort((a,b)=>b.rating-a.rating);
+  return usePlayer?[player,others[0]]:others.slice(0,2);
+ }
+ function pss1024SoNSimOrder(ev,a,b,usePlayer=false){
+  return [...pss1024SoNPair(ev,a,usePlayer&&a==="Polska"),...pss1024SoNPair(ev,b,usePlayer&&b==="Polska")]
+   .map(r=>({...r,side:r.nation==="Polska"?"own":"away",score:r.rating+rand(-9,9)})).sort((x,y)=>y.score-x.score);
+ }
+ function pss1024SoNHeatPoints(order){
+  const pts=[4,3,2,0],byNation={};order.forEach((r,i)=>byNation[r.nation]=(byNation[r.nation]||0)+pts[i]);return {byNation,pts};
+ }
+ function pss1024SoNApply(scores,order){const {byNation}=pss1024SoNHeatPoints(order);for(const [n,p] of Object.entries(byNation))scores[n]=(scores[n]||0)+p;return byNation}
+ function pss1024SoNStanding(scores){return Object.entries(scores).sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0])).map(([nation,score],i)=>({place:i+1,nation,score}))}
+ function pss1024SoNStandingsText(scores){return pss1024SoNStanding(scores).map(x=>`${x.place}. ${x.nation} ${x.score} pkt.`).join(" • ")}
+
+ function pss1024SoNInteractiveHeat(ev,opponent,{scores,heatLabel,dayToken},done){
+  const pair=pss1024SoNPair(ev,"Polska",true),player=pair.find(r=>r.player),mate=pair.find(r=>!r.player),rivals=pss1024SoNPair(ev,opponent,false).map(r=>({...r,side:"away"}));
+  const entrants=[{...player,side:"own",player:true},{...mate,side:"own"},...rivals];
+  const ctx=mentorAdviceContext(rivals,"start",mate,{dayToken,competitionKey:"SoN",teamRace:true,raceState:newRaceState(2),order:entrants});
+  const specs=[["attack","Mocno postaw na start","Spróbuj od razu ustawić bieg pod polską parę."],["inside","Pilnuj krawężnika","Postaw na pierwszy łuk i krótszą linię."],["outside","Wyjdź szerzej","Buduj prędkość po zewnętrznej."],["safe","Spokojny start","Ogranicz ryzyko i zachowaj kontakt z partnerem."]];
+  const options=specs.map(([mode,title,desc])=>{const prob=raceOutcomeProbabilities(mode,{phase:"start",rivals,teammate:mate,context:ctx,position:2});return {title,desc,prob,action:()=>start(mode,prob)}});
+  showModal("SPEEDWAY OF NATIONS",heatLabel,`Polska: <b>${player.label} OVR ${player.rating}</b> + partner OVR ${mate.rating}. ${opponent}: OVR ${rivals[0].rating} i ${rivals[1].rating}.<br>Przed biegiem: ${pss1024SoNStandingsText(scores)}${raceAdviceText(rivals,"start",mate,ctx)}`,options);
+
+  function start(mode,prob){
+   const resolved=resolveRaceDecision(mode,{phase:"start",rivals,teammate:mate,context:ctx,position:2,teamRace:true,probOverride:prob});
+   closeModal();showOutcomeRoller({title:"Start i pierwszy łuk",subtitle:"",mode,prob,outcome:resolved.outcome,onDone:()=>{
+    ctx.tacticalBonus=decisionTacticalBonus(mode,rivals,"start",mate,ctx);
+    let snap=raceStartSnapshot(mode,entrants,ctx);snap=ensureStartSnapshotPosition(snap,resolved.targetPosition);ctx.order=snap.order;updateRaceState(ctx,2,snap.position,resolved.outcome,mode);maybeShiftTrackConditions(ctx,"distance");
+    const dc=mentorAdviceContext(rivals,"distance",mate,ctx);dc.raceState=ctx.raceState;dc.trackShift=ctx.trackShift;dc.trackShiftChecked=true;dc.order=snap.order;snap.context=dc;
+    const choices=ensureMentorChoiceAvailable(raceDecisionChoices(snap,{teamRace:true,phase:"distance"}),dc,"distance",snap.position).map(opt=>{const p=raceOutcomeProbabilities(opt.key,{phase:"distance",rivals,teammate:mate,context:dc,position:snap.position});return {title:opt.title,desc:opt.desc,prob:p,action:()=>middle(opt.key,p,snap,dc)}});
+    showModal("PIERWSZE OKRĄŻENIE",`JEDZIESZ ${snap.position}.`,`${resolved.outcome==="incident"?resolved.narrative:contextualRaceNarrative(mode,resolved.outcome,2,snap.position,dc)} ${raceSituationNarrative(snap,{teamRace:true})}${currentRaceAdvice(rivals,"distance",mate,dc)}`,choices);
+   }});
+  }
+  function middle(mode,prob,snap,c){
+   const before=snap.position,resolved=resolveRaceDecision(mode,{phase:"distance",rivals,teammate:mate,context:c,position:before,teamRace:true,probOverride:prob});
+   closeModal();showOutcomeRoller({title:"Środek biegu",subtitle:"",mode,prob,outcome:resolved.outcome,onDone:()=>{
+    let preview=finishRaceFromSnapshot(snap,mode,{teamRace:true,rivals,teammate:mate,context:c,preview:true,suppressIncident:true});preview=ensurePlayerResultPosition(preview,resolved.targetPosition);updateRaceState(c,before,preview.position,resolved.outcome,mode);
+    const lc=mentorAdviceContext(rivals,"late",mate,c);lc.raceState=c.raceState;lc.trackShift=c.trackShift;lc.order=preview.order||preview.scores||[];
+    const choices=ensureMentorChoiceAvailable(raceDecisionChoices({...preview,context:lc},{teamRace:true,phase:"late"}),lc,"late",preview.position).map(opt=>{const p=raceOutcomeProbabilities(opt.key,{phase:"late",rivals,teammate:mate,context:lc,position:preview.position});return {title:opt.title,desc:opt.desc,prob:p,action:()=>finish(opt.key,p,snapshotFromRaceResult(preview),lc,preview.position)}});
+    const narr=resolved.outcome==="incident"?resolved.narrative:contextualRaceNarrative(mode,resolved.outcome,before,preview.position,c);
+    showModal("KOŃCÓWKA BIEGU",`JEDZIESZ ${preview.position}.`,`${narr} ${raceSituationNarrative({...preview,context:lc},{teamRace:true})}${currentRaceAdvice(rivals,"late",mate,lc)}`,choices);
+   }});
+  }
+  function finish(mode,prob,snap,c,position){
+   const resolved=resolveRaceDecision(mode,{phase:"late",rivals,teammate:mate,context:c,position,teamRace:true,probOverride:prob});
+   closeModal();showOutcomeRoller({title:"Końcówka biegu",subtitle:"",mode,prob,outcome:resolved.outcome,onDone:()=>{
+    let out=finishRaceFromSnapshot(snap,mode,{teamRace:true,rivals,teammate:mate,context:c,suppressIncident:true});out=ensurePlayerResultPosition(out,resolved.targetPosition);
+    if(resolved.incident){out=ensurePlayerResultPosition(out,4);out.incident={type:resolved.incident.key,text:resolved.incident.text}}
+    const order=out.order||out.scores||[];const byNation=pss1024SoNApply(scores,order),place=order.findIndex(r=>r.player)+1,points=[4,3,2,0][place-1]??0;
+    const narr=resolved.outcome==="incident"?resolved.narrative:contextualRaceNarrative(mode,resolved.outcome,position,place,c);
+    showModal("WYNIK BIEGU",`Polska ${byNation.Polska||0}:${byNation[opponent]||0} ${opponent}`,`${narr}${out.incident?` ${out.incident.text}`:""}<br>Twój wynik: <b>${place}. miejsce — ${points} pkt.</b><br>Klasyfikacja: ${pss1024SoNStandingsText(scores)}`,[
+     {title:"Kontynuuj turniej",desc:"Przejdź do kolejnych biegów.",action:()=>{closeModal();done({points,place,order,teamPoints:byNation})}}
+    ]);
+   }});
+  }
+ }
+
+ function pss1024SoNFinalize(ev,phaseScores,playerPoints,playerHeats,podium){
+  const table=pss1024SoNStanding(phaseScores),place=podium.includes("Polska")?podium.indexOf("Polska")+1:Math.max(4,table.findIndex(x=>x.nation==="Polska")+1);
+  const result=place===1?"złoty medal Speedway of Nations":place===2?"srebrny medal Speedway of Nations":place===3?"brązowy medal Speedway of Nations":`${place}. miejsce w Speedway of Nations`;
+  S.national="Polska";S.teamCaps=(S.teamCaps||0)+1;if(place<=3)S.nationalMedals=(S.nationalMedals||0)+1;
+  addHistory("Speedway of Nations",`${result}. Faza zasadnicza: ${table.map(x=>`${x.nation} ${x.score}`).join(", ")}. Twój dorobek: ${playerPoints} pkt w ${playerHeats} biegach.`);
+  return {name:"Speedway of Nations",key:"SoN",stage:"21 biegów + Grand Final Qualifier + Grand Final",result,points:playerPoints,place,heats:playerHeats,teamScores:table,hostCity:ev.hostCity};
+ }
+ function pss1024SoNKnockoutAuto(ev,a,b){const order=pss1024SoNSimOrder(ev,a,b,a==="Polska"&&ev.primary);const by=pss1024SoNHeatPoints(order).byNation;return {winner:(by[a]||0)>(by[b]||0)?a:b,order,by}}
+ function pss1024SoNKnockout(ev,a,b,label,interactive,done){
+  if(interactive&&ev.primary&&(a==="Polska"||b==="Polska")){
+   const local={[a]:0,[b]:0},opp=a==="Polska"?b:a;
+   pss1024SoNInteractiveHeat(ev,opp,{scores:local,heatLabel:label,dayToken:`${S.year}:SoN:${label}`},out=>done({winner:(local[a]||0)>(local[b]||0)?a:b,playerPoints:out.points,playerHeats:1}));
+  }else{
+   const r=pss1024SoNKnockoutAuto(ev,a,b),idx=r.order.findIndex(x=>x.player),playerHeats=idx>=0?1:0,playerPoints=idx>=0?[4,3,2,0][idx]:0;
+   done({winner:r.winner,playerPoints,playerHeats});
+  }
+ }
+ function pss1024SoNAfterPhase(ev,scores,interactive,playerPoints,playerHeats,done){
+  const table=pss1024SoNStanding(scores),first=table[0].nation,second=table[1].nation,third=table[2].nation;
+  const runFinal=(qualWinner,bronze)=>pss1024SoNKnockout(ev,first,qualWinner,"GRAND FINAL",interactive,r=>{
+   const gold=r.winner,silver=gold===first?qualWinner:first,podium=[gold,silver,bronze];done(pss1024SoNFinalize(ev,scores,playerPoints+r.playerPoints,playerHeats+r.playerHeats,podium));
+  });
+  pss1024SoNKnockout(ev,second,third,"GRAND FINAL QUALIFIER",interactive,q=>{const bronze=q.winner===second?third:second;runFinal(q.winner,bronze)});
+ }
+ function pss1024SimulateSoN(event={}){
+  const ev=event.nations?event:pss1024SoNBuildEvent(event),scores=Object.fromEntries(ev.nations.map(n=>[n,0])),schedule=pss1024SoNSchedule(ev.nations);let playerPoints=0,playerHeats=0;
+  for(const [a,b] of schedule){const opp=a==="Polska"?b:a,use=(a==="Polska"||b==="Polska")&&ev.playerOpponents.includes(opp),order=pss1024SoNSimOrder(ev,a,b,use);pss1024SoNApply(scores,order);if(use){const p=order.findIndex(r=>r.player);playerPoints+=[4,3,2,0][p];playerHeats++}}
+  let finalResult=null;pss1024SoNAfterPhase(ev,scores,false,playerPoints,playerHeats,r=>{finalResult=r});return finalResult;
+ }
+ function pss1024PlaySoN(event,done){
+  const ev=event.nations?event:pss1024SoNBuildEvent(event),scores=Object.fromEntries(ev.nations.map(n=>[n,0])),schedule=pss1024SoNSchedule(ev.nations);let i=0,playerPoints=0,playerHeats=0;
+  const step=()=>{
+   if(i>=schedule.length){
+    showModal("SPEEDWAY OF NATIONS","Koniec fazy zasadniczej",pss1024SoNStandingsText(scores),[{title:"Przejdź do fazy medalowej",desc:"Sprawdź Grand Final Qualifier i Grand Final.",action:()=>{closeModal();pss1024SoNAfterPhase(ev,scores,true,playerPoints,playerHeats,done)}}]);return;
+   }
+   const [a,b]=schedule[i],heatNo=i+1,opp=a==="Polska"?b:a,use=(a==="Polska"||b==="Polska")&&ev.playerOpponents.includes(opp);i++;
+   if(a==="Polska"||b==="Polska"){
+    if(use){pss1024SoNInteractiveHeat(ev,opp,{scores,heatLabel:`BIEG ${heatNo}/21 — POLSKA VS ${opp.toUpperCase()}`,dayToken:`${S.year}:SoN:${heatNo}`},out=>{playerPoints+=out.points;playerHeats++;step()});return}
+    const order=pss1024SoNSimOrder(ev,a,b,false);pss1024SoNApply(scores,order);step();return;
+   }
+   const order=pss1024SoNSimOrder(ev,a,b,false);pss1024SoNApply(scores,order);step();
+  };step();
+ }
+
+ const playTeamCompetitionQueue1024Base=playTeamCompetitionQueue;
+ playTeamCompetitionQueue=function(basePph,next){
+  // Przechwytujemy tylko nowy format SoN. Pozostałe zawody zachowują dotychczasowy flow.
+  const pending=S.pendingTeamCompetitions||[],idx=pending.findIndex(e=>e.format==="son1024"||e.name==="Speedway of Nations");
+  if(idx<0){playTeamCompetitionQueue1024Base(basePph,next);return}
+  const sonEvent=pending.splice(idx,1)[0];
+  const before=[...pending];S.pendingTeamCompetitions=[];
+  const ev=pss1024SoNBuildEvent(sonEvent),means=ev.nations.map(n=>`${n} (${ev.means[n].toFixed(1).replace(".",",")})`).join(" • "),role=ev.primary?"podstawowa para":`trzeci zawodnik — przewidywane ${ev.playerStarts} starty`;
+  const afterSoN=()=>{S.pendingTeamCompetitions=before;playTeamCompetitionQueue1024Base(basePph,next)};
+  showModal("POWOŁANIE DO REPREZENTACJI","Speedway of Nations",`Tor: <b>${ev.hostCity}</b>.<br>Średnie OVR trzyosobowych kadr: ${means}.<br>Twoja rola: <b>${role}</b>.`,[
+   {title:"Rozegraj Speedway of Nations",desc:"Rozegrasz pełne polskie biegi. Pozostałe zostaną zasymulowane pomiędzy nimi.",action:()=>{closeModal();pss1024PlaySoN(ev,r=>{globalThis.PSSCompetitionFinance?.ensureCompetitionReward?.(r);S.competitions.push(r);renderCompetitions();save();showCompetitionResult(r,afterSoN)})}},
+   {title:"Symuluj cały turniej",desc:"Gra policzy 21 biegów, Grand Final Qualifier i Grand Final.",action:()=>{closeModal();const r=pss1024SimulateSoN(ev);globalThis.PSSCompetitionFinance?.ensureCompetitionReward?.(r);S.competitions.push(r);renderCompetitions();save();showCompetitionResult(r,afterSoN)}}
+  ]);
+ };
+
+ if(S){S.pss1024??={};S.pss1024.version=PATCH_1024;save();render()}
 })();

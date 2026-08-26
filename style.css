@@ -974,3 +974,50 @@ button,.btn,.option,.choice-card{touch-action:manipulation;-webkit-tap-highlight
   .header-actions .header-btn{min-height:39px;padding:0 11px;font-size:.7rem}
   .version-badge{align-self:center}
 }
+
+/* ===== 1.02.4 ===== */
+.competition-result-stats{
+ display:block;
+ margin-top:8px;
+ font-weight:400;
+ color:var(--muted,#6f7874);
+ line-height:1.45;
+}
+.season-competition-summary{
+ display:grid;
+ gap:10px;
+ margin:10px 0 12px;
+}
+.season-competition-group{
+ border:1px solid rgba(25,69,62,.16);
+ border-radius:10px;
+ overflow:hidden;
+ background:rgba(255,255,255,.58);
+}
+.season-competition-group-title{
+ padding:7px 12px;
+ font-size:.76rem;
+ font-weight:800;
+ letter-spacing:.08em;
+ text-transform:uppercase;
+ color:#1b4d45;
+ background:rgba(30,107,96,.07);
+}
+.season-competition-row{
+ display:grid;
+ grid-template-columns:minmax(190px,1.25fr) minmax(240px,2fr) minmax(100px,.6fr);
+ gap:12px;
+ align-items:center;
+ padding:8px 12px;
+ border-top:1px solid rgba(25,69,62,.10);
+ font-size:.9rem;
+ line-height:1.3;
+}
+.season-competition-name{font-weight:750;color:#20332f}
+.season-competition-result{color:#4f5d59}
+.season-competition-money{text-align:right;font-weight:800;color:#1b6b58;white-space:nowrap}
+@media(max-width:760px){
+ .season-competition-row{grid-template-columns:1fr auto;gap:4px 10px}
+ .season-competition-result{grid-column:1/2;font-size:.84rem}
+ .season-competition-money{grid-column:2/3;grid-row:1/3;align-self:center}
+}
