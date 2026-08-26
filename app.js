@@ -9303,6 +9303,9 @@ const saved=load();if(saved){S=saved;S.seasonFlowActive=false;normalize();repair
   if(["SGP","SEC","IMP","SGP2"].includes(key))state.cycleFinance.push({competition:result.name||key,...finance});
   return finance;
  }
+ // Shared API for later patch layers. Keep helpers accessible across IIFE boundaries.
+ globalThis.PSSCompetitionFinance={ensureCompetitionReward,expectedRounds,roundPlacesForResult};
+
  function competitionFinanceHtml(result){
   const f=result?.finance;if(!f||!f.total)return "";
   if(["SGP","SEC","IMP","SGP2"].includes(f.key)){
@@ -10105,6 +10108,8 @@ const saved=load();if(saved){S=saved;S.seasonFlowActive=false;normalize();repair
 // ============================================================================
 (() => {
  const PATCH_1023=1;
+ const competitionFinanceApi=globalThis.PSSCompetitionFinance;
+ if(!competitionFinanceApi){throw new Error("Brak wspólnego modułu finansów zawodów (PSSCompetitionFinance).");}
 
  // --------------------------------------------------------------------------
  // 1. JĘZYK, INTERPUNKCJA I ODMIANA MIEJSCOWOŚCI
@@ -10526,8 +10531,8 @@ const saved=load();if(saved){S=saved;S.seasonFlowActive=false;normalize();repair
    if(event.format==="son"){
     const ev=sonBuildEvent(event),opponents=ev.nations.filter(n=>n!=="Polska").map(n=>`${n} (${ev.means[n].toFixed(1).replace(".",",")})`).join(" • "),role=ev.primary?"podstawowa para":`trzeci zawodnik — przewidywane ${ev.playerStarts} starty`;
     showModal("POWOŁANIE DO REPREZENTACJI","Speedway of Nations",`Tor: <b>${ev.hostCity}</b>. Rywale Polski — średni OVR trzyosobowych kadr: ${opponents}.<br>Twoja rola: <b>${role}</b>.`,[
-     {title:"Rozegraj Speedway of Nations",desc:"Polskie biegi rozegrasz kolejno; pozostałe zostaną zasymulowane. Punktacja 4–3–2–0 premiuje jazdę parą.",action:()=>{closeModal();playSoNFull(basePph,ev,r=>{ensureCompetitionReward(r);S.competitions.push(r);renderCompetitions();save();showCompetitionResult(r,proceed)})}},
-     {title:"Symuluj cały turniej",desc:"Gra policzy 21 biegów fazy zasadniczej, Grand Final Qualifier i Grand Final.",action:()=>{closeModal();const r=simulateSoNFull(basePph,ev);ensureCompetitionReward(r);S.competitions.push(r);renderCompetitions();save();showCompetitionResult(r,proceed)}}
+     {title:"Rozegraj Speedway of Nations",desc:"Polskie biegi rozegrasz kolejno; pozostałe zostaną zasymulowane. Punktacja 4–3–2–0 premiuje jazdę parą.",action:()=>{closeModal();playSoNFull(basePph,ev,r=>{competitionFinanceApi.ensureCompetitionReward(r);S.competitions.push(r);renderCompetitions();save();showCompetitionResult(r,proceed)})}},
+     {title:"Symuluj cały turniej",desc:"Gra policzy 21 biegów fazy zasadniczej, Grand Final Qualifier i Grand Final.",action:()=>{closeModal();const r=simulateSoNFull(basePph,ev);competitionFinanceApi.ensureCompetitionReward(r);S.competitions.push(r);renderCompetitions();save();showCompetitionResult(r,proceed)}}
     ]);return;
    }
    const count=clamp(event.playerHeats||5,1,5),role=count>=5?"lider / podstawowy zawodnik":count>=3?"rotacja w podstawowym składzie":"rezerwowy / zawodnik zadaniowy",ageText=event.junior?"Reprezentacja U21":"Reprezentacja Polski";
@@ -10627,11 +10632,11 @@ const saved=load();if(saved){S=saved;S.seasonFlowActive=false;normalize();repair
  // --------------------------------------------------------------------------
  function cycleSportStats(result){
   const key=canonicalCompetitionKey(result);if(!["SGP","SEC","IMP","SGP2"].includes(key))return null;
-  const expected=expectedRounds(result,key),places=roundPlacesForResult(result,key),rounds=places.length||Math.min(expected,Number(String(result.stage||"").match(/(\d+)/)?.[1]||expected)),wins=places.filter(p=>p===1).length,podiums=places.filter(p=>p<=3).length,best=places.length?Math.min(...places):null;
+  const expected=competitionFinanceApi.expectedRounds(result,key),places=competitionFinanceApi.roundPlacesForResult(result,key),rounds=places.length||Math.min(expected,Number(String(result.stage||"").match(/(\d+)/)?.[1]||expected)),wins=places.filter(p=>p===1).length,podiums=places.filter(p=>p<=3).length,best=places.length?Math.min(...places):null;
   return {expected,rounds,wins,podiums,best};
  }
  showCompetitionResult=function(result,next){
-  ensureCompetitionReward(result);
+  competitionFinanceApi.ensureCompetitionReward(result);
   const openResult=()=>{
    const healthNote=postCompetitionHealthExposure(result),resultText=ensureSentence((result?.result||"Zawody zakończone")+healthNote),stats=cycleSportStats(result),statLine=stats?`<br><b>${stats.rounds}/${stats.expected} rund • ${stats.wins} ${stats.wins===1?"zwycięstwo":"zwycięstw"} • ${stats.podiums} ${stats.podiums===1?"podium":"podiów"}${stats.best?` • najlepsza runda: ${stats.best}. miejsce`:""} • ${result.points} pkt.</b>`:(result?.points!=null?`<br>Twój dorobek: ${result.points} pkt.`:"");
    showModal("WYNIK ZAWODÓW",result?.name||"Zawody",`<b>${resultText}</b>${statLine}`,[{title:"Kontynuuj",desc:"Przejdź dalej.",action:()=>{closeModal();next?.()}}]);

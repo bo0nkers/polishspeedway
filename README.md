@@ -132,3 +132,7 @@ Gra jest statyczna i nie wymaga procesu buildowania. Może być publikowana bezp
 ## Adres projektu
 
 `https://polishspeedway.vercel.app/`
+
+## Hotfix 26.08.2026
+- Naprawiono krytyczny błąd 1.02.3 blokujący wyświetlanie wyników zawodów (`ensureCompetitionReward is not defined`).
+- Wspólne helpery finansów i statystyk cykli są teraz dostępne dla warstwy 1.02.3, dzięki czemu ekran wyniku nie kończy się błędem zakresu JS.
