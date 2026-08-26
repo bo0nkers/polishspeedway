@@ -1,98 +1,116 @@
 # Polish Speedway Simulator
 
-## Wersja 1.02.2
+## Wersja 1.02.3
 
-Wersja 1.02.2 rozwija wydanie 1.02.1 o ukryte profile specjalne oraz uporządkowany górny pasek. Zachowuje tutorial, przebudowany team, zróżnicowane zakończenia kariery, zwarte osiągnięcia, finanse turniejowe i wszystkie wcześniejsze poprawki balansu.
+Wersja 1.02.3 rozwija wydanie 1.02.2 przede wszystkim w czterech obszarach: kwalifikacje i reprezentacja, Speedway of Nations, spójność biegów interaktywnych oraz podsumowanie kariery. Zachowuje tutorial, easter eggi, przebudowany team, ekonomię i model progresji z poprzednich wydań.
 
+### Kwalifikacje i cykle
 
-### Easter eggi — ukryte profile specjalne
+- Dodano rzeczywistą ścieżkę **SGP2: nominacja krajowa → kwalifikacje SGP2 → trzyrundowy cykl SGP2**.
+- Kwalifikacje SGP2 są 20-biegowym turniejem 16 zawodników; **TOP 4** awansuje do cyklu.
+- Bardzo mocny junior, np. 17-latek OVR 76, ma bardzo wysoką szansę otrzymania nominacji, ale awans nadal trzeba wywalczyć na torze.
+- Kwalifikacje SGP2 są rozdzielone od właściwego SGP2 w historii i podsumowaniu kariery.
+- Zbalansowano **eliminacje IMP**: zwykle słabsza stawka niż w IMP Challenge, bo polscy uczestnicy SGP i SEC mają miejsce w IMP z urzędu.
+- OVR 78–82 powinien być mocnym kandydatem do przejścia eliminacji, a zawodnicy 72–75 mogą awansować przy dobrym turnieju.
+- **IMP Challenge** pozostaje trudniejszy, ale nie jest już „mini-SGP”; OVR 85 powinien być mocnym kandydatem do awansu.
+- Zwiększono wagę nominalnego OVR w efektywnym ratingu turniejowym.
 
-- **Bartosz Zmarzlik + numer 95** aktywuje ukryty profil tylko przy dokładnej kombinacji nazwy i numeru. Startowy OVR wynosi dokładnie **72**, statystyki są za każdym razem inaczej rozłożone, a ośrodek zostaje przeniesiony do Gorzowa.
-- **Jakub Woźnik** działa z dowolnym numerem. Startowy OVR wynosi dokładnie **69**, profil ma bardzo wysoki ukryty potencjał i trzy losowane warianty humorystycznej historii startowej.
-- **Super Burschi** działa z dowolnym numerem. Startowy OVR wynosi dokładnie **76**, ma najwyższy potencjał i profesjonalizm oraz najłatwiejszą z trzech profili drogę do poziomu 97–99.
-- W każdym z profili całkowity OVR jest stały, ale mocne i słabsze strony są ponownie losowane przy każdej nowej karierze.
-- Gra nie pokazuje komunikatu „easter egg aktywowany”; specjalny profil ujawnia się naturalnie przez parametry i unikalny opis.
+### Reprezentacja
 
-### Górny pasek
+- Nominacje do seniorskiej reprezentacji zależą przede wszystkim od realnego poziomu sportowego: OVR, średniej, poziomu ligi i aktualnej formy. Reputacja jest tylko dodatkiem.
+- Młody zawodnik może dostać seniorskie powołanie, ale musi być rzeczywiście konkurencyjny wobec seniorów.
+- Powołanie nie oznacza już automatycznie pięciu startów: rola w kadrze może dać 2–5 biegów.
+- Słabszy indywidualny występ przy medalu drużyny jest opisywany osobno, a bonusy reputacji/rozwoju zależą również od osobistego wkładu.
+- Obniżono siłę rywali U21 w DMŚJ. Większość mocnych juniorów mieści się teraz w realistyczniejszym zakresie, a OVR 87+ jest rzadki; 89–90 to skrajny wyjątek.
+- Siła juniora uwzględnia także wiek — 20–21-latek może być naturalnie mocniejszy od 17-latka.
 
-- Skrócono oznaczenie wersji do **V 1.02.2**.
-- Zachowano logo, znak i napis **POLISH SPEEDWAY SIMULATOR** po lewej stronie w dotychczasowym układzie.
-- **Nowa kariera** pozostaje skrajnym prawym przyciskiem na desktopie.
-- Eksport i import są kompaktowymi przyciskami **EKSPORT / IMPORT**.
-- Natywne szerokie pole „Wybierz plik / Nie wybrano pliku” jest ukryte; po imporcie pojawia się tylko krótki status **IMPORT ✓**.
+### Speedway of Nations
 
-### Tutorial i przewodnik
+- SoN jest pełnoprawnym turniejem: **7 reprezentacji, 21 biegów fazy zasadniczej, każda para spotyka każdą raz**.
+- Punktacja SoN to **4–3–2–0**, więc jazda parą ma realne znaczenie.
+- Po fazie zasadniczej rozgrywany jest **Grand Final Qualifier**, a następnie **Grand Final**.
+- Rywale Polski są losowani z puli współczesnych mocnych nacji żużlowych; każda reprezentacja ma generowaną trzyosobową kadrę i wyświetlany średni OVR.
+- Ekran powołania pokazuje tor, sześciu rywali, średnią siłę kadr oraz rolę zawodnika — bez zbędnego tłumaczenia całego regulaminu.
+- Polskie biegi można rozgrywać kolejno; pozostałe biegi są symulowane.
+- Medal Speedway of Nations uruchamia ekran celebracyjny z fajerwerkami.
 
-- Działa przycisk **PRZEWODNIK** w górnym menu.
-- Dodano 5-etapowy onboarding dla nowej kariery, możliwy do pominięcia i ponownego uruchomienia.
-- Przewodnik opisuje m.in. OVR, rozwój, ligę, finanse, team, transfery, biegi, turnieje, reprezentację i zdrowie.
-- Dodano kontekstowe wskazówki, które można wyłączyć.
-- Tutorial nie ujawnia ukrytych wzorów ani jednej optymalnej strategii.
+### PGE Ekstraliga
 
-### Punkty rozwoju
+- W podglądzie fazy finałowej dodano brakujący **dwumecz o 3. miejsce**.
 
-- Przycisk ma jednoznaczny format **`+1 • X PR`**.
-- `+1 • 5 PR` oznacza: cecha rośnie dokładnie o 1, a koszt wynosi 5 punktów rozwoju.
-- Zwiększono czcionkę przycisków na desktopie i poprawiono czytelność na mobile.
-- Gdy następny punkt jest kupowany ponad naturalny próg cechy, przycisk jest delikatnie oznaczony na czerwono.
-- Przewodnik dokładnie tłumaczy bazowy koszt, miękki próg i wpływ wieku.
+### Biegi interaktywne
 
-### Team i usługi
+- Kolor ruletki jest nadrzędnym źródłem wyniku narracyjnego:
+  - fioletowy = wyjątkowy sukces,
+  - zielony = sukces,
+  - pomarańczowy = niepowodzenie,
+  - czerwony = incydent.
+- Zielony lub fioletowy wynik nie może już generować tekstu „decyzja nie wychodzi”.
+- Przy decyzjach taktycznych sukces może nie zmienić pozycji, ale narracja jasno mówi, że sam plan został wykonany dobrze.
+- Dopuszczono rzadkie większe zmiany pozycji: awans o dwie pozycje oraz większy spadek po poważnym błędzie.
+- Dodano małą szansę **defektu**. Ryzyko maleje wraz z jakością sprzętu i zaplecza technicznego.
+- Jeśli zawodnik jedzie 2., 3. lub 4. i bezpośrednio przed nim jest rywal, generator pilnuje dostępności realnej opcji ataku.
+- Krawężnik nie jest już domyślnym fallbackiem dla neutralnej taktyki; preferowana linia wynika z umiejętności i warunków toru.
+- Po jawnej zmianie warunków toru mentor nie może bez uzasadnienia sugerować linii sprzecznej z wyświetloną informacją.
+- Ograniczono powtarzanie pozycji i tych samych informacji w jednym ekranie biegu.
+- Dodano globalną normalizację interpunkcji w dynamicznie składanych tekstach.
 
-- Rozwój teamu nie jest już obowiązkową decyzją „albo–albo” przed każdym sezonem.
-- **Zarządzaj teamem** jest stałą opcją w centrum kariery.
-- Po zakupie modal pozostaje otwarty; saldo i karty aktualizują się w miejscu — bez znikania i ponownego pojawiania się okna.
-- Każda karta pokazuje typ (**USŁUGA / INWESTYCJA**), efekt, czas działania, limit i — przy bazie — poziom oraz koszt utrzymania.
-- Wczesna kariera dostaje tańsze, realistyczne usługi. Duże inwestycje odblokowują się dopiero przy rozwiniętym teamie.
-- Jeśli gracz przez co najmniej dwa sezony ignoruje system teamu, może pojawić się lekkie przypomnienie z opcjami **Zarządzaj teamem** / **Nie, dziękuję**. Po odmowie obowiązuje dwuletni cooldown.
-- Brak inwestycji sam w sobie nie jest karą.
+### Dzika karta IMP i SEC
 
-### Koniec kariery
+- Po wygranej rywalizacji o dziką kartę IMP ekran jednoznacznie mówi, że zawodnik **został wybrany**, zamiast nadal nazywać go „jednym z kandydatów”.
+- Start z dziką kartą IMP jest pełnoprawnym startem rundy: zdobyte punkty liczą się do klasyfikacji generalnej całego cyklu.
+- Analogicznie pojedynczy start z dziką kartą SEC daje miejsce w generalce, jeśli zawodnik zdobył punkty.
+- Podsumowanie kariery scala wszystkie starty IMP niezależnie od sposobu kwalifikacji.
 
-- Wymuszone zakończenie kariery nie jest już sprowadzane prawie zawsze do problemów zdrowotnych.
-- Gra może zakończyć karierę z powodu realnego, trwałego spadku poziomu sportowego, utraty pozycji na rynku/składzie, wieloletniego przeciążenia, utraty motywacji lub zdrowia.
-- Powód jest wybierany tylko wtedy, gdy wspierają go rzeczywiste dane kariery: trend OVR, średnia, liczba biegów, szansa na skład, historia urazów i obciążenie.
-- Przy wysokim OVR i dobrych wynikach powód „spadek poziomu” jest blokowany.
-- Dodano lekkie, kontekstowe wahania sezonowe wynikające z wyraźnie dobrej/słabej dyspozycji lub fazy kariery, bez niszczenia głównej krzywej rozwoju.
-- Pop-up po zakończeniu kariery ma trzy opcje w kolejności: **Przejdź do podsumowania**, **Nowa kariera**, **Postaw kawę**.
-- Na stałym ekranie podsumowania nadal pozostają duże CTA **Nowa kariera** i istniejący przycisk z kawą.
+### Wyniki cykli
 
-### Osiągnięcia w podsumowaniu kariery
+- Końcowy popup SGP, SEC, IMP i SGP2 pokazuje kompaktowo:
+  - udział w rundach X/Y,
+  - liczbę zwycięstw rund,
+  - liczbę podiów,
+  - najlepszy wynik rundy,
+  - sumę punktów.
+- Szczegółowe finanse nadal są pokazywane później, a nie w natychmiastowym ekranie wyniku.
 
-- Dla SGP/IMŚ, SGP2/IMŚJ, SEC i IMP podsumowanie pokazuje kompaktowo: liczbę sezonów/startów, liczbę rozegranych rund, zwycięstwa rund i podia rund.
-- Dzikie karty SGP/SEC/IMP są wliczane do odpowiednich statystyk rundowych; IMP nie tworzy osobnej karty „dzika karta”.
-- DMPJ pokazuje najlepsze miejsce albo najwyższą osiągniętą fazę oraz liczbę/lata powtórzenia najlepszego wyniku.
-- MIMP i DME pozostają podsumowane jako pojedyncze turnieje, bez sztucznej statystyki rundowej.
-- Opisy pozostają zwarte, żeby sekcja nie rozciągała się niepotrzebnie.
+### Osiągnięcia i podsumowanie kariery
 
-### Kwalifikacje SGP
+- Poprawiono dane „ostatnio” — karta pokazuje rzeczywisty ostatni wynik zawodów, a nie powód nominacji.
+- Grand Prix Challenge nie pobiera już jako ostatniego wyniku rezultatu wcześniejszych eliminacji SGP Challenge.
+- Kwalifikacje nie używają ikon medalowych jak imprezy mistrzowskie; zamiast tego pokazują wygrane, podia i najlepsze miejsce.
+- **DMPJ** ma czytelniejszy zapis najlepszego miejsca/fazy oraz lat powtórzenia wyniku.
+- SEC jest opisane jako **Indywidualne Mistrzostwa Europy — SEC**.
+- Dodano kartę **Kwalifikacje SGP2**.
+- Dzikie karty SEC/IMP są uwzględniane w generalce i statystykach odpowiedniego cyklu.
 
-- Stosowana jest nazwa **Eliminacje SGP Challenge**.
-- Eliminacje SGP Challenge i właściwy **Grand Prix Challenge** są rozdzielone w archiwum/podsumowaniu.
-- Starsze wpisy z tekstem „eliminacje SGP” są korygowane przy wczytaniu zapisu, gdy da się je bezpiecznie rozpoznać.
+### Celebracje
 
-### Finanse turniejowe
+- Podium **Brązowego Kasku** i **Srebrnego Kasku** uruchamia fajerwerki.
+- Medal SGP2 oraz medal Speedway of Nations również są celebrowane.
+- Ujednolicono zapis punktów: po liczbie jest zawsze **`pkt.`**, nigdy `Pkt.`.
 
-- Szczegółowe rozliczenie cyklu nie jest już wciskane do natychmiastowego ekranu wyniku zawodów.
-- Późniejsza sekcja turniejów pokazuje kompaktowo rundy, zwycięstwa, podia i łączną gratyfikację.
-- DMŚJ pozostaje imprezą reprezentacyjną, nie cyklem.
-- Obniżono premię DMŚJ do juniorskiego poziomu — srebro przy pięciu biegach to około 19 tys. zł, a nie setki tysięcy.
-- Pełne rozliczenie cyklu dotyczy wyłącznie SGP, SEC, SGP2 i wielorundowego IMP.
+### Odmiana miejscowości
 
-### Zachowane najważniejsze poprawki 1.02
+- Rozszerzono centralny słownik odmiany miast, m.in. **w Krośnie, w Grudziądzu, we Wrocławiu, w Pardubicach**.
+- Dynamiczne komunikaty korzystają z jednej warstwy normalizacji, aby ograniczyć formy typu „w Wrocław”.
 
-- Częsty model kariery: **rozwój → peak/plateau → regres**, z możliwością wcześniejszego peaku, późnego rozkwitu, odbudowy, drugiej młodości i wyjątkowej długowieczności.
-- Wynik ruletki nie jest zdradzany przed zatrzymaniem animacji.
-- Sukces oznacza powodzenie konkretnego manewru/obrony.
-- Start ma osobną logikę od dalszych faz biegu.
-- Wyjątkowy sukces jest mniejszą częścią całej puli powodzenia.
-- Poprawiono ciągłość pozycji, narrację 5:1, zgodność mentora z dostępnymi decyzjami oraz nadmierny bias w stronę krawężnika.
-- Dodano Speedway of Nations.
-- Zachowano kompaktową tabelę sezon po sezonie na urządzeniach mobilnych.
+### Stabilność przepływu sezonu
+
+- Watchdog sezonu nie uruchamia już fałszywego recovery po prawidłowym rozliczeniu sezonu.
+- Po rozliczeniu sezonu stan przechodzi do jawnego etapu `post-season`, a watchdog zostaje wyłączony.
+- Awaryjne odblokowanie nie powinno już proponować ponownego rozegrania sezonu, który został już rozliczony.
+
+### Zachowane elementy 1.02.2
+
+- Easter eggi: Bartosz Zmarzlik #95, Jakub Woźnik, Super Burschi.
+- Stały OVR specjalnych profili przy losowanym rozkładzie statystyk.
+- Kompaktowy header z logo po lewej i przyciskiem **Nowa kariera** po prawej.
+- Tutorial, Przewodnik i kontekstowe podpowiedzi.
+- System teamu/usług oraz przypomnienie o niewykorzystywanym zapleczu.
+- Model kariery: rozwój → peak/plateau → regres z wyjątkami i różnymi przyczynami zakończenia kariery.
 
 ### Zapis gry
 
-Wersja 1.02.2 używa klucza `pss_v1022`. Przy pierwszym uruchomieniu automatycznie migruje zapis z `pss_v1021`, `pss_v102` oraz obsługiwanych starszych wersji.
+Wersja 1.02.3 używa klucza `pss_v1023`. Przy pierwszym uruchomieniu automatycznie migruje zapis z `pss_v1022`, `pss_v1021`, `pss_v102` oraz obsługiwanych starszych wersji.
 
 ### Pliki wydania
 
@@ -105,7 +123,7 @@ Do publikacji potrzebne są:
 - `social-preview.jpg`
 - `speedway-emblem.png`
 
-Trzy pliki graficzne nie zostały zmienione i nie są ponownie dołączane do paczki roboczej. Przy aktualizacji istniejącego deploymentu należy pozostawić je na serwerze.
+Trzy pliki graficzne nie zostały zmienione i nie są ponownie dołączane do paczki. Przy aktualizacji istniejącego deploymentu należy pozostawić je na serwerze.
 
 ### Publikacja
 
