@@ -25,7 +25,7 @@ Wersja 1.02.4 rozwija 1.02.3-HOTFIX. Skupia się na pełnym formacie Speedway of
 - W podsumowaniach cykli pierwsza linia z miejscem/medalem pozostaje pogrubiona, a druga linia ze statystykami rund jest zwykłą czcionką.
 - Dzikie karty IMP/SEC nie pokazują już sztucznego tekstu „około X. miejsca”.
 - Popup rundy dzikiej karty pokazuje wyłącznie wynik tej rundy i informację, że punkty liczą się do generalki.
-- Po kliknięciu dalej pojawia się osobny ekran z dokładnym miejscem w klasyfikacji generalnej i liczbą punktów.
+- Po kliknięciu dalej pojawia się osobny ekran z dokładnym miejscem w klasyfikacji generalnej i liczbą punktów; w poprawionym wydaniu pozycja pochodzi z pełnej tabeli, a nie z oszacowania.
 
 #### Podsumowanie sezonu
 - „Dodatkowe rozgrywki” nie są już jednym długim, nieczytelnym akapitem.
@@ -53,3 +53,11 @@ Grafiki pozostają bez zmian:
 - `speedway-emblem.png`
 - `postaw-kawe.jpeg`
 - `social-preview.jpg`
+
+### Poprawione wydanie 1.02.4 — refresh 26.08.2026
+- Naprawiono fałszywy watchdog po zakończonym sezonie: statusy `settled` i `contract` są traktowane jako prawidłowo rozliczony sezon, a watchdog nie uruchamia się podczas normalnego oczekiwania na użytkownika w post-season.
+- Pełnoekranowe celebracje na telefonach używają dynamicznego viewportu (`100dvh`), `viewport-fit=cover`, safe area i ciemnego tła dokumentu podczas fajerwerków.
+- W mobilnej karcie zawodnika ostatnia pozycja statystyk domyka siatkę na pełną szerokość; etykietę `REPREZENTACJA` skrócono do `KADRA`.
+- Pozycja w biegu jest wymuszana z jednego snapshotu: nagłówek, kolejność i narracja nie powinny już pokazywać dwóch różnych miejsc równocześnie.
+- Odmiana miejscowości została rozszerzona globalnie także na nagłówki celebracji i teksty renderowane później w UI, np. `RUNDA W KRAKOWIE`, `we Wrocławiu`, `w Krośnie`.
+- Dzika karta IMP/SEC nie korzysta już z heurystycznego `około X. miejsca`. Gra buduje pełną klasyfikację z bazową stawką cyklu, lokalnymi dzikimi kartami i możliwymi zastępstwami, a następnie pokazuje dokładne miejsce.

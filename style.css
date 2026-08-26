@@ -1021,3 +1021,26 @@ button,.btn,.option,.choice-card{touch-action:manipulation;-webkit-tap-highlight
  .season-competition-result{grid-column:1/2;font-size:.84rem}
  .season-competition-money{grid-column:2/3;grid-row:1/3;align-self:center}
 }
+
+
+/* ===== 1.02.4 refresh: mobile polish + card closure ===== */
+html.achievement-active,
+body.achievement-active{
+ background:#061412!important;
+}
+.achievement-burst{
+ width:100vw!important;
+ height:100dvh!important;
+ min-height:100vh!important;
+ box-sizing:border-box!important;
+ padding-bottom:max(env(safe-area-inset-bottom),0px)!important;
+ overscroll-behavior:none;
+}
+@supports not (height:100dvh){
+ .achievement-burst{height:100vh!important}
+}
+@media(max-width:700px){
+ .profile .micro>div:last-child{grid-column:1/-1}
+ .profile .micro{margin-bottom:8px!important}
+ .profile .micro + hr{margin-top:8px!important}
+}
