@@ -1,46 +1,23 @@
 # Polish Speedway Simulator
 
-## Wersja 1.02.4
+## Wersja 1.02.5
 
-Wersja 1.02.4 rozwija 1.02.3-HOTFIX. Skupia się na pełnym formacie Speedway of Nations, czytelności podsumowań sezonu, prawidłowej kolejności celebracji, logice dzikich kart oraz ochronie młodych zawodników przed sztucznym regresem.
+Drobne wydanie rozwijające 1.02.4. Główna zmiana dotyczy czytelności tabeli **„Sezon po sezonie”** w podsumowaniu kariery na telefonach.
 
-### Najważniejsze zmiany
-
-#### Speedway of Nations
-- DPŚ jest rozgrywany co 3 lata z kotwicą 2023 / 2026 / 2029 / 2032 itd.
-- W sezonach bez DPŚ główną seniorską imprezą światową jest Speedway of Nations.
-- SoN ma 7 reprezentacji i 21 biegów fazy zasadniczej; każdy jedzie z każdym dokładnie raz.
-- Sześć biegów Polski jest rozłożonych na przestrzeni całego turnieju zamiast kumulować się na początku.
-- Po 21 biegach działa pełna faza medalowa: 1. miejsce bezpośrednio do Grand Final, 2.–3. do Grand Final Qualifier, następnie Grand Final.
-- Złoto nie jest już przyznawane po samych sześciu biegach Polski.
-- Polskie biegi są rozgrywane pełnym, wieloetapowym silnikiem: start i pierwszy łuk → pierwsze okrążenie → końcówka → wynik.
-- Decyzje uwzględniają partnera i specyfikę jazdy parowej; punktacja pozostaje 4–3–2–0.
-- Na ekranie powołania pokazywany jest także średni OVR Polski oraz średnie OVR wszystkich pozostałych kadr.
-- Pozostałe 15 biegów fazy zasadniczej jest symulowane w tle pomiędzy polskimi startami.
-- Medal SoN nadal uruchamia celebrację/fajerwerki.
-
-#### Wyniki zawodów i celebracje
-- Przy awansie z kwalifikacji SGP2 najpierw pojawia się celebracja, a dopiero potem szczegółowy popup wyniku.
-- Ta sama kolejność jest zachowywana przez centralny ekran wyniku: ważny sukces → fajerwerk → szczegóły.
-- W podsumowaniach cykli pierwsza linia z miejscem/medalem pozostaje pogrubiona, a druga linia ze statystykami rund jest zwykłą czcionką.
-- Dzikie karty IMP/SEC nie pokazują już sztucznego tekstu „około X. miejsca”.
-- Popup rundy dzikiej karty pokazuje wyłącznie wynik tej rundy i informację, że punkty liczą się do generalki.
-- Po kliknięciu dalej pojawia się osobny ekran z dokładnym miejscem w klasyfikacji generalnej i liczbą punktów; w poprawionym wydaniu pozycja pochodzi z pełnej tabeli, a nie z oszacowania.
-
-#### Podsumowanie sezonu
-- „Dodatkowe rozgrywki” nie są już jednym długim, nieczytelnym akapitem.
-- Wyniki są prezentowane jako kompaktowe wiersze: nazwa imprezy | wynik i punkty | nagroda finansowa.
-- Wydarzenia są sortowane prestiżem, z grupami: mistrzostwa świata i reprezentacja, mistrzostwa krajowe i juniorskie, kwalifikacje, turnieje prestiżowe.
-- Usunięto powtórzenia punktów i zbędne „0 zł”.
-
-#### Rozwój młodych zawodników
-- Zawodnik przed swoim indywidualnym peakiem nie traci już statystyk tylko dlatego, że wyprzedził target krzywej kariery.
-- Wyprzedzenie krzywej ma przede wszystkim hamować dalszy rozwój / prowadzić do plateau, a nie odbierać już zdobyte punkty.
-- Przed peakiem trwały minus może wynikać z realnego negatywnego stanu, np. kryzysu formy.
-- Jest to szczególnie istotne dla profilu Super Burschi, który ma rozwijać się wyjątkowo dobrze w młodym wieku.
+### Zmiany 1.02.5
+- Mobilna historia kariery pozostaje zwartą tabelą, zamiast przechodzić w wysokie kafelki.
+- Skrócono nagłówki na telefonach: `SEZ.`, `W`, `OVR`, `KLUB`, `LIGA`, `B`, `ŚR`, `WYN.`.
+- Skrócono nazwy lig wyłącznie w wersji mobilnej:
+  - `PGE Ekstraliga` → `PGE`,
+  - `Metalkas 2. Ekstraliga` → `M2E`,
+  - `Krajowa Liga Żużlowa` → `KLŻ`.
+- Wynik sezonu na telefonie ma krótki zapis, np. `5. m.`, `1. m. ↑`, `8. m. ↓`.
+- Rok, wiek, OVR, liczba biegów, średnia i wynik nie łamią się już pionowo na kilka linii.
+- Więcej szerokości przeznaczono na nazwę klubu; tylko dłuższe nazwy klubów mogą naturalnie przechodzić do kolejnej linii.
+- Desktop zachowuje pełne nazwy lig, pełne opisy wyników i dotychczasowy wygląd tabeli.
 
 ### Kompatybilność zapisu
-Wersja 1.02.4 używa klucza `pss_v1024`. Przy pierwszym uruchomieniu automatycznie migruje zapis z `pss_v1023`, a następnie z obsługiwanych starszych wersji.
+Wersja 1.02.5 używa klucza `pss_v1025` i automatycznie migruje zapis z `pss_v1024` oraz obsługiwanych wcześniejszych wersji.
 
 ### Pliki do publikacji
 Podmień:
@@ -53,11 +30,3 @@ Grafiki pozostają bez zmian:
 - `speedway-emblem.png`
 - `postaw-kawe.jpeg`
 - `social-preview.jpg`
-
-### Poprawione wydanie 1.02.4 — refresh 26.08.2026
-- Naprawiono fałszywy watchdog po zakończonym sezonie: statusy `settled` i `contract` są traktowane jako prawidłowo rozliczony sezon, a watchdog nie uruchamia się podczas normalnego oczekiwania na użytkownika w post-season.
-- Pełnoekranowe celebracje na telefonach używają dynamicznego viewportu (`100dvh`), `viewport-fit=cover`, safe area i ciemnego tła dokumentu podczas fajerwerków.
-- W mobilnej karcie zawodnika ostatnia pozycja statystyk domyka siatkę na pełną szerokość; etykietę `REPREZENTACJA` skrócono do `KADRA`.
-- Pozycja w biegu jest wymuszana z jednego snapshotu: nagłówek, kolejność i narracja nie powinny już pokazywać dwóch różnych miejsc równocześnie.
-- Odmiana miejscowości została rozszerzona globalnie także na nagłówki celebracji i teksty renderowane później w UI, np. `RUNDA W KRAKOWIE`, `we Wrocławiu`, `w Krośnie`.
-- Dzika karta IMP/SEC nie korzysta już z heurystycznego `około X. miejsca`. Gra buduje pełną klasyfikację z bazową stawką cyklu, lokalnymi dzikimi kartami i możliwymi zastępstwami, a następnie pokazuje dokładne miejsce.

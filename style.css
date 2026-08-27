@@ -316,6 +316,10 @@ body::before{
 }
 .career-season-table tbody tr:nth-child(even){background:#f5f7f5}
 .career-season-table tbody tr:last-child td{border-bottom:0}
+
+/* Wartości alternatywne dla mobilnej tabeli historii kariery */
+.career-season-mobile{display:none}
+.career-season-full{display:inline}
 @media(max-width:780px){
  .career-summary-grid{grid-template-columns:repeat(2,1fr)}
  .championship-summary-row{grid-template-columns:1fr}
@@ -722,20 +726,27 @@ button,.btn,.option,.choice-card{touch-action:manipulation;-webkit-tap-highlight
  .career-summary-grid>div span{font-size:8px!important;line-height:1.05!important}
  .career-summary-grid>div b{font-size:11px!important;line-height:1.05!important}
  .career-season-table-wrap{overflow:visible!important;width:100%!important}
- .career-season-table{display:table!important;width:100%!important;min-width:0!important;table-layout:fixed!important;border-collapse:collapse!important;font-size:8px!important}
+ .career-season-table{display:table!important;width:100%!important;min-width:0!important;table-layout:fixed!important;border-collapse:collapse!important;font-size:9px!important}
  .career-season-table thead{display:table-header-group!important}
  .career-season-table tbody{display:table-row-group!important}
  .career-season-table tr{display:table-row!important}
- .career-season-table th,.career-season-table td{display:table-cell!important;padding:4px 2px!important;white-space:normal!important;word-break:normal!important;overflow-wrap:anywhere!important;vertical-align:middle!important;line-height:1.08!important}
+ .career-season-table th,.career-season-table td{display:table-cell!important;padding:4px 2px!important;word-break:normal!important;overflow-wrap:normal!important;vertical-align:middle!important;line-height:1.12!important}
+ .career-season-table th{font-size:0!important;white-space:nowrap!important;padding:5px 1px!important;letter-spacing:.02em!important;text-align:center!important}
+ .career-season-table th::after{font-size:7px!important;font-weight:800!important;letter-spacing:.025em!important}
+ .career-season-table th:nth-child(1)::after{content:"SEZ."}.career-season-table th:nth-child(2)::after{content:"W"}.career-season-table th:nth-child(3)::after{content:"OVR"}.career-season-table th:nth-child(4)::after{content:"KLUB"}.career-season-table th:nth-child(5)::after{content:"LIGA"}.career-season-table th:nth-child(6)::after{content:"B"}.career-season-table th:nth-child(7)::after{content:"ŚR"}.career-season-table th:nth-child(8)::after{content:"WYN."}
  .career-season-table td:before,.career-season-table td::before{display:none!important;content:none!important}
+ .career-season-table td:nth-child(1),.career-season-table td:nth-child(2),.career-season-table td:nth-child(3),.career-season-table td:nth-child(5),.career-season-table td:nth-child(6),.career-season-table td:nth-child(7),.career-season-table td:nth-child(8){white-space:nowrap!important}
+ .career-season-table td:nth-child(1),.career-season-table td:nth-child(2),.career-season-table td:nth-child(3),.career-season-table td:nth-child(5),.career-season-table td:nth-child(6),.career-season-table td:nth-child(7){text-align:center!important}
+ .career-season-table td:nth-child(4){overflow-wrap:anywhere!important;hyphens:auto!important}
  .career-season-table th:nth-child(1),.career-season-table td:nth-child(1){width:10%!important}
- .career-season-table th:nth-child(2),.career-season-table td:nth-child(2){width:7%!important}
- .career-season-table th:nth-child(3),.career-season-table td:nth-child(3){width:7%!important}
- .career-season-table th:nth-child(4),.career-season-table td:nth-child(4){width:22%!important}
- .career-season-table th:nth-child(5),.career-season-table td:nth-child(5){width:20%!important}
- .career-season-table th:nth-child(6),.career-season-table td:nth-child(6){width:8%!important}
- .career-season-table th:nth-child(7),.career-season-table td:nth-child(7){width:10%!important}
- .career-season-table th:nth-child(8),.career-season-table td:nth-child(8){width:16%!important}
+ .career-season-table th:nth-child(2),.career-season-table td:nth-child(2){width:6%!important}
+ .career-season-table th:nth-child(3),.career-season-table td:nth-child(3){width:8%!important}
+ .career-season-table th:nth-child(4),.career-season-table td:nth-child(4){width:29%!important}
+ .career-season-table th:nth-child(5),.career-season-table td:nth-child(5){width:8%!important}
+ .career-season-table th:nth-child(6),.career-season-table td:nth-child(6){width:7%!important}
+ .career-season-table th:nth-child(7),.career-season-table td:nth-child(7){width:12%!important}
+ .career-season-table th:nth-child(8),.career-season-table td:nth-child(8){width:20%!important}
+ .career-season-full{display:none!important}.career-season-mobile{display:inline!important}
  .championship-summary-row{padding:6px 7px!important;gap:2px!important}
  .championship-summary-row strong{font-size:10px!important}
  .championship-summary-row span,.championship-summary-row small{font-size:8px!important;line-height:1.15!important}
@@ -1023,24 +1034,7 @@ button,.btn,.option,.choice-card{touch-action:manipulation;-webkit-tap-highlight
 }
 
 
-/* ===== 1.02.4 refresh: mobile polish + card closure ===== */
-html.achievement-active,
-body.achievement-active{
- background:#061412!important;
-}
-.achievement-burst{
- width:100vw!important;
- height:100dvh!important;
- min-height:100vh!important;
- box-sizing:border-box!important;
- padding-bottom:max(env(safe-area-inset-bottom),0px)!important;
- overscroll-behavior:none;
-}
-@supports not (height:100dvh){
- .achievement-burst{height:100vh!important}
-}
-@media(max-width:700px){
- .profile .micro>div:last-child{grid-column:1/-1}
- .profile .micro{margin-bottom:8px!important}
- .profile .micro + hr{margin-top:8px!important}
+/* ===== 1.02.5 — czytelniejsza tabela sezon po sezonie na telefonach ===== */
+@media(max-width:680px){
+ .career-season-table-wrap{border:1px solid var(--line)!important;border-radius:7px!important;overflow:hidden!important}
 }

@@ -2076,10 +2076,11 @@ function createPlayer(){
  $("newsBox").innerHTML=`<p class="eyebrow">PRZED LICENCJĄ</p><h3>${background.title.toUpperCase()}</h3><p>${background.text}</p><p><b>Zaplecze:</b> ${support.title}. Budżet początkowy: ${money(S.budget)}.</p>${openingReport?`<div class="guidance-report"><span>RAPORT SZKÓŁKI</span><p>${openingReport.text}</p></div>`:""}`;
  save();
 }
-function save(){localStorage.setItem("pss_v1024",JSON.stringify(S))}
+function save(){localStorage.setItem("pss_v1025",JSON.stringify(S))}
 function load(){
  try{
-  const newest=localStorage.getItem("pss_v1024");
+  const newest=localStorage.getItem("pss_v1025");
+  const previousV1024=localStorage.getItem("pss_v1024");
   const previousV1023=localStorage.getItem("pss_v1023");
   const previousV1022=localStorage.getItem("pss_v1022");
   const previousV1021=localStorage.getItem("pss_v1021");
@@ -2088,13 +2089,14 @@ function load(){
   const previousVersion=localStorage.getItem("pss_v100");
   const previousBrand=localStorage.getItem("pzs_v200");
   if(newest)return JSON.parse(newest);
-  if(previousV1023){localStorage.setItem("pss_v1024",previousV1023); return JSON.parse(previousV1023);}
-  if(previousV1022){localStorage.setItem("pss_v1024",previousV1022); return JSON.parse(previousV1022);}
-  if(previousV1021){localStorage.setItem("pss_v1024",previousV1021); return JSON.parse(previousV1021);}
-  if(previousV102){localStorage.setItem("pss_v1024",previousV102); return JSON.parse(previousV102);}
-  if(previousV101){localStorage.setItem("pss_v1024",previousV101); return JSON.parse(previousV101);}
-  if(previousVersion){localStorage.setItem("pss_v1024",previousVersion); return JSON.parse(previousVersion);}
-  if(previousBrand){localStorage.setItem("pss_v1024",previousBrand); return JSON.parse(previousBrand);}
+  if(previousV1024){localStorage.setItem("pss_v1025",previousV1024); return JSON.parse(previousV1024);}
+  if(previousV1023){localStorage.setItem("pss_v1025",previousV1023); return JSON.parse(previousV1023);}
+  if(previousV1022){localStorage.setItem("pss_v1025",previousV1022); return JSON.parse(previousV1022);}
+  if(previousV1021){localStorage.setItem("pss_v1025",previousV1021); return JSON.parse(previousV1021);}
+  if(previousV102){localStorage.setItem("pss_v1025",previousV102); return JSON.parse(previousV102);}
+  if(previousV101){localStorage.setItem("pss_v1025",previousV101); return JSON.parse(previousV101);}
+  if(previousVersion){localStorage.setItem("pss_v1025",previousVersion); return JSON.parse(previousVersion);}
+  if(previousBrand){localStorage.setItem("pss_v1025",previousBrand); return JSON.parse(previousBrand);}
   const v1361=localStorage.getItem("pzs_v1361");
   if(v1361)return JSON.parse(v1361);
   const v136=localStorage.getItem("pzs_v136");
@@ -7055,6 +7057,18 @@ function leagueSeasonLabel(record){
  }
  return `${place}. miejsce${promotion}${relegation}`;
 }
+function mobileLeagueLabel(league){
+ if(league==="PGE Ekstraliga")return "PGE";
+ if(league==="Metalkas 2. Ekstraliga")return "M2E";
+ if(league==="Krajowa Liga Żużlowa")return "KLŻ";
+ return league||"—";
+}
+function mobileLeagueSeasonLabel(record){
+ const place=record.finalPosition||record.regularPosition||"—";
+ const medal=record.league==="PGE Ekstraliga"?(place===1?"🥇 ":place===2?"🥈 ":place===3?"🥉 ":""):"";
+ const arrow=record.outcome==="awans"?" ↑":record.outcome==="spadek"?" ↓":"";
+ return `${medal}${place}. m.${arrow}`;
+}
 function canonicalCompetitionKey(entry){
  const name=entry.key||entry.name||"";
  if(name==="IMP Wild Card"||/IMP.*dzika karta/i.test(name))return "IMP Wild Card";
@@ -7169,12 +7183,13 @@ function seasonHistoryHtml(){
   <thead><tr><th>Sezon</th><th>Wiek</th><th>OVR</th><th>Klub</th><th>Liga</th><th>Biegi</th><th>Średnia</th><th>Rezultat</th></tr></thead>
   <tbody>${seasons.map(season=>`<tr>
    <td data-label="Sezon">${season.year}</td><td data-label="Wiek">${season.age}</td><td data-label="OVR">${season.overall}</td>
-   <td data-label="Klub">${season.club}</td><td data-label="Liga">${season.league}</td><td data-label="Biegi">${season.heats}</td>
+   <td data-label="Klub">${season.club}</td><td data-label="Liga"><span class="career-season-full">${season.league}</span><span class="career-season-mobile">${mobileLeagueLabel(season.league)}</span></td><td data-label="Biegi">${season.heats}</td>
    <td data-label="Średnia">${Number(season.average).toFixed(3).replace(".",",")}</td>
-   <td data-label="Rezultat" title="Faza zasadnicza: ${season.regularPosition||"—"}. miejsce">${leagueSeasonLabel(season)}</td>
+   <td data-label="Rezultat" title="Faza zasadnicza: ${season.regularPosition||"—"}. miejsce"><span class="career-season-full">${leagueSeasonLabel(season)}</span><span class="career-season-mobile">${mobileLeagueSeasonLabel(season)}</span></td>
   </tr>`).join("")}</tbody>
  </table></div>`;
 }
+
 
 function repeatedChampionLabel(count,title){
  const words={2:"Dwukrotny",3:"Trzykrotny",4:"Czterokrotny",5:"Pięciokrotny",6:"Sześciokrotny",7:"Siedmiokrotny",8:"Ośmiokrotny",9:"Dziewięciokrotny",10:"Dziesięciokrotny"};
@@ -8687,7 +8702,7 @@ createPlayer=function(){
 };
 
 function clearCareerSavesAndReload(){
- const keys=["pss_v1024","pss_v1023","pss_v1022","pss_v1021","pss_v102","pss_v101","pss_v100","pzs_v200","pzs_v1361","pzs_v136","pzs_v135","pzs_v134","pzs_v1331","pzs_v133","pzs_v132","pzs_v131","pzs_v1301","pzs_v130","pzs_v129","pzs_v128","pzs_v127","pzs_v126","pzs_v1252","pzs_v1251","pzs_v125","pzs_v124","pzs_v123","pzs_v122","pzs_v121","pzs_v120","pzs_v119","pzs_v118","pzs_v117","pzs_v116","pzs_v115","pzs_v114","pzs_v113","pzs_v112","pzs_v111","pzs_v110","pzs_v109","pzs_v108","pzs_v107","pzs_v106","pzs_v105","pzs_v104","pzs_v103","pzs_v102","pzs_v101","pzs_v100","pzs_v305","pzs_v304","pzs_v303","pzs_v302","pzs_v301","pzs_final30","pzs_v30","pzs_v29","pzs_v28","pzs_v27","pzs_v26","pzs_v25","pzs_v24","pzs_v23","pzs_v22","pzs_v2"];
+ const keys=["pss_v1025","pss_v1024","pss_v1023","pss_v1022","pss_v1021","pss_v102","pss_v101","pss_v100","pzs_v200","pzs_v1361","pzs_v136","pzs_v135","pzs_v134","pzs_v1331","pzs_v133","pzs_v132","pzs_v131","pzs_v1301","pzs_v130","pzs_v129","pzs_v128","pzs_v127","pzs_v126","pzs_v1252","pzs_v1251","pzs_v125","pzs_v124","pzs_v123","pzs_v122","pzs_v121","pzs_v120","pzs_v119","pzs_v118","pzs_v117","pzs_v116","pzs_v115","pzs_v114","pzs_v113","pzs_v112","pzs_v111","pzs_v110","pzs_v109","pzs_v108","pzs_v107","pzs_v106","pzs_v105","pzs_v104","pzs_v103","pzs_v102","pzs_v101","pzs_v100","pzs_v305","pzs_v304","pzs_v303","pzs_v302","pzs_v301","pzs_final30","pzs_v30","pzs_v29","pzs_v28","pzs_v27","pzs_v26","pzs_v25","pzs_v24","pzs_v23","pzs_v22","pzs_v2"];
  keys.forEach(k=>localStorage.removeItem(k));location.reload();
 }
 function showCareerEndSupportPopup(){
@@ -8706,20 +8721,27 @@ function installPSS102RuntimeStyles(){
   .career-summary-grid>div span{font-size:8px!important;line-height:1.05!important}
   .career-summary-grid>div b{font-size:11px!important;line-height:1.05!important}
   .career-season-table-wrap{overflow:visible!important;width:100%!important}
-  .career-season-table{display:table!important;width:100%!important;min-width:0!important;table-layout:fixed!important;border-collapse:collapse!important;font-size:8px!important}
+  .career-season-table{display:table!important;width:100%!important;min-width:0!important;table-layout:fixed!important;border-collapse:collapse!important;font-size:9px!important}
   .career-season-table thead{display:table-header-group!important}
   .career-season-table tbody{display:table-row-group!important}
   .career-season-table tr{display:table-row!important}
-  .career-season-table th,.career-season-table td{display:table-cell!important;padding:4px 2px!important;white-space:normal!important;word-break:normal!important;overflow-wrap:anywhere!important;vertical-align:middle!important;line-height:1.08!important}
+  .career-season-table th,.career-season-table td{display:table-cell!important;padding:4px 2px!important;word-break:normal!important;overflow-wrap:normal!important;vertical-align:middle!important;line-height:1.12!important}
+  .career-season-table th{font-size:0!important;white-space:nowrap!important;padding:5px 1px!important;letter-spacing:.02em!important;text-align:center!important}
+  .career-season-table th::after{font-size:7px!important;font-weight:800!important;letter-spacing:.025em!important}
+  .career-season-table th:nth-child(1)::after{content:"SEZ."}.career-season-table th:nth-child(2)::after{content:"W"}.career-season-table th:nth-child(3)::after{content:"OVR"}.career-season-table th:nth-child(4)::after{content:"KLUB"}.career-season-table th:nth-child(5)::after{content:"LIGA"}.career-season-table th:nth-child(6)::after{content:"B"}.career-season-table th:nth-child(7)::after{content:"ŚR"}.career-season-table th:nth-child(8)::after{content:"WYN."}
   .career-season-table td:before,.career-season-table td::before{display:none!important;content:none!important}
+  .career-season-table td:nth-child(1),.career-season-table td:nth-child(2),.career-season-table td:nth-child(3),.career-season-table td:nth-child(5),.career-season-table td:nth-child(6),.career-season-table td:nth-child(7),.career-season-table td:nth-child(8){white-space:nowrap!important}
+  .career-season-table td:nth-child(1),.career-season-table td:nth-child(2),.career-season-table td:nth-child(3),.career-season-table td:nth-child(5),.career-season-table td:nth-child(6),.career-season-table td:nth-child(7){text-align:center!important}
+  .career-season-table td:nth-child(4){overflow-wrap:anywhere!important;hyphens:auto!important}
   .career-season-table th:nth-child(1),.career-season-table td:nth-child(1){width:10%!important}
-  .career-season-table th:nth-child(2),.career-season-table td:nth-child(2){width:7%!important}
-  .career-season-table th:nth-child(3),.career-season-table td:nth-child(3){width:7%!important}
-  .career-season-table th:nth-child(4),.career-season-table td:nth-child(4){width:22%!important}
-  .career-season-table th:nth-child(5),.career-season-table td:nth-child(5){width:20%!important}
-  .career-season-table th:nth-child(6),.career-season-table td:nth-child(6){width:8%!important}
-  .career-season-table th:nth-child(7),.career-season-table td:nth-child(7){width:10%!important}
-  .career-season-table th:nth-child(8),.career-season-table td:nth-child(8){width:16%!important}
+  .career-season-table th:nth-child(2),.career-season-table td:nth-child(2){width:6%!important}
+  .career-season-table th:nth-child(3),.career-season-table td:nth-child(3){width:8%!important}
+  .career-season-table th:nth-child(4),.career-season-table td:nth-child(4){width:29%!important}
+  .career-season-table th:nth-child(5),.career-season-table td:nth-child(5){width:8%!important}
+  .career-season-table th:nth-child(6),.career-season-table td:nth-child(6){width:7%!important}
+  .career-season-table th:nth-child(7),.career-season-table td:nth-child(7){width:12%!important}
+  .career-season-table th:nth-child(8),.career-season-table td:nth-child(8){width:20%!important}
+  .career-season-full{display:none!important}.career-season-mobile{display:inline!important}
   .championship-summary-row{padding:6px 7px!important;gap:2px!important}.championship-summary-row strong{font-size:10px!important}.championship-summary-row span,.championship-summary-row small{font-size:8px!important;line-height:1.15!important}
  }
  `;document.head.appendChild(style);
@@ -11065,221 +11087,5 @@ const saved=load();if(saved){S=saved;S.seasonFlowActive=false;normalize();repair
  if(S){S.pss1024??={};S.pss1024.version=PATCH_1024;save();render()}
 })();
 
-// ============================================================================
-// Polish Speedway Simulator 1.02.4 — REFRESH / MOBILE + SPÓJNOŚĆ
-// Poprawione wydanie tej samej wersji: watchdog, fleksja, pozycje, IMP WC.
-// ============================================================================
-(() => {
- const REFRESH_ID="1.02.4-refresh-20260826";
- if(globalThis.PSS_1024_REFRESH===REFRESH_ID)return;
- globalThis.PSS_1024_REFRESH=REFRESH_ID;
 
- // --------------------------------------------------------------------------
- // 1. GLOBALNA FLEKSJA MIEJSCOWOŚCI W TEKSTACH UI
- // --------------------------------------------------------------------------
- Object.assign(CITY_LOCATIVE,{
-  "Wrocław":"Wrocławiu","Kraków":"Krakowie","Krosno":"Krośnie","Gorzów":"Gorzowie",
-  "Gorzów Wielkopolski":"Gorzowie Wielkopolskim","Grudziądz":"Grudziądzu","Łódź":"Łodzi",
-  "Toruń":"Toruniu","Gniezno":"Gnieźnie","Częstochowa":"Częstochowie","Leszno":"Lesznie",
-  "Bydgoszcz":"Bydgoszczy","Lublin":"Lublinie","Rzeszów":"Rzeszowie","Tarnów":"Tarnowie",
-  "Zielona Góra":"Zielonej Górze","Poznań":"Poznaniu","Opole":"Opolu","Piła":"Pile",
-  "Rybnik":"Rybniku","Świętochłowice":"Świętochłowicach","Ostrów Wielkopolski":"Ostrowie Wielkopolskim",
-  "Warszawa":"Warszawie","Szczecin":"Szczecinie","Kielce":"Kielcach","Białystok":"Białymstoku",
-  "Pardubice":"Pardubicach","Praga":"Pradze","Målilla":"Målilli","Västervik":"Västerviku",
-  "Manchester":"Manchesterze","Oxford":"Oksfordzie","Edinburgh":"Edynburgu","Leicester":"Leicesterze",
-  "Stralsund":"Stralsundzie","Lublana":"Lublanie","Debrecen":"Debreczynie"
- });
- const CITY_GENITIVE_REFRESH={
-  "Krosno":"Krosna","Kraków":"Krakowa","Wrocław":"Wrocławia","Gorzów":"Gorzowa","Gorzów Wielkopolski":"Gorzowa Wielkopolskiego",
-  "Grudziądz":"Grudziądza","Łódź":"Łodzi","Toruń":"Torunia","Gniezno":"Gniezna","Częstochowa":"Częstochowy",
-  "Leszno":"Leszna","Bydgoszcz":"Bydgoszczy","Lublin":"Lublina","Rzeszów":"Rzeszowa","Tarnów":"Tarnowa",
-  "Zielona Góra":"Zielonej Góry","Poznań":"Poznania","Opole":"Opola","Piła":"Piły","Rybnik":"Rybnika",
-  "Świętochłowice":"Świętochłowic","Ostrów Wielkopolski":"Ostrowa Wielkopolskiego","Warszawa":"Warszawy",
-  "Szczecin":"Szczecina","Kielce":"Kielc","Białystok":"Białegostoku","Pardubice":"Pardubic",
-  "Praga":"Pragi","Målilla":"Målilli","Västervik":"Västerviku","Manchester":"Manchesteru","Oxford":"Oksfordu",
-  "Edinburgh":"Edynburga","Leicester":"Leicesteru","Stralsund":"Stralsundu","Lublana":"Lublany","Debrecen":"Debreczyna"
- };
- function escRe(s){return String(s).replace(/[.*+?^${}()|[\]\\]/g,"\\$&")}
- function caseLike(src,repl){
-  const letters=String(src).replace(/[^A-Za-zĄĆĘŁŃÓŚŹŻąćęłńóśźżÀ-ž]/g,"");
-  if(letters&&letters===letters.toLocaleUpperCase("pl"))return String(repl).toLocaleUpperCase("pl");
-  if(src&&src[0]===src[0].toLocaleLowerCase("pl"))return String(repl).charAt(0).toLocaleLowerCase("pl")+String(repl).slice(1);
-  return repl;
- }
- function inflectCityPhrases(text){
-  let s=String(text??"");
-  const cities=Object.keys(CITY_LOCATIVE).sort((a,b)=>b.length-a.length);
-  for(const city of cities){
-   const loc=CITY_LOCATIVE[city]||city,gen=CITY_GENITIVE_REFRESH[city]||globalThis.cityGenitive?.(city)||city,re=escRe(city),tail="(?=$|[\\s.,;:!?…\\)\\]”\"'—–-])";
-   s=s.replace(new RegExp(`(^|[\\s(„\"'—–-])((?:w|we)\\s+)(${re})${tail}`,"giu"),(m,prefix,prep,rawCity)=>{
-    const useWe=city==="Wrocław";let p=useWe?"we":"w";if(prep.trim()===prep.trim().toLocaleUpperCase("pl"))p=p.toLocaleUpperCase("pl");
-    return `${prefix}${p} ${caseLike(rawCity,loc)}`;
-   });
-   s=s.replace(new RegExp(`(^|[\\s(„\"'—–-])((?:do)\\s+)(${re})${tail}`,"giu"),(m,prefix,prep,rawCity)=>`${prefix}${prep}${caseLike(rawCity,gen)}`);
-   s=s.replace(new RegExp(`(^|[\\s(„\"'—–-])((?:z|ze)\\s+)(${re})${tail}`,"giu"),(m,prefix,prep,rawCity)=>`${prefix}${prep}${caseLike(rawCity,gen)}`);
-  }
-  return s.replace(/\bw Wrocławiu\b/gi,m=>m[0]===m[0].toUpperCase()?"WE WROCŁAWIU":"we Wrocławiu");
- }
- globalThis.PSSInflectCityPhrases=inflectCityPhrases;
-
- function fixCityTextNodes(root=document.body){
-  if(!root||!document.createTreeWalker)return;
-  const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,{acceptNode(node){
-   const tag=node.parentElement?.tagName;if(!node.nodeValue?.trim()||["SCRIPT","STYLE","TEXTAREA","INPUT"].includes(tag))return NodeFilter.FILTER_REJECT;
-   return NodeFilter.FILTER_ACCEPT;
-  }});
-  const nodes=[];while(walker.nextNode())nodes.push(walker.currentNode);
-  nodes.forEach(n=>{const fixed=inflectCityPhrases(n.nodeValue);if(fixed!==n.nodeValue)n.nodeValue=fixed});
- }
-
- const showModalRefresh=showModal;
- showModal=function(kicker,title,text,options){
-  const opts=(options||[]).map(o=>({...o,title:inflectCityPhrases(o.title),desc:inflectCityPhrases(o.desc)}));
-  const out=showModalRefresh(inflectCityPhrases(kicker),inflectCityPhrases(title),inflectCityPhrases(text),opts);
-  fixCityTextNodes(document.getElementById("modal"));
-  return out;
- };
- const addHistoryRefresh=addHistory;
- addHistory=function(title,text){return addHistoryRefresh(inflectCityPhrases(title),inflectCityPhrases(text))};
- const renderRefresh=render;
- render=function(){const out=renderRefresh();fixCityTextNodes(document.body);return out};
-
- // Celebracje także korzystają z fleksji oraz wypełniają dynamiczny viewport telefonu.
- const showAchievementCelebrationRefresh=showAchievementCelebration;
- showAchievementCelebration=function(kind,title,subtitle="",onContinue=null){
-  const theme=document.querySelector('meta[name="theme-color"]'),oldTheme=theme?.getAttribute("content")||"#173d3a";
-  document.documentElement.classList.add("achievement-active");document.body.classList.add("achievement-active");
-  if(theme)theme.setAttribute("content","#061412");
-  const cleanup=()=>{
-   document.documentElement.classList.remove("achievement-active");document.body.classList.remove("achievement-active");
-   if(theme)theme.setAttribute("content",oldTheme);
-   onContinue?.();
-  };
-  const out=showAchievementCelebrationRefresh(inflectCityPhrases(kind),inflectCityPhrases(title),inflectCityPhrases(subtitle),cleanup);
-  const root=document.querySelector(".achievement-burst");if(root){root.style.height="100dvh";root.style.minHeight="100vh";fixCityTextNodes(root)}
-  return out;
- };
-
- // --------------------------------------------------------------------------
- // 2. WATCHDOG: POST-SEASON I RYNEK SĄ PRAWIDŁOWYMI STANAMI OCZEKIWANIA
- // --------------------------------------------------------------------------
- currentSeasonAlreadySettled=function(){
-  return S.seasonResolution?.year===S.year&&["settled","contract"].includes(String(S.seasonResolution?.status||""));
- };
- const resolveContractAfterSeasonRefresh=resolveContractAfterSeason;
- resolveContractAfterSeason=function(pph){
-  if(S.seasonResolution?.year===S.year){S.seasonResolution.status="contract";S.seasonFlowStage="contract";clearSeasonWatchdog();save()}
-  return resolveContractAfterSeasonRefresh(pph);
- };
- armSeasonWatchdog=function(){
-  clearSeasonWatchdog();
-  if(!S?.seasonFlowActive||currentSeasonAlreadySettled())return;
-  const stage=String(S.seasonFlowStage||"");
-  // Nie pilnujemy stanów, w których gra prawidłowo czeka na użytkownika.
-  if(!stage||["post-season","contract","result","celebration"].includes(stage))return;
-  seasonWatchdog=setTimeout(()=>{
-   if(S?.seasonFlowActive&&!currentSeasonAlreadySettled()&&!modalIsVisible()&&String(S.seasonFlowStage||"")===stage){
-    recoverSeasonFlow(new Error(`Brak postępu na etapie: ${stage}.`));
-   }
-  },30000);
- };
-
- // --------------------------------------------------------------------------
- // 3. JEDEN STAN POZYCJI = JEDNA PRAWDA W CAŁYM EKRANIE BIEGU
- // --------------------------------------------------------------------------
- ensureStartSnapshotPosition=function(snapshot,target){
-  if(!snapshot?.order?.length)return snapshot;target=clamp(Number(target)||1,1,4);
-  const player=snapshot.order.find(r=>r.player);if(!player)return snapshot;
-  const others=snapshot.order.filter(r=>!r.player);const order=[...others];order.splice(target-1,0,player);
-  const top=Math.max(...order.map(r=>Number(r.raceScore)||0),100)+2;
-  order.forEach((r,i)=>{r.raceScore=top-i*.75});
-  snapshot.order=order;snapshot.position=target;return snapshot;
- };
- ensurePlayerResultPosition=function(result,target){
-  const source=result?.order?.length?result.order:result?.scores;if(!source?.length)return result;target=clamp(Number(target)||1,1,4);
-  const player=source.find(r=>r.player);if(!player)return result;
-  const others=source.filter(r=>!r.player);const order=[...others];order.splice(target-1,0,player);
-  const top=Math.max(...order.map(r=>Number(r.finalScore??r.raceScore)||0),100)+2;
-  order.forEach((r,i)=>{r.finalScore=top-i*.75;r.raceScore=Number.isFinite(r.raceScore)?r.raceScore:top-i*.75});
-  result.order=order;result.scores=order;result.position=target;result.points=4-target;return result;
- };
-
- // Dodatkowa siatka bezpieczeństwa dla starszych fragmentów generatora narracji.
- function synchronizePositionText(title,text){
-  const m=String(title||"").match(/(?:JEDZIESZ|JESTEŚ)\s*([1-4])\./i);if(!m)return text;
-  const p=m[1];let s=String(text||"");
-  s=s.replace(/(po pierwszym łuku\s+(?:układasz się|jedziesz|jesteś)(?:\s+na)?\s+)([1-4])(?=\.?(?:\s+pozycji|\s+miejscu))/giu,(x,a)=>a+p);
-  s=s.replace(/((?:Jedziesz|Jesteś)(?:\s+na)?\s+)([1-4])(?=\.?(?:\s+miejscu)?)/giu,(x,a,n)=>String(n)===p?x:a+p);
-  return s;
- }
- const showModalPositionSafe=showModal;
- showModal=function(kicker,title,text,options){return showModalPositionSafe(kicker,title,synchronizePositionText(title,text),options)};
-
- // --------------------------------------------------------------------------
- // 4. IMP/SEC Z DZIKĄ KARTĄ: DOKŁADNA, PEŁNA GENERALKA — BEZ „OKOŁO”
- // --------------------------------------------------------------------------
- function hash32(str){let h=2166136261>>>0;for(const ch of String(str)){h^=ch.codePointAt(0);h=Math.imul(h,16777619)}return h>>>0}
- function seeded(seed){let a=seed>>>0;return ()=>{a=(a+0x6D2B79F5)>>>0;let t=a;t=Math.imul(t^(t>>>15),t|1);t^=t+Math.imul(t^(t>>>7),t|61);return ((t^(t>>>14))>>>0)/4294967296}}
- function rr(rng,a,b){return Math.floor(rng()*(b-a+1))+a}
- function exactWildcardStanding(result,series="IMP",year=S.year){
-  if(!result)return result;
-  const rounds=series==="SEC"?4:3,regularCount=15,playerRound=clamp(Number(result.round)||Number(String(result.stage||"").match(/runda\s*(\d+)/i)?.[1])||1,1,rounds),points=Math.max(0,Number(result.points||0));
-  const seed=hash32(`${series}:${year}:${result.hostCity||""}:${playerRound}:${points}:${result.roundPlace||result.regularPlace||16}`),rng=seeded(seed);
-  const regs=Array.from({length:regularCount},(_,i)=>({id:`regular-${i}`,points:0,wins:0,podiums:0,best:99,starts:0,ability:.25+rng()*.75}));
-  for(let round=1;round<=rounds;round++){
-   const scores=regs.map(r=>({r,pts:clamp(Math.round(4+r.ability*8+(rng()-.5)*6),0,15)})).sort((a,b)=>b.pts-a.pts||b.r.ability-a.r.ability);
-   scores.forEach((x,idx)=>{x.r.points+=x.pts;x.r.starts++;x.r.best=Math.min(x.r.best,idx+1);if(idx===0)x.r.wins++;if(idx<3)x.r.podiums++});
-  }
-  const extras=[];
-  for(let round=1;round<=rounds;round++){
-   if(round===playerRound)continue;
-   const pts=rr(rng,0,9),best=clamp(16-Math.floor(pts*.7)+rr(rng,-1,2),6,16);
-   extras.push({id:`wildcard-${round}`,points:pts,wins:best===1?1:0,podiums:best<=3?1:0,best,starts:1});
-  }
-  const replacements=rr(rng,0,3);
-  for(let i=0;i<replacements;i++){
-   const pts=rr(rng,0,7),best=clamp(16-Math.floor(pts*.65)+rr(rng,0,2),8,16);
-   extras.push({id:`reserve-${i}`,points:pts,wins:0,podiums:0,best,starts:1});
-  }
-  const player={id:"player",points,wins:Number(result.finalPlace)===1?1:0,podiums:Number(result.finalPlace)<=3?1:0,best:Number(result.finalPlace||result.baragePlace||result.roundPlace||result.regularPlace||16),starts:1};
-  const table=[...regs,...extras,player].sort((a,b)=>b.points-a.points||b.wins-a.wins||b.podiums-a.podiums||a.best-b.best||b.starts-a.starts||String(a.id).localeCompare(String(b.id)));
-  const place=table.findIndex(x=>x.id==="player")+1;
-  let core=String(result.result||"")
-   .replace(/\s*Punkty z tej rundy liczą się do klasyfikacji generalnej;?\s*kończysz cykl na około\s*\d+\.?\s*miejscu\.?/i,"")
-   .replace(/\s*Punkty z tej rundy liczą się do klasyfikacji generalnej\.?/i,"")
-   .trim().replace(/\s+/g," ");
-  result.result=ensureSentence(core||`${result.roundPlace||result.regularPlace||16}. miejsce w rundzie`);
-  result.generalPlace=place;result.generalClassificationPoints=points;result.generalFieldSize=table.length;result.generalExact=true;result.generalStanding=table.map(x=>({id:x.id,points:x.points,best:x.best}));
-  return result;
- }
- const simulateIMPWildcardRoundRefresh=simulateIMPWildcardRound;
- simulateIMPWildcardRound=function(basePph,event){const r=simulateIMPWildcardRoundRefresh(basePph,event);r.round=event?.round||r.round||1;return exactWildcardStanding(r,"IMP",S.year)};
- const playInteractiveIMPWildcardRoundRefresh=playInteractiveIMPWildcardRound;
- playInteractiveIMPWildcardRound=function(basePph,event,done){return playInteractiveIMPWildcardRoundRefresh(basePph,event,r=>{if(r)r.round=event?.round||r.round||1;done(exactWildcardStanding(r,"IMP",S.year))})};
- const simulateInternationalWildcardRoundRefresh=simulateInternationalWildcardRound;
- simulateInternationalWildcardRound=function(event,basePph){const r=simulateInternationalWildcardRoundRefresh(event,basePph);return event?.series==="SEC"?exactWildcardStanding(Object.assign(r,{round:event.round||1}),"SEC",S.year):r};
- const playInternationalWildcardRoundRefresh=playInternationalWildcardRound;
- playInternationalWildcardRound=function(event,basePph,done){return playInternationalWildcardRoundRefresh(event,basePph,r=>done(event?.series==="SEC"?exactWildcardStanding(Object.assign(r,{round:event.round||1}),"SEC",S.year):r))};
-
- // Istniejący zapis bieżącego sezonu też czyścimy z historycznego „około”.
- if(Array.isArray(S?.competitions)){
-  S.competitions.forEach(r=>{if(r?.key==="IMP Wild Card")exactWildcardStanding(r,"IMP",S.year);else if(r?.key==="SEC Wild Card")exactWildcardStanding(r,"SEC",S.year)});
- }
-
- // W liście rozegranych zawodów pokaż dokładną pozycję generalną przy dzikiej karcie.
- const renderCompetitionsRefresh=renderCompetitions;
- renderCompetitions=function(){
-  renderCompetitionsRefresh();
-  const box=$("competitionList");if(!box)return;
-  const rows=[...box.querySelectorAll(".competition-row")];
-  rows.forEach((row,i)=>{
-   const c=S.competitions?.[i];if(!c||!["IMP Wild Card","SEC Wild Card"].includes(c.key)||!Number.isFinite(Number(c.generalPlace)))return;
-   const detail=row.querySelector("small");if(detail)detail.textContent=`${inflectCityPhrases(c.stage||"")} • generalka: ${c.generalPlace}. miejsce`;
-  });
-  fixCityTextNodes(box);
- };
-
- // Profile z bieżącego zapisu: krótka etykieta kadry w HTML jest statyczna, dane pozostają bez zmian.
- fixCityTextNodes(document.body);
- save();
-})();
+// Polish Speedway Simulator 1.02.5 — kompaktowa tabela historii kariery na mobile
