@@ -1,107 +1,170 @@
 # Polish Speedway Simulator
 
-## Wersja 1.03.3 — 6.09.2026
+## Wersja 1.03.4 — 6.09.2026
 
-Wersja 1.03.3 rozwija przede wszystkim **wariancję ścieżek kariery**. Poziom startowy nadal ma duże znaczenie, ale nie powinien już w tak dużym stopniu wyznaczać końcowego pułapu zawodnika. Najsłabszy profil startowy może w wyjątkowej, dobrze poprowadzonej karierze dojść do światowej czołówki, a wysoki poziom początkowy nie jest gwarancją medali, SGP ani mistrzostwa świata.
+Wersja 1.03.4 jest przede wszystkim aktualizacją **różnorodności karier**. Główny cel tej wersji to ograniczenie liniowego schematu rozwoju i zwiększenie szansy na kariery, które naprawdę mają własną historię: nagły juniorski wystrzał, okres stagnacji, odbudowę, późniejszy przełom albo zmarnowany wysoki talent.
 
-### Najważniejsze zmiany 1.03.3
+Poziom startowy nadal ma znaczenie, ale ma określać **prawdopodobieństwo i trudność pierwszych lat**, a nie z góry ustalać wynik kariery. Z każdego profilu startowego istnieje rzadka, ale realna droga do światowej gwiazdy. Jednocześnie wysoki start nie gwarantuje SGP, medali ani mistrzostwa świata.
 
-#### Duże zdarzenia kariery
+### Najważniejsze zmiany 1.03.4
 
-Dodano nową warstwę rzadkich **dużych zdarzeń**, które mogą realnie zmienić trajektorię kariery. Ich zasada jest inna niż w zwykłych losowych wydarzeniach:
+#### 1. Większa fluktuacja rozwoju
 
-**faktyczny trigger w symulacji → informacje dla gracza → decyzja → częściowa losowość → długofalowa konsekwencja**.
+Dodano ukryty **sezonowy puls rozwojowy**. Nie jest to bezpośredni bonus `+X OVR`. Puls wpływa na tempo wykorzystywania treningu, szanse naturalnych wzrostów, fazę kariery i chwilowe odchylenie od bazowej trajektorii.
 
-Duże zdarzenie nie powinno samo wymyślać faktu, który wcześniej nie wystąpił. Przykładowo zdarzenie po kontuzji wymaga rzeczywistego urazu zapisanego przez grę, a kryzys po ważnym meczu wymaga rzeczywiście rozegranego lub świadomie zasymulowanego kluczowego spotkania.
+Największa wariancja występuje w wieku **15–21 lat**. Junior może trafić na:
 
-W 1.03.3 dostępne są m.in.:
+- stagnację;
+- normalny rozwój;
+- dobry okres;
+- mocny impuls;
+- rzadki przełom/breakout;
+- sportowy dołek.
 
-- eksperymentalny program silnikowy;
-- odejście kluczowego mechanika;
-- przebudowa stylu po poważnej kontuzji;
-- przeciążony kalendarz wynikający z faktycznego workloadu;
-- reakcja na realnie zawalony ważny mecz ligowy;
-- rywalizacja o miejsce w składzie przy rzeczywiście niepewnej pozycji;
-- przełom treningowy z wyborem konkretnego obszaru rozwoju;
-- całkowita przebudowa przygotowań;
-- późne zrozumienie żużla / możliwa „druga młodość”;
-- sponsor z mierzalnym celem sportowym i wypłatą dopiero po jego wykonaniu;
-- decyzja o tempie powrotu po ciężkim urazie;
-- bardzo rzadki fenomenalny okres/sezon, który może stać się punktem zwrotnym kariery.
+Dzięki temu rozwój ma częściej wyglądać np. `49 → 50 → 53 → 58 → 62`, albo `57 → 58 → 58 → 56 → 60`, a rzadziej jak niemal identyczne `+0/+1` w każdym sezonie.
 
-Skutki są rozłożone w czasie. System częściej zmienia tempo rozwoju, profil umiejętności, momentum, odporność na regres lub miękki pułap kariery niż przyznaje natychmiastowe, arbitralne punkty OVR.
+Po 21. roku życia zmienność stopniowo maleje. Nadal możliwe są późne przełomy, druga młodość, odbudowa i regres, ale mają inne triggery i mniejszą częstotliwość niż w okresie juniorskim.
 
-Starsze losowe wersje kilku sytuacji, które dublowały nowy system (np. eksperymentalny silnik, sztuczny uraz przed ważnym meczem czy przypadkowy konflikt o rolę), zostały wyłączone z puli zwykłych eventów.
+#### 2. Juniorski wystrzał
 
-#### Większe nakładanie się trajektorii karier
+Do dużych zdarzeń dodano **„Juniorski wystrzał — coś nagle kliknęło”**. Może wystąpić między 16. a 21. rokiem życia, jeśli zawodnik rzeczywiście ma za sobą starty i nie jest świeżo po ciężkim urazie.
 
-Ukryty model potencjału nowych karier ma teraz mocniej zachodzące na siebie rozkłady. Profile startowe nadal pozostają takie jak w ekranie tworzenia zawodnika:
+Gracz wybiera sposób wykorzystania okresu:
 
-- **Szkółka od zera** — 15 lat, OVR ok. 36–43;
-- **Zwykły adept** — 15 lat, OVR ok. 40–48;
-- **Po licencji Ż** — 16 lat, OVR ok. 46–54;
-- **Talent szkółki** — 16 lat, OVR ok. 53–61;
-- **Rezerwowy junior** — 17 lat, OVR ok. 49–57.
+- mocniej idzie w pracę torową;
+- buduje fundamenty razem z klubem;
+- zachowuje dotychczasowy plan i obserwuje rozwój.
 
-Różnica polega na tym, że start jest teraz mocniej traktowany jako **przewaga lub utrudnienie na początku**, a nie jako niemal gotowa odpowiedź na pytanie o przyszły peak. Pozytywne punkty zwrotne mają trochę większą wartość dla zawodników, którzy zaczynali nisko i mają dużo przestrzeni do rozwoju; z kolei zawodnik już znajdujący się blisko elity ma mniej łatwych rezerw i może więcej stracić przy negatywnym ciągu zdarzeń.
+Dobry przebieg może na 1–2 sezony bardzo mocno przyspieszyć rozwój oraz lekko otworzyć miękki pułap kariery. Nie jest to gwarantowany skok OVR.
 
-#### Prognoza jazdy i realne biegi
+#### 3. Pierwsze lata mają największe znaczenie
 
-Przebudowano powiązanie prognozy jazdy z faktycznym wykorzystaniem zawodnika w lidze.
+Do 21. roku życia klub mocniej uczestniczy w rozwoju i finansowaniu podstawowego zaplecza. Junior nie powinien przegrywać całej kariery wyłącznie dlatego, że na starcie ma mały budżet.
 
-- procent widoczny przy kontrakcie jest teraz bezpośrednio używany przy ustalaniu obecności w składzie na poszczególne mecze;
-- 5–8% prognozy oznacza sporadyczne występy, a nie kilkadziesiąt biegów w sezonie;
-- liczba biegów w meczu zależy od realnej roli: rezerwa, walka o skład, rotacja, podstawowy zawodnik lub lider;
-- dobra sytuacja w trakcie kariery nadal może zmienić szanse na jazdę przez istniejące mechanizmy formy, rozwoju i decyzji klubowych.
+Klub pokrywa większą część standardowych kosztów, a własne pieniądze zawodnika służą przede wszystkim do rzeczy ponadstandardowych: dodatkowego silnika, tunera, prywatnego treningu, rozbudowanego teamu czy regeneracji.
 
-#### PGE Ekstraliga — bardziej wiarygodny rynek
+Jeżeli junior bardzo wcześnie staje się zawodnikiem wysokiego poziomu, może wejść w **pełny profesjonalizm** jeszcze przed 22. rokiem życia. Wtedy klub przestaje chronić go finansowo tak mocno, bo zawodnik funkcjonuje już jak profesjonalista z własnym zapleczem.
 
-Niski OVR nie dostał sztywnego zakazu wejścia do PGE Ekstraligi, ale takie transfery są teraz znacznie bardziej wyjątkowe.
+#### 4. Lekko wyższe limity umiejętności
 
-- bardzo młody zawodnik z wysokim ukrytym potencjałem może sporadycznie trafić do PGE jako głęboka rezerwa / projekt rozwojowy;
-- niski OVR nie powinien dostawać obietnicy regularnej jazdy tylko dlatego, że algorytm wylosował mocny klub;
-- pod uwagę nadal brane są wiek, status junior/U24/senior, OVR, potencjał, siła kadry, dopasowanie i faktyczna rola.
+Miękkie limity poszczególnych umiejętności zostały podniesione niewielką wartością. Celem nie jest łatwiejsze nabijanie 90+ OVR, lecz usunięcie sytuacji, w których rozsądny trening zbyt wcześnie nie ma już gdzie prowadzić.
 
-#### SEC od 2026 i równoległe SGP + SEC
+W wieku juniorskim udany przełom może chwilowo otworzyć jeszcze odrobinę dodatkowej przestrzeni.
 
-Ujednolicono ścieżkę Speedway Euro Championship:
+#### 5. Rynek dla słabego juniora
 
-- **TOP 6 SEC** zachowuje miejsce w kolejnym sezonie;
-- **TOP 6 SEC Challenge** awansuje do cyklu;
-- SEC Challenge ma 16 zawodników;
-- w modelu cyklu pozostają 3 stałe dzikie karty oraz lokalna dzika karta na rundę;
-- kwalifikacja do SGP nie blokuje już SEC;
-- zawodnik posiadający miejsce w SEC może świadomie zdecydować, czy z niego korzysta;
-- zawodnik SGP może zgłosić się do eliminacji SEC, jeśli otrzyma taką możliwość;
-- jazda SGP + SEC jednocześnie zwiększa faktyczne obciążenie, utrudnia regenerację i podnosi ryzyko urazu, ale daje też więcej ekspozycji na mocną stawkę i niewielki dodatkowy bodziec rozwojowy.
+Dla zawodników do 21 lat z niskim OVR rynek działa teraz bardziej selektywnie:
 
-#### Sponsor z celem
+- pojawia się **mniej ofert**;
+- pierwszeństwo mają słabsze kluby i KLŻ;
+- oferty są sortowane mocniej pod realną szansę jazdy;
+- niski OVR nie powinien oznaczać listy kilku klubów, z których każdy proponuje prawie wyłącznie ławkę.
 
-Duża premia sponsora nie jest już „pieniędzmi z góry”. Jeśli wydarzenie sponsorskie się pojawi, gra proponuje cele dopasowane do rzeczywistych rozgrywek i poziomu zawodnika — np. konkretną średnią ligową lub miejsce w SGP/SEC. Gracz wybiera cel rozsądny, ambitny albo odrzuca propozycję. Premia jest wypłacana dopiero po zakończeniu sezonu, jeżeli warunek został spełniony.
+To nie jest gwarancja jazdy. Chodzi o to, aby realistyczny klub zainteresowany słabym juniorem rzeczywiście widział dla niego możliwą ścieżkę rozwoju.
 
-#### Koszty dużych decyzji
+#### 6. Prognoza jazdy i liczba biegów juniora
 
-Wydatki w nowych dużych zdarzeniach korzystają ze skalowania do poziomu finansowego kariery, ale mają również stałe minimum. Dzięki temu mechanik, projekt silnikowy czy profesjonalna regeneracja pozostają realnym kosztem zarówno dla młodego zawodnika, jak i gwiazdy zarabiającej wielokrotnie więcej.
+Prognoza procentowa nadal oznacza przede wszystkim **szansę wejścia do składu na dany mecz**. Po wejściu do składu liczbę biegów wyznacza rola.
+
+Orientacyjnie:
+
+- rezerwa — około 1–2,5 biegu;
+- walka o skład / rywalizacja juniorska — około 2–3;
+- rotacja juniorska — około 3;
+- regularna jazda – junior — zwykle około 3–4;
+- podstawowy junior — około 3,5–4,5.
+
+Etykiety ról są również lepiej dopasowane do faktycznej prognozy.
+
+#### 7. Schodki średniej biegopunktowej
+
+Doprecyzowano ważną zasadę: schodki wieku dotyczą przede wszystkim **średniej biegopunktowej, a nie OVR**.
+
+- pierwszy sezon w wieku **22 lat** — zawodnik nie ma już biegów juniorskich, więc przy niedostatecznym poziomie może zaliczyć wyraźny spadek średniej;
+- pierwszy sezon w wieku **25 lat** — koniec U24 tworzy drugi, mniejszy schodek;
+- awans do mocniejszej ligi nadal może obniżyć średnią mimo rosnącego OVR;
+- zejście do słabszej ligi może dać naturalne odbicie wyniku.
+
+Bardzo mocni zawodnicy są na te dwa schodki mniej podatni.
+
+#### 8. Duże zdarzenia kariery
+
+W 1.03.4 pozostają wszystkie duże zdarzenia z 1.03.3, a ich kadencja została lekko zwiększona, aby pełna 20-letnia kariera nie była pozbawiona punktów zwrotnych. Każde zdarzenie zachowuje jednak własne prawdopodobieństwo — bardzo rzadki „fenomenalny sezon” nie staje się częsty tylko dlatego, że w danym roku kwalifikuje się do puli. Nadal obowiązuje zasada:
+
+**faktyczny trigger → informacje → decyzja → częściowa losowość → długofalowa konsekwencja**.
+
+Aktualna pula obejmuje 13 głównych zdarzeń:
+
+1. nowy silnik / eksperymentalny pakiet;
+2. odejście kluczowego mechanika;
+3. zmiana stylu po realnej kontuzji;
+4. przeciążony kalendarz;
+5. porażka w ważnym, faktycznie rozegranym momencie;
+6. konflikt / rywalizacja o miejsce w składzie;
+7. przełom treningowy;
+8. całkowita przebudowa przygotowań;
+9. późne zrozumienie żużla / druga młodość;
+10. sponsor z mierzalnym celem;
+11. ryzykowny powrót po realnym ciężkim urazie;
+12. bardzo rzadki fenomenalny sezon;
+13. juniorski wystrzał.
+
+Eventy nadal nie mogą tworzyć faktów znikąd. Kontuzjowy event wymaga prawdziwego urazu, przeciążenie wymaga prawdziwego workloadu, a kryzys po meczu wymaga realnego ważnego spotkania.
+
+#### 9. Ruletka — czytelniejszy segment końcowy
+
+Aktualny kafelek znajdujący się pod wskaźnikiem jest podczas animacji delikatnie rozjaśniany o około **13%**. Po zatrzymaniu rozjaśnienie pozostaje na polu końcowym.
+
+Dodatkowo ruletka nie oznacza już jednoznacznie zielonym kolorem gałęzi, która zawiera sportowy debuff, np. spadek tempa rozwoju, umiejętności, sprzętu lub wzrost ryzyka urazu.
+
+Naprawiono również dwa zgłoszone przypadki:
+
+- „Oszczędzaj siły, dopracuj sprzęt” — udany wynik nie obniża już tempa rozwoju (`×1,01` zamiast `×0,98`);
+- „Nie komentować” po rzuceniu kaskiem — zielona gałąź oznacza teraz wygaśnięcie tematu, a postępowanie komisji pozostaje negatywnym wynikiem.
+
+#### 10. Nazwy klubów na rynku
+
+Naprawiono sytuację, w której automatyczna odmiana polskich miejscowości ingerowała w nazwę własną klubu, np. tworząc `Bazarek Rymanów Ostrowie Wielkopolskim`. Na rynku nazwa własna pozostaje w mianowniku: `Bazarek Rymanów Ostrów Wielkopolski`.
 
 ### Zapis gry
 
-Aktualny zapis używa klucza:
+Aktualny klucz zapisu:
 
-`pss_v1033`
+`pss_v1034`
 
-Przy pierwszym uruchomieniu 1.03.3 gra automatycznie odczytuje i migruje zapis z `pss_v1032` oraz wcześniejszych obsługiwanych wersji.
-
-**Ważne:** istniejąca kariera zachowuje swoje wcześniej wylosowane DNA/potencjał, aby aktualizacja nie przepisała wstecz całej jej historii. Nowy, szerzej rozłożony model startowej trajektorii jest w pełni stosowany do nowych karier; stare zapisy mogą natomiast korzystać z nowych dużych zdarzeń i ich wpływu na dalszą trajektorię.
+Gra automatycznie migruje zapis z `pss_v1033` oraz wcześniejszych obsługiwanych wersji. Nowe kariery korzystają z pełnego modelu fluktuacji 1.03.4. Istniejące kariery zachowują dotychczasową historię i DNA, ale od kolejnego sezonu mogą korzystać z nowego pulsu rozwojowego, poprawek rynku i dużych zdarzeń.
 
 ### Uruchomienie
 
-Gra nie wymaga instalacji ani serwera. Otwórz `index.html` w nowoczesnej przeglądarce. Dane kariery są przechowywane lokalnie w `localStorage` przeglądarki.
+Gra nie wymaga instalacji ani serwera. Otwórz `index.html` w nowoczesnej przeglądarce. Dane kariery są przechowywane lokalnie w `localStorage`.
 
 ---
 
 # Historia wersji
 
-Poniższa historia została odtworzona z README 1.03.2, komentarzy wersjonujących i kolejnych warstw patchy znajdujących się w kodzie. Dla najstarszych wersji 1.00–1.01 nie zachował się w paczce 1.03.2 osobny pełny changelog, dlatego opis tych dwóch wydań jest rekonstrukcją najważniejszych zmian widocznych w kodzie.
+Poniższa historia obejmuje kolejne wydania od 1.00 do 1.03.4. Dla najstarszych wersji 1.00–1.01 część opisu została zrekonstruowana z kodu i zachowanych informacji projektowych.
+
+## 1.03.4 — 6.09.2026
+
+- mocno zwiększono wariancję rozwoju, przede wszystkim w wieku 15–21 lat;
+- dodano ukryty sezonowy „puls rozwojowy”, który może tworzyć okresy stagnacji, zwykłego wzrostu, mocnego impulsu i rzadkiego breakoutu;
+- dodatnie i ujemne okresy rozwojowe mają większą bezwładność, dzięki czemu kariery częściej przebiegają falami zamiast schematem +0/+1 OVR rocznie;
+- dodano duże zdarzenie **„Juniorski wystrzał — coś nagle kliknęło”**;
+- duże zdarzenia kariery mają nieco wyższą kadencję w długich zapisach, ale każde zachowuje własną rzadkość, cooldown i realny trigger;
+- lekko podniesiono miękkie limity umiejętności; przełom juniorski może na krótko otworzyć dodatkową przestrzeń rozwoju;
+- w okresie juniorskim klub pokrywa większą część podstawowych kosztów i zapewnia bazowy bodziec szkoleniowy; własny budżet służy przede wszystkim do przewagi premium;
+- bardzo mocny junior może wcześniej wejść w model pełnego profesjonalizmu i przejąć większą część kosztów własnego teamu;
+- przy niskim OVR rynek daje mniej ofert, ale mocniej preferuje kluby KLŻ z realną szansą jazdy i rozwoju;
+- role juniorskie zostały lepiej powiązane z prognozą jazdy; „regularna jazda” oznacza po wejściu do składu zwykle około 3–4 biegów;
+- prognoza jazdy nadal odpowiada przede wszystkim za prawdopodobieństwo obecności w składzie;
+- dodano naturalny schodek **średniej biegopunktowej** w pierwszym sezonie po utracie statusu juniora (22 lata) i U24 (25 lat); OVR może w tym czasie nadal rosnąć;
+- pozostawiono osobne schodki średniej przy zmianach poziomu ligi;
+- poprawiono semantykę ruletki: zielony segment nie może oznaczać ukrytego sportowego debuffa;
+- naprawiono zdarzenie „Oszczędzaj siły, dopracuj sprzęt” — sukces nie obniża już tempa rozwoju;
+- naprawiono „Nie komentować” po rzuceniu kaskiem — pozytywna gałąź oznacza wygaśnięcie tematu, a nie karę morale;
+- aktywny kafelek ruletki jest delikatnie rozjaśniany podczas ruchu i po zatrzymaniu;
+- poprawiono wyświetlanie nazw własnych klubów na rynku transferowym, aby globalna odmiana miejscowości nie zmieniała np. „Ostrów Wielkopolski” na „Ostrowie Wielkopolskim” wewnątrz nazwy klubu;
+- zapis przeniesiono na `pss_v1034` z automatyczną migracją z 1.03.3 i wcześniejszych wspieranych wersji.
 
 ## 1.03.3 — 6.09.2026
 
@@ -245,7 +308,7 @@ Poniższa historia została odtworzona z README 1.03.2, komentarzy wersjonujący
 
 ---
 
-## Założenie projektu po 1.03.3
+## Założenie projektu po 1.03.4
 
 **Talent daje prawdopodobieństwo, nie gwarancję wyniku.**
 

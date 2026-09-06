@@ -387,7 +387,7 @@ EVENTS.push(...[["Azjatycka ofensywa kibicowska","W głosowaniu o dziką kartę 
 
 let S=null;
 
-EVENTS.push(...[["Mechanik zaczął pakować za wcześnie","Po meczu nowy mechanik ładuje motocykle do busa. Kilkanaście minut później komisja przypomina, że maszyny nie mogły jeszcze opuścić parku maszyn przed kontrolą.",17,50,[["Natychmiast zawrócić busa","70% → kontrola odbywa się prawidłowo • 30% → kara za opóźnienie",[[70,{"professionalism":3,"budget":-3000}],[30,{"budget":-12000,"reputation":-3,"professionalism":2}]]],["Wziąć odpowiedzialność","Profesjonalizm +4 • kara finansowa",[[100,{"professionalism":4,"budget":-9000,"morale":-2}]]],["Obwinić mechanika","Relacja z teamem -8 • 35% → mechanik odchodzi",[[65,{"clubRelation":-8,"professionalism":-2}],[35,{"clubRelation":-10,"equipment":-4,"professionalism":-3}]]]],{"id":"packed_too_early","weight":0.12,"once":true,"cooldown":99}],["Samolot odleciał dwie minuty za wcześnie","Masz wystąpić w ważnym meczu, ale nie zdążasz na lot. Według ciebie zabrakło dwóch minut, według linii lotniczej — siedmiu.",18,50,[["Kupić bilet na inne lotnisko","65% → docierasz na czas • 35% → przyjeżdżasz w połowie meczu",[[65,{"budget":-18000,"professionalism":3}],[35,{"budget":-26000,"chance":-6,"morale":-4}]]],["Wynająć samochód i jechać nocą","45% → zdążysz • 55% → przemęczenie",[[45,{"budget":-9000,"loyalty":4}],[55,{"budget":-9000,"morale":-6,"injuryRisk":4,"skill":["fitness",-1]}]]],["Zadzwonić do prezesa","Klub organizuje transport, ale zapamiętuje sytuację",[[100,{"clubRelation":-7,"loyalty":-3,"budget":-5000}]]]],{"id":"missed_flight","weight":0.28,"once":false,"cooldown":12}],["Defekt na ostatniej prostej","Prowadzisz przez cały bieg. Na ostatniej prostej motocykl gaśnie, a rywale mijają cię niemal na linii mety.",16,50,[["Spokojnie przeanalizować awarię","Ustawienia +1 • profesjonalizm +3 • koszt remontu",[[100,{"skill":["setup",1],"professionalism":3,"budget":-12000,"morale":-3}]]],["Wypchnąć motocykl do mety","40% → zdobywasz jeszcze punkt • 60% → bez punktów",[[40,{"reputation":4,"skill":["fitness",-1]}],[60,{"morale":-4,"skill":["fitness",-2]}]]],["Kopać motocykl","Medialność +7 • profesjonalizm -5 • 20% → kara",[[80,{"media":7,"professionalism":-5}],[20,{"media":8,"professionalism":-6,"budget":-6000}]]]],{"id":"last_straight_failure","weight":0.55,"once":false,"cooldown":8}],["Kask poleciał dalej niż motocykl","Awaria pozbawia cię zwycięstwa w wielkim finale. W przypływie złości kopiesz motocykl, a kask ląduje niepokojąco blisko trybun.",18,50,[["Natychmiast przeprosić","Profesjonalizm +3 • medialność +4 • niewielka kara",[[100,{"professionalism":3,"media":4,"budget":-4000}]]],["Sprzęt też musi czuć presję","Medialność +10 • profesjonalizm -6 • sponsor techniczny niezadowolony",[[100,{"media":10,"professionalism":-6,"equipment":-2}]]],["Nie komentować","Morale -5 • 30% → postępowanie komisji",[[70,{"morale":-5}],[30,{"morale":-5,"budget":-9000,"reputation":-3}]]]],{"id":"helmet_throw","weight":0.22,"once":true,"cooldown":99}],["Banda odmawia dalszej współpracy","Po groźnym upadku uszkodzona jest nie tylko dmuchana banda, ale też element konstrukcji stadionu. Naprawa może potrwać kilkanaście minut albo pół dnia.",16,50,[["Czekać na naprawę","65% → mecz jest kontynuowany • 35% → zawody zostają zakończone",[[65,{"professionalism":2,"morale":-1}],[35,{"morale":-3,"media":3}]]],["Poprzeć zakończenie spotkania","Profesjonalizm +4 • część kibiców niezadowolona",[[100,{"professionalism":4,"reputation":-2,"injuryRisk":-2}]]],["Pomóc ekipie technicznej","Medialność +6 • profesjonalizm +2 • 5% → zdjęcie z młotkiem trzymanym odwrotnie",[[95,{"media":6,"professionalism":2}],[5,{"media":11,"professionalism":1}]]]],{"id":"broken_barrier","weight":0.42,"once":false,"cooldown":9}],["Rekord toru czy źle ustawiony pomiar?","Po świetnym biegu spiker ogłasza rekord toru. Po pięciu minutach system pokazuje czas wolniejszy o prawie sekundę.",17,50,[["Domagać się sprawdzenia fotokomórki","50% → rekord uznany • 50% → czas poprawiony",[[50,{"reputation":6,"professionalism":2,"media":5}],[50,{"professionalism":2,"morale":-2}]]],["Od razu wrzucić grafikę REKORDZISTA","40% → rekord zostaje • 60% → trzeba usuwać grafikę",[[40,{"media":8,"reputation":5}],[60,{"media":7,"reputation":-3}]]],["Najważniejsze są trzy punkty","Profesjonalizm +4 • medialność -1",[[100,{"professionalism":4,"media":-1}]]]],{"id":"track_record_measurement","weight":0.48,"once":false,"cooldown":10}],["Klub organizuje prezentację na rynku","Sponsor chce, żebyś wjechał motocyklem przez dekoracyjną bramę, której szerokość ktoś zmierzył na oko.",16,50,[["Wjechać motocyklem","70% → świetna prezentacja • 20% → przewracasz reklamę • 10% → klinujesz się w bramie",[[70,{"media":8,"reputation":3}],[20,{"media":7,"budget":-4000}],[10,{"media":12,"morale":-3,"equipment":-1}]]],["Wejść pieszo","Profesjonalizm +2 • sponsor lekko rozczarowany",[[100,{"professionalism":2,"media":-1}]]],["Zaproponować pokaz startu","Medialność +10 • 15% → mandat",[[85,{"media":10,"reputation":3,"equipment":-1}],[15,{"media":11,"budget":-3000,"equipment":-1}]]]],{"id":"market_presentation","weight":0.72,"once":false,"cooldown":7}],["Pożyczony motocykl okazuje się szybszy","Po awarii własnego parku maszyn jedziesz na motocyklu kolegi z drużyny i zdobywasz komplet punktów.",17,50,[["Odkupić jednostkę","Świetny zakup • Przeciętny zakup • Przepłacasz za jednostkę",[[35,{"budget":-30000,"equipment":6,"morale":5}],[45,{"budget":-55000,"equipment":4,"morale":4}],[20,{"budget":-80000,"equipment":2,"morale":1}]]],["Zaproponować wymianę silników","40% → kolega się zgadza • 60% → odpowiada śmiejącą się emotikoną",[[40,{"equipment":3,"loyalty":3}],[60,{"media":2,"morale":-1}]]],["Uznać, że to przypadek","Profesjonalizm +1 • mechanik przypomina wynik przez miesiąc",[[100,{"professionalism":1,"morale":2}]]]],{"id":"borrowed_bike_faster","weight":0.46,"once":false,"cooldown":10}],["Nocna kontrola hałasu","Po treningu pod stadion przyjeżdża patrol. Mieszkańcy skarżą się, że próby silników trwały długo po zakończeniu zajęć.",16,50,[["Przyjąć mandat","Budżet -2–8 tys. zł • profesjonalizm +1",[[100,{"budget":-5000,"professionalism":1}]]],["To był generator prądu","30% → sprawa się kończy • 70% → mandat jest wyższy",[[30,{"media":2}],[70,{"budget":-10000,"reputation":-2}]]],["Zaproponować mieszkańcom bilety","Koszt organizacyjny • reputacja lokalna +5",[[100,{"budget":-2500,"reputation":5,"media":3}]]]],{"id":"noise_control","weight":0.65,"once":false,"cooldown":8}],["Motocykl przeszedł kontrolę, ale nie ten","Po meczu komisja prosi o motocykl z właściwym numerem plomb. Mechanik pokazuje inną maszynę i dopiero po chwili orientuje się, że prawidłowa stoi głęboko w busie.",17,50,[["Natychmiast wyjąć właściwy motocykl","70% → kontrola bez problemów • 30% → kara za opóźnianie",[[70,{"professionalism":3}],[30,{"professionalism":2,"budget":-7000}]]],["Upierać się, że to właściwa maszyna","20% → komisja się myli • 80% → dyskwalifikacja",[[20,{"reputation":4,"media":4}],[80,{"reputation":-8,"chance":-7,"budget":-11000}]]],["Przyznać się do pomyłki","Profesjonalizm +4 • kara finansowa • wynik pozostaje",[[100,{"professionalism":4,"budget":-5000}]]]],{"id":"wrong_bike_control","weight":0.22,"once":true,"cooldown":99}]]);
+EVENTS.push(...[["Mechanik zaczął pakować za wcześnie","Po meczu nowy mechanik ładuje motocykle do busa. Kilkanaście minut później komisja przypomina, że maszyny nie mogły jeszcze opuścić parku maszyn przed kontrolą.",17,50,[["Natychmiast zawrócić busa","70% → kontrola odbywa się prawidłowo • 30% → kara za opóźnienie",[[70,{"professionalism":3,"budget":-3000}],[30,{"budget":-12000,"reputation":-3,"professionalism":2}]]],["Wziąć odpowiedzialność","Profesjonalizm +4 • kara finansowa",[[100,{"professionalism":4,"budget":-9000,"morale":-2}]]],["Obwinić mechanika","Relacja z teamem -8 • 35% → mechanik odchodzi",[[65,{"clubRelation":-8,"professionalism":-2}],[35,{"clubRelation":-10,"equipment":-4,"professionalism":-3}]]]],{"id":"packed_too_early","weight":0.12,"once":true,"cooldown":99}],["Samolot odleciał dwie minuty za wcześnie","Masz wystąpić w ważnym meczu, ale nie zdążasz na lot. Według ciebie zabrakło dwóch minut, według linii lotniczej — siedmiu.",18,50,[["Kupić bilet na inne lotnisko","65% → docierasz na czas • 35% → przyjeżdżasz w połowie meczu",[[65,{"budget":-18000,"professionalism":3}],[35,{"budget":-26000,"chance":-6,"morale":-4}]]],["Wynająć samochód i jechać nocą","45% → zdążysz • 55% → przemęczenie",[[45,{"budget":-9000,"loyalty":4}],[55,{"budget":-9000,"morale":-6,"injuryRisk":4,"skill":["fitness",-1]}]]],["Zadzwonić do prezesa","Klub organizuje transport, ale zapamiętuje sytuację",[[100,{"clubRelation":-7,"loyalty":-3,"budget":-5000}]]]],{"id":"missed_flight","weight":0.28,"once":false,"cooldown":12}],["Defekt na ostatniej prostej","Prowadzisz przez cały bieg. Na ostatniej prostej motocykl gaśnie, a rywale mijają cię niemal na linii mety.",16,50,[["Spokojnie przeanalizować awarię","Ustawienia +1 • profesjonalizm +3 • koszt remontu",[[100,{"skill":["setup",1],"professionalism":3,"budget":-12000,"morale":-3}]]],["Wypchnąć motocykl do mety","40% → zdobywasz jeszcze punkt • 60% → bez punktów",[[40,{"reputation":4,"skill":["fitness",-1]}],[60,{"morale":-4,"skill":["fitness",-2]}]]],["Kopać motocykl","Medialność +7 • profesjonalizm -5 • 20% → kara",[[80,{"media":7,"professionalism":-5}],[20,{"media":8,"professionalism":-6,"budget":-6000}]]]],{"id":"last_straight_failure","weight":0.55,"once":false,"cooldown":8}],["Kask poleciał dalej niż motocykl","Awaria pozbawia cię zwycięstwa w wielkim finale. W przypływie złości kopiesz motocykl, a kask ląduje niepokojąco blisko trybun.",18,50,[["Natychmiast przeprosić","Profesjonalizm +3 • medialność +4 • niewielka kara",[[100,{"professionalism":3,"media":4,"budget":-4000}]]],["Sprzęt też musi czuć presję","Medialność +10 • profesjonalizm -6 • sponsor techniczny niezadowolony",[[100,{"media":10,"professionalism":-6,"equipment":-2}]]],["Nie komentować","70% → temat wygasa • 30% → postępowanie komisji",[[70,{"professionalism":2}],[30,{"morale":-5,"budget":-9000,"reputation":-3}]]]],{"id":"helmet_throw","weight":0.22,"once":true,"cooldown":99}],["Banda odmawia dalszej współpracy","Po groźnym upadku uszkodzona jest nie tylko dmuchana banda, ale też element konstrukcji stadionu. Naprawa może potrwać kilkanaście minut albo pół dnia.",16,50,[["Czekać na naprawę","65% → mecz jest kontynuowany • 35% → zawody zostają zakończone",[[65,{"professionalism":2,"morale":-1}],[35,{"morale":-3,"media":3}]]],["Poprzeć zakończenie spotkania","Profesjonalizm +4 • część kibiców niezadowolona",[[100,{"professionalism":4,"reputation":-2,"injuryRisk":-2}]]],["Pomóc ekipie technicznej","Medialność +6 • profesjonalizm +2 • 5% → zdjęcie z młotkiem trzymanym odwrotnie",[[95,{"media":6,"professionalism":2}],[5,{"media":11,"professionalism":1}]]]],{"id":"broken_barrier","weight":0.42,"once":false,"cooldown":9}],["Rekord toru czy źle ustawiony pomiar?","Po świetnym biegu spiker ogłasza rekord toru. Po pięciu minutach system pokazuje czas wolniejszy o prawie sekundę.",17,50,[["Domagać się sprawdzenia fotokomórki","50% → rekord uznany • 50% → czas poprawiony",[[50,{"reputation":6,"professionalism":2,"media":5}],[50,{"professionalism":2,"morale":-2}]]],["Od razu wrzucić grafikę REKORDZISTA","40% → rekord zostaje • 60% → trzeba usuwać grafikę",[[40,{"media":8,"reputation":5}],[60,{"media":7,"reputation":-3}]]],["Najważniejsze są trzy punkty","Profesjonalizm +4 • medialność -1",[[100,{"professionalism":4,"media":-1}]]]],{"id":"track_record_measurement","weight":0.48,"once":false,"cooldown":10}],["Klub organizuje prezentację na rynku","Sponsor chce, żebyś wjechał motocyklem przez dekoracyjną bramę, której szerokość ktoś zmierzył na oko.",16,50,[["Wjechać motocyklem","70% → świetna prezentacja • 20% → przewracasz reklamę • 10% → klinujesz się w bramie",[[70,{"media":8,"reputation":3}],[20,{"media":7,"budget":-4000}],[10,{"media":12,"morale":-3,"equipment":-1}]]],["Wejść pieszo","Profesjonalizm +2 • sponsor lekko rozczarowany",[[100,{"professionalism":2,"media":-1}]]],["Zaproponować pokaz startu","Medialność +10 • 15% → mandat",[[85,{"media":10,"reputation":3,"equipment":-1}],[15,{"media":11,"budget":-3000,"equipment":-1}]]]],{"id":"market_presentation","weight":0.72,"once":false,"cooldown":7}],["Pożyczony motocykl okazuje się szybszy","Po awarii własnego parku maszyn jedziesz na motocyklu kolegi z drużyny i zdobywasz komplet punktów.",17,50,[["Odkupić jednostkę","Świetny zakup • Przeciętny zakup • Przepłacasz za jednostkę",[[35,{"budget":-30000,"equipment":6,"morale":5}],[45,{"budget":-55000,"equipment":4,"morale":4}],[20,{"budget":-80000,"equipment":2,"morale":1}]]],["Zaproponować wymianę silników","40% → kolega się zgadza • 60% → odpowiada śmiejącą się emotikoną",[[40,{"equipment":3,"loyalty":3}],[60,{"media":2,"morale":-1}]]],["Uznać, że to przypadek","Profesjonalizm +1 • mechanik przypomina wynik przez miesiąc",[[100,{"professionalism":1,"morale":2}]]]],{"id":"borrowed_bike_faster","weight":0.46,"once":false,"cooldown":10}],["Nocna kontrola hałasu","Po treningu pod stadion przyjeżdża patrol. Mieszkańcy skarżą się, że próby silników trwały długo po zakończeniu zajęć.",16,50,[["Przyjąć mandat","Budżet -2–8 tys. zł • profesjonalizm +1",[[100,{"budget":-5000,"professionalism":1}]]],["To był generator prądu","30% → sprawa się kończy • 70% → mandat jest wyższy",[[30,{"media":2}],[70,{"budget":-10000,"reputation":-2}]]],["Zaproponować mieszkańcom bilety","Koszt organizacyjny • reputacja lokalna +5",[[100,{"budget":-2500,"reputation":5,"media":3}]]]],{"id":"noise_control","weight":0.65,"once":false,"cooldown":8}],["Motocykl przeszedł kontrolę, ale nie ten","Po meczu komisja prosi o motocykl z właściwym numerem plomb. Mechanik pokazuje inną maszynę i dopiero po chwili orientuje się, że prawidłowa stoi głęboko w busie.",17,50,[["Natychmiast wyjąć właściwy motocykl","70% → kontrola bez problemów • 30% → kara za opóźnianie",[[70,{"professionalism":3}],[30,{"professionalism":2,"budget":-7000}]]],["Upierać się, że to właściwa maszyna","20% → komisja się myli • 80% → dyskwalifikacja",[[20,{"reputation":4,"media":4}],[80,{"reputation":-8,"chance":-7,"budget":-11000}]]],["Przyznać się do pomyłki","Profesjonalizm +4 • kara finansowa • wynik pozostaje",[[100,{"professionalism":4,"budget":-5000}]]]],{"id":"wrong_bike_control","weight":0.22,"once":true,"cooldown":99}]]);
 
 const INDIVIDUAL_EVENTS=[
  {name:"Młodzieżowe Indywidualne Mistrzostwa Polski",short:"MIMP",minAge:16,maxAge:21,minOverall:48,prestige:4},
@@ -2077,10 +2077,11 @@ function createPlayer(){
  $("newsBox").innerHTML=`<p class="eyebrow">PRZED LICENCJĄ</p><h3>${background.title.toUpperCase()}</h3><p>${background.text}</p><p><b>Zaplecze:</b> ${support.title}. Budżet początkowy: ${money(S.budget)}.</p>${openingReport?`<div class="guidance-report"><span>RAPORT SZKÓŁKI</span><p>${openingReport.text}</p></div>`:""}`;
  save();
 }
-function save(){localStorage.setItem("pss_v1033",JSON.stringify(S))}
+function save(){localStorage.setItem("pss_v1034",JSON.stringify(S))}
 function load(){
  try{
-  const newest=localStorage.getItem("pss_v1033");
+  const newest=localStorage.getItem("pss_v1034");
+  const previousV1033=localStorage.getItem("pss_v1033");
   const previousV1032=localStorage.getItem("pss_v1032");
   const previousV1031=localStorage.getItem("pss_v1031");
   const previousV1030=localStorage.getItem("pss_v1030");
@@ -2095,19 +2096,20 @@ function load(){
   const previousVersion=localStorage.getItem("pss_v100");
   const previousBrand=localStorage.getItem("pzs_v200");
   if(newest)return JSON.parse(newest);
-  if(previousV1032){localStorage.setItem("pss_v1033",previousV1032); return JSON.parse(previousV1032);}
-  if(previousV1031){localStorage.setItem("pss_v1033",previousV1031); return JSON.parse(previousV1031);}
-  if(previousV1030){localStorage.setItem("pss_v1033",previousV1030); return JSON.parse(previousV1030);}
-  if(previousV1026Test){localStorage.setItem("pss_v1033",previousV1026Test); return JSON.parse(previousV1026Test);}
-  if(previousV1025){localStorage.setItem("pss_v1033",previousV1025); return JSON.parse(previousV1025);}
-  if(previousV1024){localStorage.setItem("pss_v1033",previousV1024); return JSON.parse(previousV1024);}
-  if(previousV1023){localStorage.setItem("pss_v1033",previousV1023); return JSON.parse(previousV1023);}
-  if(previousV1022){localStorage.setItem("pss_v1033",previousV1022); return JSON.parse(previousV1022);}
-  if(previousV1021){localStorage.setItem("pss_v1033",previousV1021); return JSON.parse(previousV1021);}
-  if(previousV102){localStorage.setItem("pss_v1033",previousV102); return JSON.parse(previousV102);}
-  if(previousV101){localStorage.setItem("pss_v1033",previousV101); return JSON.parse(previousV101);}
-  if(previousVersion){localStorage.setItem("pss_v1033",previousVersion); return JSON.parse(previousVersion);}
-  if(previousBrand){localStorage.setItem("pss_v1033",previousBrand); return JSON.parse(previousBrand);}
+  if(previousV1033){localStorage.setItem("pss_v1034",previousV1033); return JSON.parse(previousV1033);}
+  if(previousV1032){localStorage.setItem("pss_v1034",previousV1032); return JSON.parse(previousV1032);}
+  if(previousV1031){localStorage.setItem("pss_v1034",previousV1031); return JSON.parse(previousV1031);}
+  if(previousV1030){localStorage.setItem("pss_v1034",previousV1030); return JSON.parse(previousV1030);}
+  if(previousV1026Test){localStorage.setItem("pss_v1034",previousV1026Test); return JSON.parse(previousV1026Test);}
+  if(previousV1025){localStorage.setItem("pss_v1034",previousV1025); return JSON.parse(previousV1025);}
+  if(previousV1024){localStorage.setItem("pss_v1034",previousV1024); return JSON.parse(previousV1024);}
+  if(previousV1023){localStorage.setItem("pss_v1034",previousV1023); return JSON.parse(previousV1023);}
+  if(previousV1022){localStorage.setItem("pss_v1034",previousV1022); return JSON.parse(previousV1022);}
+  if(previousV1021){localStorage.setItem("pss_v1034",previousV1021); return JSON.parse(previousV1021);}
+  if(previousV102){localStorage.setItem("pss_v1034",previousV102); return JSON.parse(previousV102);}
+  if(previousV101){localStorage.setItem("pss_v1034",previousV101); return JSON.parse(previousV101);}
+  if(previousVersion){localStorage.setItem("pss_v1034",previousVersion); return JSON.parse(previousVersion);}
+  if(previousBrand){localStorage.setItem("pss_v1034",previousBrand); return JSON.parse(previousBrand);}
   const v1361=localStorage.getItem("pzs_v1361");
   if(v1361)return JSON.parse(v1361);
   const v136=localStorage.getItem("pzs_v136");
@@ -8355,7 +8357,7 @@ const CAREER_DEVELOPMENT_EVENTS=[
      [100,{morale:3,injuryRisk:-3,development:{id:"load-recovery",label:"regeneracja po kumulacji startów",phase:"recovery",duration:1,growthMult:.84,fitnessGrowthMult:.80,declineProtection:.75,formBonus:.5}}]
     ]],
     ["Oszczędzaj siły, dopracuj sprzęt",`${teamChance}% → team świetnie wykorzystuje czas • ${100-teamChance}% → ustawienia nie rekompensują zmęczenia`,[
-     [teamChance,{skill:["setup",1],development:{id:"load-team-ok",label:"sprzęt dopracowany przy mniejszym obciążeniu",duration:1,growthMult:.98,teamBonus:1.5,raceBonus:.5,declineProtection:.35}}],
+     [teamChance,{skill:["setup",1],development:{id:"load-team-ok",label:"sprzęt dopracowany przy mniejszym obciążeniu",duration:1,growthMult:1.01,teamBonus:1.5,raceBonus:.5,declineProtection:.35}}],
      [100-teamChance,{equipment:-1,morale:-2,development:{id:"load-team-fail",label:"niepełna regeneracja",duration:1,growthMult:.76,fitnessGrowthMult:.55}}]
     ]]
    ];
@@ -8691,7 +8693,7 @@ createPlayer=function(){
 };
 
 function clearCareerSavesAndReload(){
- const keys=["pss_v1033","pss_v1032","pss_v1031","pss_v1030","pss_v1026test","pss_v1025","pss_v1024","pss_v1023","pss_v1022","pss_v1021","pss_v102","pss_v101","pss_v100","pzs_v200","pzs_v1361","pzs_v136","pzs_v135","pzs_v134","pzs_v1331","pzs_v133","pzs_v132","pzs_v131","pzs_v1301","pzs_v130","pzs_v129","pzs_v128","pzs_v127","pzs_v126","pzs_v1252","pzs_v1251","pzs_v125","pzs_v124","pzs_v123","pzs_v122","pzs_v121","pzs_v120","pzs_v119","pzs_v118","pzs_v117","pzs_v116","pzs_v115","pzs_v114","pzs_v113","pzs_v112","pzs_v111","pzs_v110","pzs_v109","pzs_v108","pzs_v107","pzs_v106","pzs_v105","pzs_v104","pzs_v103","pzs_v102","pzs_v101","pzs_v100","pzs_v305","pzs_v304","pzs_v303","pzs_v302","pzs_v301","pzs_final30","pzs_v30","pzs_v29","pzs_v28","pzs_v27","pzs_v26","pzs_v25","pzs_v24","pzs_v23","pzs_v22","pzs_v2"];
+ const keys=["pss_v1034","pss_v1033","pss_v1032","pss_v1031","pss_v1030","pss_v1026test","pss_v1025","pss_v1024","pss_v1023","pss_v1022","pss_v1021","pss_v102","pss_v101","pss_v100","pzs_v200","pzs_v1361","pzs_v136","pzs_v135","pzs_v134","pzs_v1331","pzs_v133","pzs_v132","pzs_v131","pzs_v1301","pzs_v130","pzs_v129","pzs_v128","pzs_v127","pzs_v126","pzs_v1252","pzs_v1251","pzs_v125","pzs_v124","pzs_v123","pzs_v122","pzs_v121","pzs_v120","pzs_v119","pzs_v118","pzs_v117","pzs_v116","pzs_v115","pzs_v114","pzs_v113","pzs_v112","pzs_v111","pzs_v110","pzs_v109","pzs_v108","pzs_v107","pzs_v106","pzs_v105","pzs_v104","pzs_v103","pzs_v102","pzs_v101","pzs_v100","pzs_v305","pzs_v304","pzs_v303","pzs_v302","pzs_v301","pzs_final30","pzs_v30","pzs_v29","pzs_v28","pzs_v27","pzs_v26","pzs_v25","pzs_v24","pzs_v23","pzs_v22","pzs_v2"];
  keys.forEach(k=>localStorage.removeItem(k));location.reload();
 }
 function showCareerEndSupportPopup(){
@@ -12356,7 +12358,7 @@ if(S){S.pss1031={version:'1.03.1'};save();}
  // -------------------------------------------------------------------------
  function eventPseudo1033(event){return [event.title,event.description(),event.minAge||15,event.maxAge||50,event.choices(),{id:event.id,weight:event.weight||1,cooldown:event.cooldown||5,once:!!event.once}]}
  function markMajorEvent1033(event){
-  const st=ensureMajorCareerState();st.lastEventYear=S.year;st.lastById[event.id]=S.year;st.seen[event.id]=(st.seen[event.id]||0)+1;st.nextEventYear=S.year+rand(2,4);st.eventLog.push({year:S.year,id:event.id,title:event.title});
+  const st=ensureMajorCareerState();st.lastEventYear=S.year;st.lastById[event.id]=S.year;st.seen[event.id]=(st.seen[event.id]||0)+1;st.nextEventYear=S.year+rand(2,3);st.eventLog.push({year:S.year,id:event.id,title:event.title});
  }
  function resolveMajorChoice1033(event,choice,next){
   markMajorEvent1033(event);
@@ -12549,6 +12551,20 @@ if(S){S.pss1031={version:'1.03.1'};save();}
    ]
   },
   {
+   id:'junior_breakout',title:'Juniorski wystrzał — coś nagle kliknęło',minAge:16,maxAge:21,weight:1.15,cooldown:99,once:true,
+   eligible:()=>{const p=previousCareerSeason(),recent=latestSeriousInjury();return !!p&&overall()<80&&(p.heats>=10||p.matches>=4)&&(!recent||recent.year<S.year-1)},
+   chance:()=>{const p=previousCareerSeason(),lowStart=(S.startOverall||50)<=48?0.018:0,rides=p?.heats>=28?0.018:p?.heats>=16?0.010:0,form=p?.average>=1.20?0.010:0;return clamp(.032+lowStart+rides+form,.032,.078)},
+   description:()=>{const p=previousCareerSeason();return `W ostatnich miesiącach rozwijasz się szybciej, niż zakładał sztab. Reakcja spod taśmy, czucie motocykla i tempo przyswajania uwag wyraźnie idą do góry. To nie jest gotowe +OVR, tylko rzadka szansa, żeby juniorski okres naprawdę przemodelował karierę.<br><br><b>Wiek:</b> ${S.age} • <b>OVR:</b> ${overall()} • <b>poprzedni sezon:</b> ${p?.heats||0} biegów, średnia ${(p?.average||0).toFixed(3).replace('.',',')}.`},
+   choices:()=>[
+    ['Idę za ciosem — więcej pracy na torze','72% → wystrzał utrzymuje się • 28% → tempo okazuje się chwilowe',[
+     [72,{morale:5,major:{peakDelta:4,potentialDelta:2,momentumDelta:5,decisionDelta:1},development:{id:`jr-breakout-track-${S.year}`,label:'juniorski wystrzał',phase:'breakthrough',phaseDuration:2,duration:2,growthMult:1.24,skillGrowth:{starts:1.18,corner:1.16,distance:1.14,technique:1.14},targetDelta:2}}],
+     [28,{morale:-1,major:{momentumDelta:-1},development:{id:`jr-breakout-short-${S.year}`,label:'krótki juniorski impuls',phase:'surge',duration:1,growthMult:1.02}}]
+    ]],
+    ['Buduję fundamenty razem z klubem','Mniejszy skok, ale bardzo stabilna szansa na trwały rozwój',[[100,{professionalism:3,major:{peakDelta:3,potentialDelta:1,momentumDelta:3,decisionDelta:2},development:{id:`jr-breakout-club-${S.year}`,label:'juniorski rozwój pod opieką klubu',phase:'surge',phaseDuration:2,duration:2,growthMult:1.14,skillGrowth:{technique:1.15,setup:1.15,mental:1.12},declineProtection:.25}}]]],
+    ['Nie zmieniam planu i obserwuję','Najmniejsze ryzyko; zachowujesz impuls, ale nie próbujesz maksymalnie otworzyć pułapu',[[100,{morale:2,major:{peakDelta:1,momentumDelta:2},development:{id:`jr-breakout-safe-${S.year}`,label:'kontrolowany juniorski impuls',phase:'surge',duration:1,growthMult:1.08}}]]]
+   ]
+  },
+  {
    id:'phenomenal_season',title:'Sezon, w którym wszystko zaczyna działać',minAge:19,maxAge:34,weight:.55,cooldown:99,once:true,
    eligible:()=>{const p=previousCareerSeason(),recent=latestSeriousInjury();return !!p&&p.average>=1.35&&S.morale>=62&&S.professionalism>=52&&(!recent||recent.year<S.year-1)},
    chance:()=>clamp(.022+(S.morale-62)*.00045+(S.professionalism-52)*.00035,.02,.045),
@@ -12582,13 +12598,16 @@ if(S){S.pss1031={version:'1.03.1'};save();}
   if(!eligible.length){st.nextEventYear=S.year+1;next();return}
   const scored=eligible.map(e=>({e,p:clamp(Number(e.chance?.()||0),0,.70)})).filter(x=>x.p>0);
   if(!scored.length){st.nextEventYear=S.year+1;next();return}
-  // Globalna bramka steruje częstotliwością dużych punktów zwrotnych.
-  // Indywidualne p nadal decyduje, który event ma największą szansę zostać wybrany.
-  // Docelowo daje to zwykle kilka dużych zdarzeń w pełnej karierze, ale bez gwarancji.
-  const maxP=Math.max(...scored.map(x=>x.p)),gate=clamp(.14+maxP*.72+Math.max(0,scored.length-1)*.024,.18,.56);
-  if(Math.random()>=gate){st.nextEventYear=S.year+1;next();return}
-  const total=scored.reduce((s,x)=>s+x.p*(x.e.weight||1),0);let roll=Math.random()*total,chosen=scored[0].e;
-  for(const x of scored){roll-=x.p*(x.e.weight||1);if(roll<=0){chosen=x.e;break}}
+  // Każde duże zdarzenie zachowuje własną rzadkość. Najpierw sprawdzamy
+  // indywidualny trigger probabilistyczny, dopiero potem — jeśli kilka zdarzeń
+  // odpaliło w tym samym sezonie — wybieramy jedno według wagi. Dzięki temu
+  // fenomenalny sezon pozostaje naprawdę rzadki, a zdarzenia wynikające z
+  // mocnego realnego triggera (np. ciężka kontuzja) są odpowiednio częstsze.
+  const cadenceBoost=1.10;
+  const triggered=scored.filter(x=>Math.random()<clamp(x.p*cadenceBoost,0,.72));
+  if(!triggered.length){st.nextEventYear=S.year+1;next();return}
+  const total=triggered.reduce((sum,x)=>sum+x.p*(x.e.weight||1),0);let roll=Math.random()*total,chosen=triggered[0].e;
+  for(const x of triggered){roll-=x.p*(x.e.weight||1);if(roll<=0){chosen=x.e;break}}
   const choices=chosen.choices().map(choice=>{
    const roulette=buildEventRoulette(eventPseudo1033(chosen),choice);
    return {title:choice[0],desc:eventChoiceDescription(choice,roulette),eventProb:roulette,action:()=>{markInjuryHandledIfNeeded(chosen);resolveMajorChoice1033(chosen,choice,next)}};
@@ -12606,5 +12625,370 @@ if(S){S.pss1031={version:'1.03.1'};save();}
   ensureMajorCareerState();
   S.pss1033={version:VERSION,majorCareerEvents:true,secTop6:true,lineupModel:'unified'};
   normalize();save();render();
+ }
+})();
+
+
+// ============================================================================
+// Polish Speedway Simulator 1.03.4 — WIĘKSZA FLUKTUACJA KARIERY / JUNIORZY
+// 06.09.2026
+//
+// Cel: mniej liniowych karier. Pierwsze lata (15–21) mają największą zmienność,
+// a niski start pozostaje trudny, lecz nie może tworzyć sportowo-finansowego
+// soft-locka. Schodki 22 i 25 lat dotyczą przede wszystkim średniej ligowej.
+// ============================================================================
+(() => {
+ const VERSION_1034='1.03.4';
+
+ function ensureVariance1034(){
+  if(!S)return null;
+  const dna=careerDNA();
+  if(!Number.isFinite(dna.developmentPulse1034))dna.developmentPulse1034=0;
+  if(dna.developmentPulseYear1034===undefined)dna.developmentPulseYear1034=null;
+  if(dna.breakoutLiftYear1034===undefined)dna.breakoutLiftYear1034=null;
+  if(dna.earlyProAnnounced1034===undefined)dna.earlyProAnnounced1034=false;
+  S.pss1034??={};
+  return dna;
+ }
+
+ function previousSeason1034(){
+  const seasons=S.careerStats?.seasons||[];
+  return [...seasons].filter(x=>x.year<S.year).sort((a,b)=>b.year-a.year)[0]||null;
+ }
+
+ function developmentPulse1034(){
+  const dna=ensureVariance1034();
+  if(dna.developmentPulseYear1034===S.year)return dna.developmentPulse1034||0;
+  const prev=previousSeason1034(),age=S.age;
+  let random;
+  if(age<=21){
+   random=(Math.random()+Math.random()+Math.random()-1.5)*1.15;
+   const tail=Math.random();
+   if(tail<.035)random+=1.05;
+   else if(tail>.975)random-=.90;
+  }else if(age<=28)random=(Math.random()+Math.random()+Math.random()-1.5)*.72;
+  else random=(Math.random()+Math.random()+Math.random()-1.5)*.48;
+  let signal=0;
+  if(prev){
+   if(prev.heats>=35)signal+=.15; else if(prev.heats<12)signal-=.12;
+   if(prev.average>=1.55)signal+=.12; else if(prev.average>0&&prev.average<.75)signal-=.10;
+  }
+  signal+=(S.professionalism-50)/260+(S.morale-50)/340;
+  const carry=(dna.developmentPulse1034||0)*(age<=21?.34:.46);
+  dna.developmentPulse1034=clamp(carry+random+signal,age<=21?-1.35:-.90,age<=21?1.65:1.05);
+  dna.developmentPulseYear1034=S.year;
+  return dna.developmentPulse1034;
+ }
+
+ // Największa zmienność przypada na juniorski okres. Stan nie daje punktów OVR
+ // z automatu — zmienia środowisko wzrostu na 1–2 sezony.
+ const careerPhaseState1033=careerPhaseState;
+ careerPhaseState=function(){
+  const dna=ensureVariance1034();
+  if(dna.phaseYear===S.year&&dna.phaseState)return dna.phaseState;
+  if(dna.phaseState?.remaining>1){
+   dna.phaseState={...dna.phaseState,remaining:dna.phaseState.remaining-1};dna.phaseYear=S.year;return dna.phaseState;
+  }
+  if(dna.majorInjuryShock&&dna.majorInjuryShock.untilYear>=S.year){
+   dna.phaseState={type:'recovery',remaining:Math.max(1,dna.majorInjuryShock.untilYear-S.year+1),...CAREER_PHASE_DEFS.recovery};dna.phaseYear=S.year;return dna.phaseState;
+  }
+  const age=S.age,type=dna.curveType,pulse=developmentPulse1034();
+  let breakthrough=.007,surge=.050,stagnation=.055,slump=.018,secondWind=0;
+  if(age<=18){breakthrough+=.030;surge+=.115;stagnation+=.070;slump+=.018}
+  else if(age<=21){breakthrough+=.022;surge+=.095;stagnation+=.060;slump+=.022}
+  else if(age<=25){breakthrough+=.006;surge+=.025;stagnation+=.015}
+  if(S.startOverall<=48&&age<=21){breakthrough+=.006;surge+=.018}
+  if(pulse>.75){breakthrough+=.018;surge+=.055}
+  else if(pulse>.30)surge+=.030;
+  else if(pulse<-.72){stagnation+=.055;slump+=.025}
+  else if(pulse<-.30)stagnation+=.025;
+  if(type==='phenom'){breakthrough+=age<=23?.035:.004;surge+=.035}
+  if(type==='early'){breakthrough+=age<=26?.015:0;slump+=age>=29?.022:0}
+  if(type==='boomBust'){breakthrough+=age<=27?.026:.004;surge+=.022;slump+=age>=dna.peakAge?.050:.010}
+  if(type==='volatile'){breakthrough+=.010;surge+=.030;stagnation+=.032;slump+=.030}
+  if(type==='underachiever'){stagnation+=.035;slump+=.012;breakthrough=Math.max(.004,breakthrough-.002)}
+  if(type==='late'){stagnation+=age<28?.030:0;breakthrough+=age>=29?.018:0;surge+=age>=29?.020:0}
+  if(type==='resurgence')secondWind+=age>=33?.065:0;
+  if(age>=32)secondWind+=.005+(dna.exceptionalLongevity?.010:0);
+  if(age>=38&&!dna.exceptionalLongevity){breakthrough*=.45;surge*=.60;slump+=.020}
+  const options=[
+   {type:'breakthrough',w:Math.max(.004,breakthrough)},
+   {type:'surge',w:Math.max(.01,surge)},
+   {type:'stagnation',w:stagnation},{type:'slump',w:slump},
+   {type:'secondWind',w:Math.max(0,secondWind)}
+  ];
+  const specialTotal=options.reduce((sum,x)=>sum+x.w,0);
+  options.push({type:'normal',w:Math.max(.28,1-specialTotal)});
+  const chosen=weightedCareerPhase(options),def=CAREER_PHASE_DEFS[chosen]||CAREER_PHASE_DEFS.normal;
+  const remaining=chosen==='normal'?1:chosen==='breakthrough'?rand(1,2):chosen==='secondWind'?rand(1,2):chosen==='stagnation'?rand(1,2):chosen==='slump'?rand(1,2):rand(1,2);
+  dna.phaseState={type:chosen,remaining,...def};dna.phaseYear=S.year;
+  return dna.phaseState;
+ };
+
+ // Sezonowy puls dodatkowo rozszczelnia gładką krzywą, szczególnie u juniorów.
+ const careerTrajectoryOffset1033=careerTrajectoryOffset;
+ careerTrajectoryOffset=function(){
+  const dna=ensureVariance1034();
+  if(dna.trajectoryOffsets[S.year]===undefined){
+   const volatile=dna.curveType==='volatile'||dna.curveType==='boomBust',junior=S.age<=21;
+   const spread=junior?(volatile?4.0:2.75):(volatile?2.7:1.65);
+   let offset=(Math.random()+Math.random()+Math.random()-1.5)*spread+developmentPulse1034()*(junior?1.05:.50);
+   if(dna.curveType==='underachiever')offset-=.30;
+   dna.trajectoryOffsets[S.year]=Math.round(offset*10)/10;
+  }
+  return dna.trajectoryOffsets[S.year];
+ };
+
+ // Limity umiejętności są lekko wyższe, ale nie otwieramy całej planszy do 99.
+ const skillSoftTarget1033=skillSoftTarget;
+ skillSoftTarget=function(key){
+  const base=skillSoftTarget1033(key),phase=careerPhaseState();
+  let lift=key==='fitness'?1:2;
+  if(S.age<=21&&phase.type==='breakthrough')lift+=2;
+  else if(S.age<=23&&phase.type==='surge')lift+=1;
+  return clamp(Math.round(base+lift),50,99);
+ };
+
+ const growthChanceForSkill1033=growthChanceForSkill;
+ growthChanceForSkill=function(value,key=null){
+  const base=growthChanceForSkill1033(value,key),pulse=developmentPulse1034();
+  const factor=clamp(1+pulse*(S.age<=21?.24:.12),.68,S.age<=21?1.42:1.20);
+  return clamp(base*factor,.0002,.985);
+ };
+
+ // Po sezonie momentum niesie część informacji dalej. Dodatni juniorski puls
+ // może dać dodatkowe realne próby wzrostu, a przełom czasem lekko otwiera peak.
+ const updateCareerTrajectory1033=updateCareerTrajectory;
+ updateCareerTrajectory=function(data={}){
+  updateCareerTrajectory1033(data);
+  const dna=ensureVariance1034(),pulse=developmentPulse1034(),phase=careerPhaseState();
+  if(S.age<=21){
+   let extra=0;
+   if(pulse>.45)extra++;
+   if(pulse>.90)extra+=rand(1,2);
+   if(phase.type==='breakthrough')extra+=rand(1,2);
+   if((data.heats||0)<10)extra=Math.max(0,extra-1);
+   for(let i=0;i<extra;i++)tryNaturalGrowth(pick(Object.keys(S.skills)),1);
+   S.devPoints+=1; // podstawowa opieka szkoleniowa klubu/szkółki
+   if(phase.type==='breakthrough'&&dna.breakoutLiftYear1034!==S.year&&Math.random()<.42){
+    dna.breakoutLiftYear1034=S.year;
+    const before=Number(dna.realizedPeak||dna.potential||82),lift=rand(1,2);
+    dna.realizedPeak=clamp(before+lift,58,99);
+    addHistory('Juniorski przełom',`Wyjątkowo dobry okres rozwojowy otwiera dodatkową przestrzeń na dalszy progres. Sztab podkreśla, że to szansa, a nie gwarancja wielkiej kariery.`);
+   }
+  }
+  if(S.age<=21&&!dna.earlyProAnnounced1034&&overall()>=73&&S.reputation>=45){
+   dna.earlyProAnnounced1034=true;S.earlyProfessional1034=true;
+   addHistory('Pełny profesjonalizm',`Mimo wieku juniorskiego osiągasz poziom, przy którym coraz większa część przygotowań przechodzi na własny profesjonalny team.`);
+  }
+ };
+
+ // Klub mocniej finansuje normalny rozwój juniora. Własny budżet ma służyć
+ // przede wszystkim do przewagi premium, a nie do opłacania całej podstawy.
+ const clubCostCoverage1033=clubCostCoverage;
+ clubCostCoverage=function(stage){
+  let value=clubCostCoverage1033(stage);
+  if(stage==='youngJunior')value+=.06;
+  if(stage==='junior')value+=.08;
+  if(S.earlyProfessional1034&&S.age<=21)value-=.10;
+  return clamp(value,0,.94);
+ };
+
+ // Prognoza = wejście do składu. Etykieta roli = realna liczba biegów po wejściu.
+ const marketRoleForClub1033=marketRoleForClub;
+ marketRoleForClub=function(club,league,currentLevel){
+  let role=marketRoleForClub1033(club,league,currentLevel);
+  if(rosterStatusForAge()!=='junior')return role;
+  const level=leagueByName(league)?.level||3;
+  const probe=projectedLineupChance(club,league,{stay:false,role:'Rywalizacja o miejsce juniorskie'});
+  if(level===1&&overall()<69)return 'Rezerwowy / rozwój';
+  if(probe>=72)return 'Regularna jazda – junior';
+  if(probe>=50)return 'Rotacja juniorska';
+  if(probe>=28)return 'Rywalizacja o miejsce juniorskie';
+  return 'Rezerwowy / rozwój';
+ };
+
+ const projectedLineupChance1033=projectedLineupChance;
+ projectedLineupChance=function(club,leagueName,options={}){
+  let value=projectedLineupChance1033(club,leagueName,options),level=leagueByName(leagueName)?.level||3;
+  if(rosterStatusForAge()==='junior'&&level===3&&overall()<=58){
+   const role=String(options.role||'').toLowerCase();
+   if(role.includes('regularna'))value=Math.max(value,58);
+   else if(role.includes('rotacja'))value=Math.max(value,47);
+   else if(role.includes('rywalizacja')||role.includes('walka'))value=Math.max(value,34);
+  }
+  return clamp(value,3,96);
+ };
+
+ const evaluatedMarketCandidates1033=evaluatedMarketCandidates;
+ evaluatedMarketCandidates=function(pph,current,currentLevel){
+  let all=evaluatedMarketCandidates1033(pph,current,currentLevel);
+  if(S.age<=21&&overall()<=58){
+   const currentKey=uniqueClubKey(current),extra=[];
+   for(const league of LEAGUES.filter(l=>l.level===3)){
+    for(const [rawName,strength] of league.teams){
+     const name=clubDisplayName(rawName);if(uniqueClubKey(name)===currentKey)continue;
+     let role=marketRoleForClub(name,league.name,currentLevel);
+     let projected=projectedLineupChance(name,league.name,{stay:false,role});
+     role=projected>=72?'Regularna jazda – junior':projected>=50?'Rotacja juniorska':projected>=28?'Rywalizacja o miejsce juniorskie':'Rezerwowy / rozwój';
+     projected=projectedLineupChance(name,league.name,{stay:false,role});
+     const req=clubRequiredOverall(name,league.name);
+     extra.push({name,league:league.name,level:3,strength,role,projected,fitScore:projected-Math.abs(req-overall())*.45+rand(-2,2),targetLevel:3});
+    }
+   }
+   all=dedupeCandidates([...all,...extra],[current]);
+  }
+  for(const c of all){
+   if(rosterStatusForAge()==='junior'){
+    c.role=c.projected>=72?'Regularna jazda – junior':c.projected>=50?'Rotacja juniorska':c.projected>=28?'Rywalizacja o miejsce juniorskie':'Rezerwowy / rozwój';
+    c.projected=projectedLineupChance(c.name,c.league,{stay:false,role:c.role});
+    c.fitScore=(c.fitScore||0)+(S.age<=21?c.projected*.18:0);
+   }
+  }
+  return all;
+ };
+
+ const selectMarketCandidates1033=selectMarketCandidates;
+ selectMarketCandidates=function(pph,current,currentLevel,count=3){
+  if(!(S.age<=21&&overall()<=58))return selectMarketCandidates1033(pph,current,currentLevel,count);
+  const all=dedupeCandidates(evaluatedMarketCandidates(pph,current,currentLevel),[current]);
+  const preferred=all.filter(c=>c.level===3&&c.projected>=40).sort((a,b)=>b.projected-a.projected||b.fitScore-a.fitScore);
+  const fallback=all.filter(c=>c.level===3).sort((a,b)=>b.projected-a.projected||b.fitScore-a.fitScore);
+  const maxOffers=overall()<49?1:2;
+  const pool=preferred.length?preferred:fallback;
+  const selected=dedupeCandidates(pool,[current]).slice(0,Math.min(maxOffers,count));
+  // Jeśli rynek w ogóle składa słabemu juniorowi ofertę, najlepszy dostępny
+  // kierunek ma rzeczywiście dawać ścieżkę rozwoju, a nie kolejną ławkę.
+  if(selected[0]&&selected[0].projected<47){
+   selected[0].role='Rotacja juniorska';
+   selected[0].projected=projectedLineupChance(selected[0].name,selected[0].league,{stay:false,role:selected[0].role});
+  }
+  return selected;
+ };
+
+ // Jeśli junior już pojawia się w składzie, „regularna jazda” oznacza 3–4 biegi,
+ // a nie dwa wyjazdy. Sama prognoza nadal steruje liczbą meczów.
+ riderRoleHeatsPerMatch=function(){
+  const role=String(S.role||'').toLowerCase(),status=rosterStatusForAge(),chance=clamp(S.chance||50,3,98);
+  if(status==='junior'){
+   if(role.includes('rezerw')||chance<15)return {min:1.2,max:2.4};
+   if(role.includes('walka')||role.includes('rywalizacja')||chance<32)return {min:2.2,max:3.1};
+   if(role.includes('regularna'))return {min:3.2,max:4.15};
+   if(role.includes('rotacja'))return {min:2.8,max:3.7};
+   if(role.includes('podstawowy')||chance>=82)return {min:3.5,max:4.45};
+   return chance>=58?{min:3.0,max:3.9}:{min:2.7,max:3.55};
+  }
+  if(role.includes('lider')||chance>=88)return {min:4.5,max:5.2};
+  if(role.includes('podstawowy'))return status==='u24'?{min:3.6,max:4.6}:{min:4.0,max:4.8};
+  if(role.includes('u24'))return {min:2.8,max:4.0};
+  if(role.includes('rotacja'))return {min:2.5,max:3.8};
+  return {min:2.8,max:4.1};
+ };
+
+ realisticLeagueUsage=function(clubMatches){
+  const chance=clamp(Number(S.chance||5),3,98)/100;let apps=0;
+  for(let i=0;i<clubMatches;i++)if(Math.random()<chance)apps++;
+  if(chance>=.92)apps=Math.max(apps,clubMatches-1);
+  if(chance<=.08)apps=Math.min(apps,2);
+  apps=Math.round(apps*currentInjuryAvailability());apps=clamp(apps,0,clubMatches);
+  const range=riderRoleHeatsPerMatch();let heats=0;
+  for(let i=0;i<apps;i++){
+   let h=range.min+Math.random()*(range.max-range.min);
+   if(chance>=.78&&rosterStatusForAge()!=='junior'&&Math.random()<.18)h+=.7;
+   if(chance<=.18)h=Math.min(h,2.5);
+   heats+=clamp(Math.round(h),1,6);
+  }
+  return {appearances:apps,heats};
+ };
+
+ // Schodki dotyczą średniej biegopunktowej: 22 lata = koniec juniora,
+ // 25 lat = koniec U24. OVR może w tym samym czasie nadal rosnąć.
+ const careerPerformanceModifier1033=careerPerformanceModifier;
+ careerPerformanceModifier=function(options={}){
+  let mod=careerPerformanceModifier1033(options);
+  const o=overall();
+  if(S.age===22){
+   const shock=clamp(.05+Math.max(0,70-o)*.006,.03,.13);mod-=shock;
+  }else if(S.age===25){
+   const shock=clamp(.03+Math.max(0,72-o)*.0045,.02,.09);mod-=shock;
+  }
+  return mod;
+ };
+
+ // Zielony segment nie może ukrywać sportowego debuffa.
+ function hasSportDownside1034(e={}){
+  if((e.skill?.[1]||0)<0||Number(e.equipment||0)<0||Number(e.chance||0)<0||Number(e.injuryRisk||0)>0)return true;
+  const d=e.development||{};
+  return Number(d.growthMult||1)<1||Number(d.fitnessGrowthMult||1)<1||Number(d.declineBias||0)>0||Number(d.formBonus||0)<0;
+ }
+ const buildEventRoulette1033=buildEventRoulette;
+ buildEventRoulette=function(event,choice){
+  const variants=buildEventRoulette1033(event,choice);if(!variants)return variants;
+  return variants.map(v=>{
+   const score=eventEffectScore(v.effect||{}),down=hasSportDownside1034(v.effect||{});
+   if(down&&(v.tone==='success'||v.tone==='super'))return {...v,tone:score<0?'fail':'neutral'};
+   if(!down&&score>=0&&v.tone==='fail')return {...v,tone:score>.6?'success':'neutral'};
+   return v;
+  });
+ };
+
+ // Delikatne podświetlenie aktualnego kafelka ruletki (+ ok. 13% jasności).
+ animateRollerWithBrake=function(stripEl,startOffset,finalOffset,duration,done){
+  const delta=finalOffset-startOffset,startTime=performance.now(),ms=Math.max(4000,duration*1000);
+  stripEl.style.transition='none';stripEl.style.transform=`translate3d(${-startOffset}px,0,0)`;
+  const roller=stripEl.closest('.outcome-roller'),tile=stripEl.querySelector('span'),style=getComputedStyle(stripEl);
+  const tw=tile?.getBoundingClientRect().width||24,gap=parseFloat(style.columnGap||style.gap)||2,step=tw+gap;
+  const marker=roller?.querySelector('.roller-marker'),rr=roller?.getBoundingClientRect(),mr=marker?.getBoundingClientRect();
+  const markerX=rr&&mr?mr.left-rr.left+mr.width/2:(roller?.clientWidth||0)*.5;
+  let active=null;
+  const markActive=offset=>{
+   const idx=Math.round((offset+markerX-tw/2)/step),next=stripEl.querySelector(`span[data-index="${idx}"]`);
+   if(next===active)return;
+   active?.classList.remove('roller-active-tile');next?.classList.add('roller-active-tile');active=next||null;
+  };
+  const speed=t=>{const x=clamp(t,0,1);return Math.exp(-2.4*Math.pow(x,1.25))*Math.pow(Math.max(0,1-x),.65)};
+  const N=480,cum=new Array(N+1).fill(0),vel=new Array(N+1);for(let i=0;i<=N;i++)vel[i]=speed(i/N);
+  for(let i=1;i<=N;i++)cum[i]=cum[i-1]+(vel[i-1]+vel[i])*.5/N;
+  const total=cum[N]||1,motion=t=>{const f=clamp(t,0,1)*N,i=Math.min(N-1,Math.floor(f)),u=f-i;return (cum[i]+(cum[i+1]-cum[i])*u)/total};
+  markActive(startOffset);
+  const frame=now=>{
+   const t=clamp((now-startTime)/ms,0,1),offset=startOffset+delta*motion(t);
+   stripEl.style.transform=`translate3d(${-offset}px,0,0)`;markActive(offset);
+   if(t<1)requestAnimationFrame(frame);else{
+    stripEl.style.transform=`translate3d(${-finalOffset}px,0,0)`;stripEl.dataset.finalOffset=String(finalOffset);markActive(finalOffset);
+    setTimeout(()=>done?.(),90);
+   }
+  };
+  requestAnimationFrame(frame);
+ };
+
+ // Nazwy własne klubów na rynku nie mogą być odmieniane przez globalny filtr
+ // miejscowości. NBSP rozdziela sponsora od bazowej nazwy wyłącznie w warstwie UI.
+ const clubOffer1033=clubOffer;
+ clubOffer=function(club,league,interest,role,salary,fee,years,stay=false){
+  const option=clubOffer1033(club,league,interest,role,salary,fee,years,stay),base=clubBaseName(club),raw=String(club);
+  if(base&&raw!==base&&raw.endsWith(` ${base}`)){
+   const safe=raw.slice(0,-base.length).replace(/\s+$/,'')+'\u00A0'+base;
+   option.title=String(option.title).replace(raw,safe);
+  }
+  return option;
+ };
+
+ // Nowa kariera również od razu dostaje znacznik modelu 1.03.4.
+ const createPlayer1033=createPlayer;
+ createPlayer=function(){
+  createPlayer1033();
+  if(S){
+   ensureVariance1034();
+   S.pss1034={version:VERSION_1034,varianceModel:1,juniorDevelopmentPulse:true,majorCareerEvents:13,rouletteActiveTile:true};
+   save();render();
+  }
+ };
+
+ // Nowy zapis wersji i migracja stanu.
+ if(S){
+  ensureVariance1034();
+  S.pss1034={version:VERSION_1034,varianceModel:1,juniorDevelopmentPulse:true,majorCareerEvents:13,rouletteActiveTile:true};
+  save();render();
  }
 })();
