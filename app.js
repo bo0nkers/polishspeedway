@@ -667,7 +667,7 @@ function simulateSECChallengeQualification(basePph){
  const power=overall()*.70+currentFormRating()*.12+S.equipment*.05+S.skills.mental*.05+Number(basePph||1.3)*3+rand(-6,6);
  const points=simulateFiveRideScore(power,mean);
  const rivals=field.map(r=>simulateFiveRideScore(r.rating+rand(-3,3),mean));
- const place=ordinalPlaceByScore(points,rivals),advanced=place<=5;
+ const place=ordinalPlaceByScore(points,rivals),advanced=place<=6;
  addHistory("SEC Challenge",`${place}. miejsce w SEC Challenge w ${cityLocative(track.city)} (${track.country}) — ${points} pkt${advanced?" • awans do cyklu SEC":" • bez awansu"}.`);
  return {track,place,points,advanced};
 }
@@ -2077,10 +2077,11 @@ function createPlayer(){
  $("newsBox").innerHTML=`<p class="eyebrow">PRZED LICENCJĄ</p><h3>${background.title.toUpperCase()}</h3><p>${background.text}</p><p><b>Zaplecze:</b> ${support.title}. Budżet początkowy: ${money(S.budget)}.</p>${openingReport?`<div class="guidance-report"><span>RAPORT SZKÓŁKI</span><p>${openingReport.text}</p></div>`:""}`;
  save();
 }
-function save(){localStorage.setItem("pss_v1032",JSON.stringify(S))}
+function save(){localStorage.setItem("pss_v1033",JSON.stringify(S))}
 function load(){
  try{
-  const newest=localStorage.getItem("pss_v1032");
+  const newest=localStorage.getItem("pss_v1033");
+  const previousV1032=localStorage.getItem("pss_v1032");
   const previousV1031=localStorage.getItem("pss_v1031");
   const previousV1030=localStorage.getItem("pss_v1030");
   const previousV1026Test=localStorage.getItem("pss_v1026test");
@@ -2094,18 +2095,19 @@ function load(){
   const previousVersion=localStorage.getItem("pss_v100");
   const previousBrand=localStorage.getItem("pzs_v200");
   if(newest)return JSON.parse(newest);
-  if(previousV1031){localStorage.setItem("pss_v1032",previousV1031); return JSON.parse(previousV1031);}
-  if(previousV1030){localStorage.setItem("pss_v1032",previousV1030); return JSON.parse(previousV1030);}
-  if(previousV1026Test){localStorage.setItem("pss_v1032",previousV1026Test); return JSON.parse(previousV1026Test);}
-  if(previousV1025){localStorage.setItem("pss_v1032",previousV1025); return JSON.parse(previousV1025);}
-  if(previousV1024){localStorage.setItem("pss_v1032",previousV1024); return JSON.parse(previousV1024);}
-  if(previousV1023){localStorage.setItem("pss_v1032",previousV1023); return JSON.parse(previousV1023);}
-  if(previousV1022){localStorage.setItem("pss_v1032",previousV1022); return JSON.parse(previousV1022);}
-  if(previousV1021){localStorage.setItem("pss_v1032",previousV1021); return JSON.parse(previousV1021);}
-  if(previousV102){localStorage.setItem("pss_v1032",previousV102); return JSON.parse(previousV102);}
-  if(previousV101){localStorage.setItem("pss_v1032",previousV101); return JSON.parse(previousV101);}
-  if(previousVersion){localStorage.setItem("pss_v1032",previousVersion); return JSON.parse(previousVersion);}
-  if(previousBrand){localStorage.setItem("pss_v1032",previousBrand); return JSON.parse(previousBrand);}
+  if(previousV1032){localStorage.setItem("pss_v1033",previousV1032); return JSON.parse(previousV1032);}
+  if(previousV1031){localStorage.setItem("pss_v1033",previousV1031); return JSON.parse(previousV1031);}
+  if(previousV1030){localStorage.setItem("pss_v1033",previousV1030); return JSON.parse(previousV1030);}
+  if(previousV1026Test){localStorage.setItem("pss_v1033",previousV1026Test); return JSON.parse(previousV1026Test);}
+  if(previousV1025){localStorage.setItem("pss_v1033",previousV1025); return JSON.parse(previousV1025);}
+  if(previousV1024){localStorage.setItem("pss_v1033",previousV1024); return JSON.parse(previousV1024);}
+  if(previousV1023){localStorage.setItem("pss_v1033",previousV1023); return JSON.parse(previousV1023);}
+  if(previousV1022){localStorage.setItem("pss_v1033",previousV1022); return JSON.parse(previousV1022);}
+  if(previousV1021){localStorage.setItem("pss_v1033",previousV1021); return JSON.parse(previousV1021);}
+  if(previousV102){localStorage.setItem("pss_v1033",previousV102); return JSON.parse(previousV102);}
+  if(previousV101){localStorage.setItem("pss_v1033",previousV101); return JSON.parse(previousV101);}
+  if(previousVersion){localStorage.setItem("pss_v1033",previousVersion); return JSON.parse(previousVersion);}
+  if(previousBrand){localStorage.setItem("pss_v1033",previousBrand); return JSON.parse(previousBrand);}
   const v1361=localStorage.getItem("pzs_v1361");
   if(v1361)return JSON.parse(v1361);
   const v136=localStorage.getItem("pzs_v136");
@@ -4553,7 +4555,7 @@ function offerPlayableMatch(table,next){
     const pts=clamp(Math.round(rides*pph+rand(-2,2)),0,rides*3),bonus=clamp(Math.round(rides*Math.max(0,pph-1.45)*.20),0,rides-1);
     const ourAgg=preview.firstLeg.ourScore+ctx.teamScore,oppAgg=preview.firstLeg.opponentScore+ctx.opponentScore;
     S.playedPostseasonTie={year:S.year,league:S.league,club:S.club,opponent,firstLeg:preview.firstLeg,secondLeg:{ourScore:ctx.teamScore,opponentScore:ctx.opponentScore},totalOur:ourAgg,totalOpponent:oppAgg};
-    closeModal();next({played:false,points:pts,bonus,rides,boost:0,opponent,stage:stage.label});
+    closeModal();next({played:false,points:pts,bonus,rides,boost:0,opponent,stage:stage.label,teamScore:ctx.teamScore,opponentScore:ctx.opponentScore,teamLost:ctx.teamScore<ctx.opponentScore});
    }}
   ]);
 }
@@ -5675,7 +5677,7 @@ function internationalHomeWildcardOpportunity(series,basePph){
  const info=majorCalendarHomeInfo(),isSGP=series==="SGP",hasHome=isSGP?info.sgpHome:info.secHome;
  if(!hasHome)return null;
  if(isSGP&&isQualifiedForCurrentSGP())return null;
- if(!isSGP&&(S.secActiveYear===S.year||isQualifiedForCurrentSGP()))return null;
+ if(!isSGP&&S.secActiveYear===S.year)return null;
  const score=internationalWildcardScore(series,basePph),threshold=isSGP?76:69;
  if(score<threshold)return null;
  const chance=clamp((isSGP?5:9)+(score-threshold)*(isSGP?2.2:2.8),isSGP?4:7,isSGP?48:62);
@@ -6526,7 +6528,7 @@ function playMajorCompetitionQueue(basePph,next){
    showAchievementCelebration("DZIKA KARTA",event.series==="SGP"?"Speedway Grand Prix":"Speedway Euro Championship",`Lokalna runda w ${cityLocative(event.hostCity)}.`,open);return;
   }
 
-  if((event.key==="SEC"||event.key==="GP Challenge")&&S.sgpQualifiedYear===S.year+1){proceed();return}
+  if(event.key==="GP Challenge"&&S.sgpQualifiedYear===S.year+1){proceed();return}
 
   const interactive=["IMP","SEC","SGP2","GP Challenge","Speedway Grand Prix"].includes(event.key);
   const openPrompt=()=>{
@@ -8689,7 +8691,7 @@ createPlayer=function(){
 };
 
 function clearCareerSavesAndReload(){
- const keys=["pss_v1032","pss_v1031","pss_v1030","pss_v1026test","pss_v1025","pss_v1024","pss_v1023","pss_v1022","pss_v1021","pss_v102","pss_v101","pss_v100","pzs_v200","pzs_v1361","pzs_v136","pzs_v135","pzs_v134","pzs_v1331","pzs_v133","pzs_v132","pzs_v131","pzs_v1301","pzs_v130","pzs_v129","pzs_v128","pzs_v127","pzs_v126","pzs_v1252","pzs_v1251","pzs_v125","pzs_v124","pzs_v123","pzs_v122","pzs_v121","pzs_v120","pzs_v119","pzs_v118","pzs_v117","pzs_v116","pzs_v115","pzs_v114","pzs_v113","pzs_v112","pzs_v111","pzs_v110","pzs_v109","pzs_v108","pzs_v107","pzs_v106","pzs_v105","pzs_v104","pzs_v103","pzs_v102","pzs_v101","pzs_v100","pzs_v305","pzs_v304","pzs_v303","pzs_v302","pzs_v301","pzs_final30","pzs_v30","pzs_v29","pzs_v28","pzs_v27","pzs_v26","pzs_v25","pzs_v24","pzs_v23","pzs_v22","pzs_v2"];
+ const keys=["pss_v1033","pss_v1032","pss_v1031","pss_v1030","pss_v1026test","pss_v1025","pss_v1024","pss_v1023","pss_v1022","pss_v1021","pss_v102","pss_v101","pss_v100","pzs_v200","pzs_v1361","pzs_v136","pzs_v135","pzs_v134","pzs_v1331","pzs_v133","pzs_v132","pzs_v131","pzs_v1301","pzs_v130","pzs_v129","pzs_v128","pzs_v127","pzs_v126","pzs_v1252","pzs_v1251","pzs_v125","pzs_v124","pzs_v123","pzs_v122","pzs_v121","pzs_v120","pzs_v119","pzs_v118","pzs_v117","pzs_v116","pzs_v115","pzs_v114","pzs_v113","pzs_v112","pzs_v111","pzs_v110","pzs_v109","pzs_v108","pzs_v107","pzs_v106","pzs_v105","pzs_v104","pzs_v103","pzs_v102","pzs_v101","pzs_v100","pzs_v305","pzs_v304","pzs_v303","pzs_v302","pzs_v301","pzs_final30","pzs_v30","pzs_v29","pzs_v28","pzs_v27","pzs_v26","pzs_v25","pzs_v24","pzs_v23","pzs_v22","pzs_v2"];
  keys.forEach(k=>localStorage.removeItem(k));location.reload();
 }
 function showCareerEndSupportPopup(){
@@ -11935,4 +11937,674 @@ if(S){S.pss1031={version:'1.03.1'};save();}
  // 4. WERSJA / MIGRACJA
  // -------------------------------------------------------------------------
  if(S){S.pss1032={version:VERSION,leaderboard:false};save()}
+})();
+
+// ============================================================================
+// Polish Speedway Simulator 1.03.3 — DUŻE ZDARZENIA KARIERY / WARIANCJA OVR
+// 06.09.2026
+//
+// Założenie nadrzędne: duże zdarzenia nie tworzą faktów w świecie gry.
+// Uruchamiają się wyłącznie na podstawie realnego stanu kariery (wyników,
+// kontuzji, obciążenia, roli, budżetu, teamu i kwalifikacji), a ich skutki
+// zmieniają trajektorię rozwoju zamiast przyznawać arbitralne +X OVR.
+// ============================================================================
+(() => {
+ const VERSION='1.03.3';
+ const MODEL=1;
+
+ function ensureMajorCareerState(){
+  if(!S)return null;
+  S.majorCareer1033??={
+   version:MODEL,lastEventYear:null,nextEventYear:(S.year||2026)+rand(1,2),seen:{},lastById:{},
+   sponsorGoal:null,lastImportantMatch:null,defectsByYear:{},dualCycleYears:[],handledInjuries:{},eventLog:[]
+  };
+  const st=S.majorCareer1033;
+  st.version=MODEL;st.seen??={};st.lastById??={};st.defectsByYear??={};st.dualCycleYears??=[];st.handledInjuries??={};st.eventLog??=[];
+  if(!Number.isFinite(st.nextEventYear))st.nextEventYear=(S.year||2026)+rand(1,2);
+  return st;
+ }
+
+ // Starsze, losowe wersje poniższych sytuacji usuń z puli małych zdarzeń.
+ // Ich odpowiedniki w 1.03.3 wymagają teraz faktycznego triggera ze stanu kariery.
+ const LEGACY_MAJOR_EVENT_TITLES_1033=new Set([
+  'Tuner proponuje eksperymentalny silnik.',
+  'Mechanik chce podwyżki.',
+  'Na treningu dochodzi do ostrego spięcia z kolegą z drużyny.',
+  'Dostajesz dziką kartę do prestiżowego turnieju.',
+  'Trener proponuje zmianę techniki startu.',
+  'Dostajesz propozycję zmiany tunera.',
+  'Przed ważnym meczem czujesz ból nadgarstka.',
+  'Prezes sugeruje obniżkę stawki za punkt.'
+ ]);
+ for(let i=EVENTS.length-1;i>=0;i--)if(LEGACY_MAJOR_EVENT_TITLES_1033.has(EVENTS[i]?.[0]))EVENTS.splice(i,1);
+
+ // -------------------------------------------------------------------------
+ // 1. START MA ZNACZENIE, ALE NIE JEST WYROKIEM
+ // -------------------------------------------------------------------------
+ // Zakresy potencjału mocniej zachodzą na siebie. „Talent szkółki” nadal ma
+ // wyraźnie lepsze prawdopodobieństwa, ale nawet kariera „od zera” ma rzadki
+ // ogon prowadzący na światowy poziom. Jednocześnie wysoki start nie chroni
+ // przed underachievementem i negatywnymi punktami zwrotnymi.
+ careerDnaRange=function(startProfile){
+  const ranges={
+   raw:[70,83,97],
+   academy:[72,85,97],
+   license:[73,86,97],
+   talent:[77,89,98],
+   reserve:[74,87,98]
+  };
+  return ranges[startProfile]||ranges.academy;
+ };
+
+ const baseCreateDNA1033=createCareerDNA;
+ createCareerDNA=function(startProfile='academy'){
+  const dna=baseCreateDNA1033(startProfile);
+  dna.varianceModel1033=MODEL;
+  dna.majorEventElasticity=Math.round(triangular(.86,1.04,1.24)*100)/100;
+  dna.majorTrajectoryDelta=0;
+  return dna;
+ };
+
+ const baseCareerDNA1033=careerDNA;
+ careerDNA=function(){
+  const dna=baseCareerDNA1033();
+  if(!dna.varianceModel1033)dna.varianceModel1033=MODEL;
+  if(!Number.isFinite(dna.majorEventElasticity))dna.majorEventElasticity=Math.round(triangular(.86,1.04,1.24)*100)/100;
+  if(!Number.isFinite(dna.majorTrajectoryDelta))dna.majorTrajectoryDelta=0;
+  return dna;
+ };
+
+ function majorPeakShift(raw){
+  const dna=careerDNA(),delta=Number(raw||0);if(!delta)return 0;
+  const before=Number(dna.realizedPeak||dna.potential||84);
+  let adjusted=delta;
+  if(delta>0){
+   const room=clamp((96-before)/14,.58,1.48);
+   const underdog=S.startOverall<=44?1.18:S.startOverall<=51?1.09:1;
+   adjusted=Math.max(1,Math.round(delta*room*underdog*(dna.majorEventElasticity||1)));
+  }else{
+   const eliteExposure=overall()>=86?1.18:overall()>=80?1.08:1;
+   adjusted=Math.min(-1,Math.round(delta*eliteExposure));
+  }
+  dna.realizedPeak=clamp(before+adjusted,58,99);
+  dna.majorTrajectoryDelta=(dna.majorTrajectoryDelta||0)+adjusted;
+  return adjusted;
+ }
+
+ function majorPotentialShift(raw){
+  const dna=careerDNA(),delta=Number(raw||0);if(!delta)return 0;
+  const before=dna.potential||84;
+  const adjusted=delta>0?Math.max(1,Math.round(delta*(S.startOverall<=44?1.12:1))):Math.min(-1,Math.round(delta));
+  dna.potential=clamp(before+adjusted,58,99);
+  if(dna.realizedPeak>dna.potential+5)dna.realizedPeak=dna.potential+5;
+  return adjusted;
+ }
+
+ function applyMajorEffect(m={}){
+  const st=ensureMajorCareerState(),dna=careerDNA();
+  const applied={};
+  if(m.peakDelta)applied.peakDelta=majorPeakShift(m.peakDelta);
+  if(m.potentialDelta)applied.potentialDelta=majorPotentialShift(m.potentialDelta);
+  if(m.decisionDelta){dna.decisionQuality=clamp((dna.decisionQuality||0)+Number(m.decisionDelta),-30,40);applied.decisionDelta=Number(m.decisionDelta)}
+  if(m.momentumDelta){dna.momentum=clamp((dna.momentum||0)+Number(m.momentumDelta),-14,14);applied.momentumDelta=Number(m.momentumDelta)}
+  if(m.defects){st.defectsByYear[S.year]=(st.defectsByYear[S.year]||0)+Number(m.defects);applied.defects=Number(m.defects)}
+  if(m.sponsorGoal){st.sponsorGoal={...m.sponsorGoal,year:S.year,status:'active'};applied.sponsorGoal=true}
+  if(m.markDualCycle&&!st.dualCycleYears.includes(S.year))st.dualCycleYears.push(S.year);
+  if(m.note)st.eventLog.push({year:S.year,note:m.note});
+  m._applied=applied;
+ }
+
+ function majorEffectDescription(m={}){
+  const a=m._applied||{},parts=[];
+  if(a.peakDelta)parts.push(`trajektoria kariery ${a.peakDelta>0?'+':''}${a.peakDelta}`);
+  if(a.potentialDelta)parts.push(`potencjał ${a.potentialDelta>0?'+':''}${a.potentialDelta}`);
+  if(a.decisionDelta)parts.push(`jakość prowadzenia kariery ${a.decisionDelta>0?'+':''}${a.decisionDelta}`);
+  if(a.momentumDelta)parts.push(`momentum ${a.momentumDelta>0?'+':''}${a.momentumDelta}`);
+  if(a.defects>0)parts.push('większa podatność sprzętu na awarie');
+  if(a.sponsorGoal)parts.push(`aktywny cel sponsora: ${m.sponsorGoal.label}`);
+  return parts.join(' • ');
+ }
+
+ const baseApplyEffect1033=applyEffect;
+ applyEffect=function(e){
+  baseApplyEffect1033(e);
+  if(e?.major)applyMajorEffect(e.major);
+  normalize();
+ };
+ const baseEffectDescription1033=effectDescription;
+ effectDescription=function(e){
+  const base=baseEffectDescription1033(e),major=e?.major?majorEffectDescription(e.major):'';
+  if(!major)return base;
+  return base==='bez zmian'?major:`${base} • ${major}`;
+ };
+
+ const baseNormalize1033=normalize;
+ normalize=function(){baseNormalize1033();ensureMajorCareerState()};
+
+ // -------------------------------------------------------------------------
+ // 2. PROGNOZA JAZDY = TEN SAM MODEL, KTÓRY DAJE PÓŹNIEJ BIEGI
+ // -------------------------------------------------------------------------
+ const baseProjected1033=projectedLineupChance;
+ projectedLineupChance=function(club,leagueName,options={}){
+  let value=baseProjected1033(club,leagueName,options),level=leagueByName(leagueName)?.level||3,status=rosterStatusForAge();
+  if(level===1){
+   if(status==='junior'&&overall()<64)value=Math.min(value,8);
+   else if(status==='junior'&&overall()<69)value=Math.min(value,(careerDNA().potential||80)>=90?18:13);
+   else if(status==='junior'&&overall()<72)value=Math.min(value,30);
+   else if(status==='u24'&&overall()<70)value=Math.min(value,10);
+   else if(status==='senior'&&overall()<74)value=Math.min(value,7);
+  }
+  return clamp(value,3,96);
+ };
+
+ riderRoleHeatsPerMatch=function(){
+  const role=String(S.role||'').toLowerCase(),status=rosterStatusForAge(),chance=clamp(S.chance||50,3,98);
+  if(chance<12||role.includes('rezerw'))return {min:1.0,max:2.3};
+  if(chance<28||role.includes('walka'))return {min:1.8,max:3.0};
+  if(role.includes('lider')||chance>=88)return {min:4.5,max:5.2};
+  if(role.includes('podstawowy'))return status==='junior'?{min:3.2,max:4.3}:status==='u24'?{min:3.6,max:4.6}:{min:4.0,max:4.8};
+  if(status==='junior')return chance>=65?{min:3.0,max:4.0}:{min:2.2,max:3.4};
+  if(role.includes('u24'))return {min:2.8,max:4.0};
+  if(role.includes('rotacja'))return {min:2.5,max:3.8};
+  return {min:2.8,max:4.1};
+ };
+
+ realisticLeagueUsage=function(clubMatches){
+  const chance=clamp(Number(S.chance||5),3,98)/100;
+  let apps=0;
+  // Prognoza procentowa jest prawdopodobieństwem wejścia do składu na dany mecz,
+  // a nie luźną etykietą ofertową. Dzięki temu 5% nie generuje 20–30 biegów.
+  for(let i=0;i<clubMatches;i++)if(Math.random()<chance)apps++;
+  if(chance>=.92)apps=Math.max(apps,clubMatches-1);
+  if(chance<=.08)apps=Math.min(apps,2);
+  apps=Math.round(apps*currentInjuryAvailability());apps=clamp(apps,0,clubMatches);
+  const range=riderRoleHeatsPerMatch();let heats=0;
+  for(let i=0;i<apps;i++){
+   let h=range.min+Math.random()*(range.max-range.min);
+   if(chance>=.78&&rosterStatusForAge()!=='junior'&&Math.random()<.18)h+=.7;
+   if(chance<=.18)h=Math.min(h,2.5);
+   heats+=clamp(Math.round(h),1,6);
+  }
+  return {appearances:apps,heats};
+ };
+
+ const baseMarketRole1033=marketRoleForClub;
+ marketRoleForClub=function(club,league,currentLevel){
+  let role=baseMarketRole1033(club,league,currentLevel),level=leagueByName(league)?.level||3,status=rosterStatusForAge();
+  if(level===1&&overall()<69)role=status==='junior'?'Rezerwowy / rozwój':'Rezerwowy / rozwój';
+  else if(level===1&&overall()<72&&/Regularna|Podstawowy/.test(role))role=status==='junior'?'Rywalizacja o miejsce juniorskie':'Walka o skład';
+  return role;
+ };
+
+ const baseEvaluatedCandidates1033=evaluatedMarketCandidates;
+ evaluatedMarketCandidates=function(pph,current,currentLevel){
+  const all=baseEvaluatedCandidates1033(pph,current,currentLevel),status=rosterStatusForAge(),dna=careerDNA();
+  return all.filter(c=>{
+   if(c.level!==1)return true;
+   if(overall()>=72)return true;
+   if(status!=='junior')return overall()>=70;
+   if(overall()<63)return false;
+   // 63–68 OVR: PGE wyłącznie jako rzadki ruch rozwojowy/rezerwowy.
+   const exceptional=(dna.potential||80)>=90||dna.juniorPhenomenon;
+   if(!exceptional)return false;
+   c.role='Rezerwowy / rozwój';c.projected=Math.min(c.projected,overall()<67?10:17);c.fitScore-=18;
+   return Math.random()<(overall()<67?.14:.24);
+  });
+ };
+
+ // -------------------------------------------------------------------------
+ // 3. REALNE DANE DO TRIGGERÓW DUŻYCH ZDARZEŃ
+ // -------------------------------------------------------------------------
+ function latestSeriousInjury(){
+  return [...(S.healthStats?.history||[])].filter(x=>['ciężki','bardzo ciężki'].includes(x.severity)).sort((a,b)=>b.year-a.year||b.weeks-a.weeks)[0]||null;
+ }
+ function previousSeasonWorkload(){
+  const p=previousCareerSeason();if(!p)return 0;
+  const comp=(p.competitions||[]).reduce((s,c)=>s+Number(c.healthExposureHeats||c.heats||0),0);
+  return Number(p.heats||0)+comp;
+ }
+ function previousSeasonIncome(){
+  const p=previousCareerSeason();
+  return Math.max(0,Number(p?.earnings||0),Number(S.season?.earnings||0));
+ }
+ function scaledCareerCost(minimum,share=0.10,mult=1){
+  const income=previousSeasonIncome(),careerBase=Math.max(income,Math.max(0,S.salary||0)*Math.max(25,S.season?.points||25));
+  return Math.round(clamp(Math.max(minimum,careerBase*share)*mult,minimum,900000)/1000)*1000;
+ }
+ function lastImportantFailure(){
+  const m=ensureMajorCareerState().lastImportantMatch;
+  if(!m||m.year!==S.year-1||!m.played||!m.teamLost)return null;
+  const rate=m.rides?m.points/m.rides:9;
+  return (m.points<=5||rate<=1.25)?m:null;
+ }
+ function teamInvestmentPresent(){
+  return facilityLevel('technical')>=1||developmentEventTeamQuality()>=2.2||activeDevelopmentEffects().some(x=>/team|mechanik|tuner/i.test(x.label||''));
+ }
+ function skillLabel(key){return SKILLS[key]||key}
+ function workloadLabel(v){return v>=125?'ekstremalne':v>=105?'bardzo wysokie':v>=88?'wysokie':'umiarkowane'}
+
+ // Ważny mecz jest faktem zapisanym z rzeczywiście rozegranego spotkania.
+ // Dotyczy zarówno ręcznie rozegranego rewanżu, jak i świadomie wybranej pełnej symulacji tego samego meczu.
+ const baseOfferPlayableMatch1033=offerPlayableMatch;
+ offerPlayableMatch=function(table,next){
+  return baseOfferPlayableMatch1033(table,result=>{
+   if(result?.rides&&result?.opponent&&Number.isFinite(Number(result.teamScore))&&Number.isFinite(Number(result.opponentScore))){
+    ensureMajorCareerState().lastImportantMatch={year:S.year,played:true,points:Number(result.points||0),bonus:Number(result.bonus||0),rides:Number(result.rides||0),teamScore:Number(result.teamScore),opponentScore:Number(result.opponentScore),opponent:result.opponent,stage:result.stage||'ważny mecz',teamLost:!!result.teamLost};
+   }
+   next(result);
+  });
+ };
+ const baseFinishPlayableMatch1033=finishPlayableMatch;
+ finishPlayableMatch=function(ctx,next){
+  return baseFinishPlayableMatch1033(ctx,result=>{
+   const st=ensureMajorCareerState(),teamLost=ctx.teamScore<ctx.opponentScore;
+   st.lastImportantMatch={year:S.year,played:true,points:ctx.points,bonus:ctx.bonus,rides:ctx.results.length,teamScore:ctx.teamScore,opponentScore:ctx.opponentScore,opponent:ctx.opponent,stage:ctx.stage?.label||'ważny mecz',teamLost};
+   next(result);
+  });
+ };
+
+ const baseRaceIncident1033=raceIncident;
+ raceIncident=function(mode,opts={}){
+  const r=baseRaceIncident1033(mode,opts);
+  if(r?.type==='defect'){const st=ensureMajorCareerState();st.defectsByYear[S.year]=(st.defectsByYear[S.year]||0)+1}
+  return r;
+ };
+
+ // -------------------------------------------------------------------------
+ // 4. CELE SPONSORA — PIENIĄDZE DOPIERO PO SPEŁNIENIU WARUNKU
+ // -------------------------------------------------------------------------
+ function sponsorGoalOptions(){
+  const p=previousCareerSeason(),income=Math.max(150000,previousSeasonIncome()),rewardBase=Math.round(clamp(income*.26+S.reputation*2200,120000,650000)/10000)*10000;
+  const activeSeries=[];
+  if(S.sgpQualifiedYear===S.year)activeSeries.push('SGP');
+  if(S.secQualifiedYear===S.year)activeSeries.push('SEC');
+  const series=activeSeries.length&&((stableTextHash(`${S.year}|${S.name}|sponsor-goal`)%100)<38)?activeSeries[stableTextHash(`${S.year}|${S.name}|sponsor-series`)%activeSeries.length]:null;
+  if(series==='SGP'){
+   const safeTop=overall()>=90?6:overall()>=85?8:10,ambTop=Math.max(3,safeTop-3);
+   return [
+    {label:`TOP ${safeTop} SGP`,type:'competitionTop',key:'SGP',target:safeTop,reward:rewardBase},
+    {label:`TOP ${ambTop} SGP`,type:'competitionTop',key:'SGP',target:ambTop,reward:Math.round(rewardBase*1.8/10000)*10000}
+   ];
+  }
+  if(series==='SEC'){
+   const safeTop=overall()>=87?5:overall()>=81?7:9,ambTop=Math.max(3,safeTop-3);
+   return [
+    {label:`TOP ${safeTop} SEC`,type:'competitionTop',key:'SEC',target:safeTop,reward:rewardBase},
+    {label:`TOP ${ambTop} SEC`,type:'competitionTop',key:'SEC',target:ambTop,reward:Math.round(rewardBase*1.75/10000)*10000}
+   ];
+  }
+  const prev=Math.max(.35,Number(p?.average||S.season?.avg||1.1)),level=leagueByName(S.league)?.level||3;
+  const floor=level===1?1.20:level===2?1.05:.90;
+  const safe=Math.min(2.45,Math.max(floor,prev+.05)),amb=Math.min(2.60,Math.max(safe+.12,prev+.18));
+  const fmt=x=>x.toFixed(3).replace('.',',');
+  return [
+   {label:`średnia ligowa min. ${fmt(safe)}`,type:'leagueAvg',target:Number(safe.toFixed(3)),reward:rewardBase},
+   {label:`średnia ligowa min. ${fmt(amb)}`,type:'leagueAvg',target:Number(amb.toFixed(3)),reward:Math.round(rewardBase*1.7/10000)*10000}
+  ];
+ }
+
+ function settleSponsorGoal1033(){
+  const st=ensureMajorCareerState(),g=st.sponsorGoal;if(!g||g.status!=='active'||g.year!==S.year)return;
+  let success=false,actual='';
+  if(g.type==='leagueAvg'){
+   const value=Number(S.season?.avg||0);success=value>=g.target;actual=`średnia ${value.toFixed(3).replace('.',',')}`;
+  }else if(g.type==='competitionTop'){
+   const r=(S.competitions||[]).find(x=>canonicalCompetitionKey(x)===g.key&&Number.isFinite(Number(x.place)));
+   success=!!r&&Number(r.place)<=g.target;actual=r?`${r.place}. miejsce`:'brak startu w cyklu';
+  }
+  g.status=success?'paid':'failed';g.actual=actual;
+  if(success){S.budget+=g.reward;addHistory('Cel sponsora zrealizowany',`${g.label}. Wynik: ${actual}. Sponsor wypłaca ${money(g.reward)}.`)}
+  else addHistory('Cel sponsora niewykonany',`${g.label}. Wynik: ${actual}. Premia ${money(g.reward)} nie zostaje wypłacona.`);
+ }
+
+ const basePlayMajorQueueSponsor1033=playMajorCompetitionQueue;
+ // właściwy wrapper SEC zostanie zdefiniowany niżej; ten helper będzie użyty przez finalną wersję kolejki.
+
+ // -------------------------------------------------------------------------
+ // 5. SEC OD 2026 + MOŻLIWOŚĆ SGP I SEC JEDNOCZEŚNIE
+ // -------------------------------------------------------------------------
+ function updateSECStatus1033(place){
+  if(Number(place)<=6){
+   S.secQualifiedYear=S.year+1;S.secQualificationReason=`${place}. miejsce w klasyfikacji generalnej SEC`;
+   addHistory('Utrzymanie w SEC',`${place}. miejsce w klasyfikacji generalnej daje stałe miejsce w cyklu SEC w sezonie ${S.year+1}.`);
+  }else{
+   if(S.secQualifiedYear===S.year+1)S.secQualifiedYear=null;
+   addHistory('SEC',`Kończysz cykl poza TOP 6. W kolejnym sezonie powrót prowadzi przez eliminacje i SEC Challenge.`);
+  }
+ }
+
+ const baseSimSEC1033=simulateSEC;
+ simulateSEC=function(basePph){const r=baseSimSEC1033(basePph);if(r)updateSECStatus1033(r.place);return r};
+ const basePlaySEC1033=playInteractiveSEC;
+ playInteractiveSEC=function(basePph,done){return basePlaySEC1033(basePph,r=>{if(r)updateSECStatus1033(r.place);done(r)})};
+
+ function dualCycleWorkload1033(){
+  const st=ensureMajorCareerState();if(st.dualCycleYears.includes(S.year))return;
+  const fitness=Number(S.skills.fitness||60),team=developmentEventTeamQuality(),strain=fitness>=88&&team>=3?2:fitness>=78&&team>=2?3:5;
+  S.injuryRisk+=strain;
+  applyDevelopmentModifier({id:`sgp-sec-${S.year}`,label:'równoległy program SGP + SEC',duration:2,growthMult:1.035,fitnessGrowthMult:.78,declineBias:.10,formBonus:-.25});
+  st.dualCycleYears.push(S.year);
+  addHistory('SGP + SEC',`Decydujesz się łączyć oba międzynarodowe cykle. Więcej jazdy zwiększa doświadczenie, ale obciążenie i ryzyko urazu rosną o ${strain} p.p.`);
+ }
+
+ majorCompetitionOpportunities=function(basePph){
+  const opportunities=[];
+  const available=INDIVIDUAL_EVENTS.filter(e=>S.age>=e.minAge&&S.age<=e.maxAge&&overall()>=e.minOverall);
+  const currentSGP=isQualifiedForCurrentSGP()&&S.age>=20;
+
+  if(currentSGP)opportunities.push({key:'Speedway Grand Prix',name:'Indywidualne Mistrzostwa Świata',qualificationReason:ensureSentence(S.sgpQualificationReason||'Miejsce utrzymane w cyklu SGP')});
+
+  // SEC: TOP 6 utrzymuje miejsce. Pozostali mogą świadomie wejść na ścieżkę
+  // eliminacje → SEC Challenge (16 zawodników, TOP 6) → czterorundowy cykl.
+  if(S.age>=18){
+   if(S.secQualifiedYear===S.year){
+    opportunities.push({key:'SEC Entry Decision',name:'Speedway Euro Championship',mode:'retained',currentSGP,qualificationReason:ensureSentence(S.secQualificationReason||'Miejsce utrzymane w TOP 6 SEC')});
+   }else if(Math.random()<internationalNominationChance('SEC',basePph)){
+    opportunities.push({key:'SEC Entry Decision',name:'Speedway Euro Championship',mode:'qualifier',currentSGP,qualificationReason:'Masz możliwość zgłoszenia się do eliminacji SEC.'});
+   }
+  }
+
+  const secAlreadyQualified=S.secQualifiedYear===S.year;
+  if(available.some(e=>e.short==='IMP')){
+   const imp=impQualificationOpportunity(basePph,currentSGP,secAlreadyQualified);if(imp)opportunities.push(imp);
+   const wildcard=impWildcardOpportunity(basePph);if(wildcard)opportunities.push(wildcard);
+  }
+
+  const hasSECPath=opportunities.some(x=>x.key==='SEC Entry Decision');const secWild=hasSECPath?null:internationalHomeWildcardOpportunity('SEC',basePph);if(secWild)opportunities.push(secWild);
+  const sgpWild=internationalHomeWildcardOpportunity('SGP',basePph);if(sgpWild)opportunities.push(sgpWild);
+
+  if(!currentSGP&&S.sgpQualifiedYear!==S.year+1&&available.some(e=>e.short==='GP Challenge')&&Math.random()<internationalNominationChance('SGP',basePph)){
+   const qualifier=simulateInternationalQualifier('SGP',basePph);
+   if(qualifier.advanced)opportunities.push({key:'GP Challenge',name:'Grand Prix Challenge',qualificationReason:`${qualifier.place}. miejsce w eliminacjach SGP Challenge w ${cityLocative(qualifier.track.city)}.`});
+  }
+  return opportunities.slice(0,7);
+ };
+
+ const baseMajorQueue1033=basePlayMajorQueueSponsor1033;
+ playMajorCompetitionQueue=function(basePph,next){
+  const pending=[...(S.pendingMajorCompetitions||[])],decisionIndex=pending.findIndex(x=>x.key==='SEC Entry Decision');
+  const finish=()=>baseMajorQueue1033(basePph,()=>{settleSponsorGoal1033();next()});
+  if(decisionIndex<0){finish();return}
+  const decision=pending.splice(decisionIndex,1)[0];S.pendingMajorCompetitions=pending;
+  const currentSGP=!!decision.currentSGP;
+  const enterCycle=(reason)=>{
+   S.secActiveYear=S.year;
+   S.pendingMajorCompetitions=[{key:'SEC',name:'Speedway Euro Championship',qualificationReason:reason},...(S.pendingMajorCompetitions||[])];
+   if(currentSGP)dualCycleWorkload1033();
+   save();finish();
+  };
+  if(decision.mode==='retained'){
+   showModal('SPEEDWAY EURO CHAMPIONSHIP','Stałe miejsce w SEC',`${ensureSentence(decision.qualificationReason)}${currentSGP?' Jednocześnie jesteś stałym uczestnikiem SGP. Połączenie obu cykli da więcej jazdy na najwyższym poziomie, ale zwiększy workload, utrudni regenerację i podniesie ryzyko urazu.':''}`, [
+    {title:'Startuj w SEC',desc:currentSGP?'Łączysz SGP i SEC. Obciążenie będzie rozliczane przez faktyczny workload, regenerację i ryzyko urazu.':'Wykorzystujesz miejsce wywalczone w poprzednim sezonie.',action:()=>{closeModal();enterCycle(decision.qualificationReason)}},
+    {title:'Zrezygnuj z miejsca',desc:'W tym sezonie nie startujesz w SEC.',action:()=>{S.secQualifiedYear=null;S.secQualificationReason=null;addHistory('Rezygnacja z SEC','Rezygnujesz ze stałego miejsca w Speedway Euro Championship.');closeModal();save();finish()}}
+   ]);return;
+  }
+  showModal('SPEEDWAY EURO CHAMPIONSHIP','Eliminacje SEC',`Masz możliwość zgłoszenia się do eliminacji SEC.${currentSGP?' Jesteś już zawodnikiem SGP, więc ewentualny awans oznaczałby równoległą jazdę w dwóch cyklach.':''}`, [
+   {title:'Zgłoś się do eliminacji',desc:'Najpierw musisz przejść eliminacje, a następnie znaleźć się w TOP 6 SEC Challenge.',action:()=>{
+    closeModal();const qualifier=simulateInternationalQualifier('SEC',basePph);
+    if(!qualifier.advanced){addHistory('Eliminacje SEC',`${qualifier.place}. miejsce — bez awansu do SEC Challenge.`);save();finish();return}
+    const challenge=simulateSECChallengeQualification(basePph);
+    if(!challenge.advanced){save();finish();return}
+    enterCycle(`${challenge.place}. miejsce w SEC Challenge w ${cityLocative(challenge.track.city)}.`);
+   }},
+   {title:'Odpuść SEC w tym sezonie',desc:'Skupiasz się na pozostałych rozgrywkach.',action:()=>{addHistory('SEC','Rezygnujesz ze zgłoszenia do eliminacji SEC w tym sezonie.');closeModal();save();finish()}}
+  ]);
+ };
+
+ // -------------------------------------------------------------------------
+ // 6. DUŻE ZDARZENIA KARIERY — WERSJA 1.03.3
+ // -------------------------------------------------------------------------
+ function eventPseudo1033(event){return [event.title,event.description(),event.minAge||15,event.maxAge||50,event.choices(),{id:event.id,weight:event.weight||1,cooldown:event.cooldown||5,once:!!event.once}]}
+ function markMajorEvent1033(event){
+  const st=ensureMajorCareerState();st.lastEventYear=S.year;st.lastById[event.id]=S.year;st.seen[event.id]=(st.seen[event.id]||0)+1;st.nextEventYear=S.year+rand(2,4);st.eventLog.push({year:S.year,id:event.id,title:event.title});
+ }
+ function resolveMajorChoice1033(event,choice,next){
+  markMajorEvent1033(event);
+  const roulette=buildEventRoulette(eventPseudo1033(event),choice);
+  if(roulette){showEventOutcomeRoller(event.title,choice[0],roulette,next);return}
+  const effect=choice?.[2]?.[0]?.[1]||{};applyEffect(effect);const desc=effectDescription(effect);
+  showModal('DUŻE ZDARZENIE',choice[0],`<b>${ensureSentence(desc)}</b>`,[{title:'Kontynuuj',desc:'Przejdź do dalszej części sezonu.',action:()=>{addHistory(event.title,`${choice[0]}. Skutek: ${desc}.`);closeModal();next()}}]);
+ }
+
+ function breakthroughChoices1033(){
+  const keys=['starts','corner','distance','technique','setup'],avg=keys.reduce((s,k)=>s+S.skills[k],0)/keys.length,team=developmentEventTeamQuality();
+  let chosen=[...keys].sort((a,b)=>(S.skills[a]-avg)-(S.skills[b]-avg)).slice(0,3);
+  if(team>=2.5&&!chosen.includes('setup'))chosen.push('setup');
+  chosen=chosen.slice(0,4);
+  return chosen.map(key=>{
+   const weakness=Math.max(0,avg-S.skills[key]),support=key==='setup'?team*2:(S.professionalism-50)*.08;
+   const success=Math.round(clamp(58+weakness*1.8+support,52,82));
+   const growth={};growth[key]=1.38;if(key==='starts')growth.corner=1.13;if(key==='corner')growth.technique=1.10;if(key==='distance')growth.overtaking=1.12;if(key==='technique')growth.distance=1.10;if(key==='setup')growth.technique=1.10;
+   return [`Pracuj nad: ${skillLabel(key)}`,`${success}% → prawdziwy przełom • ${100-success}% → bodziec okazuje się za słaby`,[
+    [success,{skill:[key,1],major:{peakDelta:2,decisionDelta:1,momentumDelta:1},development:{id:`bt-${key}-${S.year}`,label:`przełom: ${skillLabel(key)}`,phase:'breakthrough',phaseDuration:1,duration:2,growthMult:1.10,skillGrowth:growth}}],
+    [100-success,{morale:-1,development:{id:`bt-${key}-miss-${S.year}`,label:'nietrafiony kierunek treningowy',duration:1,growthMult:.82}}]
+   ]];
+  });
+ }
+
+ const MAJOR_CAREER_EVENTS_1033=[
+  {
+   id:'experimental_engine',title:'Nowy silnik — ogromny potencjał, mało danych',minAge:17,maxAge:40,weight:1,cooldown:7,
+   eligible:()=>S.league!=='Etap szkolenia'&&teamInvestmentPresent()&&S.budget>=scaledCareerCost(60000,.045,.7),
+   chance:()=>clamp(.08+facilityLevel('technical')*.018+(S.skills.setup-55)*.001,.06,.16),
+   description:()=>{const full=scaledCareerCost(85000,.09,1+facilityLevel('technical')*.05);return `Tuner proponuje eksperymentalny pakiet. Dane z prób są obiecujące, ale rozwiązanie nie ma jeszcze pełnej historii startowej.<br><br><b>Ustawienia sprzętu:</b> ${S.skills.setup} • <b>zaplecze techniczne:</b> poziom ${facilityLevel('technical')} • <b>pełne wdrożenie:</b> ok. ${money(full)}.`},
+   choices:()=>{const full=scaledCareerCost(85000,.09,1+facilityLevel('technical')*.05),test=Math.round(full*.48/1000)*1000,team=developmentEventTeamQuality(),success=Math.round(clamp(54+team*5+(S.skills.setup-65)*.28,48,79));return [
+    ['Wchodzę w projekt całkowicie',`${success}% → techniczny skok • ${100-success}% → kosztowna ślepa uliczka`,[
+     [success,{budget:-full,equipment:4,skill:['setup',1],major:{peakDelta:3,potentialDelta:1,decisionDelta:2,momentumDelta:2},development:{id:`engine-boom-${S.year}`,label:'udany program silnikowy',duration:2,growthMult:1.10,skillGrowth:{setup:1.35,technique:1.16},teamBonus:1.2}}],
+     [100-success,{budget:-full,equipment:-2,morale:-3,major:{peakDelta:-2,defects:2,decisionDelta:-1},development:{id:`engine-fail-${S.year}`,label:'nietrafiony program silnikowy',duration:2,growthMult:.76,formBonus:-.8}}]
+    ]],
+    ['Najpierw jeden silnik testowy','Mniejszy upside, ale znacznie mniejsza skala ryzyka',[
+     [72,{budget:-test,equipment:2,major:{peakDelta:1,decisionDelta:2},development:{id:`engine-test-ok-${S.year}`,label:'udany test nowej jednostki',duration:1,skillGrowth:{setup:1.20,technique:1.08}}}],
+     [28,{budget:-test,equipment:-1,major:{defects:1},development:{id:`engine-test-miss-${S.year}`,label:'test bez przełomu',duration:1,growthMult:.92}}]
+    ]],
+    ['Zostaję przy sprawdzonym sprzęcie','Zero ryzyka technologicznego i brak kosztu wdrożenia',[[100,{professionalism:1,major:{decisionDelta:1}}]]]
+   ]}
+  },
+  {
+   id:'mechanic_departure',title:'Kluczowy mechanik chce odejść',minAge:18,maxAge:42,weight:.95,cooldown:8,
+   eligible:()=>S.league!=='Etap szkolenia'&&teamInvestmentPresent(),
+   chance:()=>clamp(.065+facilityLevel('technical')*.015+(overall()>=80?.025:0),.05,.13),
+   description:()=>{const q=1+facilityLevel('technical')*.12,cost=scaledCareerCost(65000,.10,q);return `Twój najważniejszy mechanik dostał ofertę od konkurencji. Współpraca ma realną wartość, ale utrzymanie go wymaga podniesienia kosztów teamu.<br><br><b>Szacowany koszt zatrzymania:</b> ${money(cost)} • <b>Setup:</b> ${S.skills.setup} • <b>poziom zaplecza:</b> ${facilityLevel('technical')}.`},
+   choices:()=>{const q=1+facilityLevel('technical')*.12,cost=scaledCareerCost(65000,.10,q),replacement=Math.round(cost*.46/1000)*1000,team=developmentEventTeamQuality(),better=Math.round(clamp(30+team*3,30,45)),same=40,worse=100-better-same;return [
+    ['Przebijam ofertę',`Duży koszt, ale zachowujesz wypracowaną synergię`,[[100,{budget:-cost,skill:['setup',1],major:{peakDelta:1,decisionDelta:1},development:{id:`mech-stay-${S.year}`,label:'utrzymana synergia z mechanikiem',duration:2,skillGrowth:{setup:1.22},teamBonus:1}}]]],
+    ['Pozwalam odejść i szukam następcy',`${better}% → trafiasz na lepszego fachowca • ${same}% → podobny poziom • ${worse}% → wyraźny krok wstecz`,[
+     [better,{budget:-replacement,skill:['setup',1],major:{peakDelta:2,decisionDelta:1},development:{id:`mech-new-better-${S.year}`,label:'lepszy mechanik',duration:2,skillGrowth:{setup:1.30,technique:1.12},teamBonus:1.2}}],
+     [same,{budget:-replacement,development:{id:`mech-new-same-${S.year}`,label:'nowy mechanik — podobny poziom',duration:1,teamBonus:.4}}],
+     [worse,{budget:-replacement,skill:['setup',-1],morale:-2,major:{peakDelta:-2},development:{id:`mech-new-worse-${S.year}`,label:'nietrafiona zmiana mechanika',duration:2,growthMult:.78,formBonus:-.5}}]
+    ]],
+    ['Upraszczam team','Oszczędzasz pieniądze, ale przez pewien czas tracisz jakość przygotowania',[[100,{major:{peakDelta:-1},development:{id:`mech-lean-${S.year}`,label:'okrojony team',duration:2,growthMult:.86,skillGrowth:{setup:.78},teamBonus:-.5}}]]]
+   ]}
+  },
+  {
+   id:'injury_style',title:'Kontuzja wymusza zmianę stylu',minAge:18,maxAge:41,weight:1.1,cooldown:10,
+   eligible:()=>{const i=latestSeriousInjury();return !!i&&i.year>=S.year-1&&!ensureMajorCareerState().handledInjuries[`${i.year}:${i.name}`]},
+   chance:()=>{const i=latestSeriousInjury();return i?.severity==='bardzo ciężki'?.62:.42},
+   description:()=>{const i=latestSeriousInjury();return `Wracasz po rzeczywistym urazie: <b>${i?.name||'poważna kontuzja'}</b> (${i?.weeks||0} tyg. przerwy). Na motocyklu czujesz, że część dawnych odruchów nie działa dokładnie tak jak wcześniej.`},
+   choices:()=>[
+    ['Próbuję odzyskać dawny styl','47% → wraca dynamika • 53% → organizm nadal ogranicza jazdę',[
+     [47,{morale:4,major:{peakDelta:1,momentumDelta:1},development:{id:`inj-old-ok-${S.year}`,label:'udany powrót do dawnego stylu',phase:'recovery',duration:1,skillGrowth:{starts:1.18,fitness:1.08},declineProtection:.25}}],
+     [53,{skill:['fitness',-1],injuryRisk:3,major:{peakDelta:-2},development:{id:`inj-old-fail-${S.year}`,label:'trudny powrót po kontuzji',phase:'recovery',duration:2,growthMult:.62}}]
+    ]],
+    ['Przebudowuję technikę','Krótkoterminowo trudniej, ale możesz otworzyć nowy profil zawodnika',[
+     [68,{skill:['fitness',-1],major:{peakDelta:2,decisionDelta:2},development:{id:`inj-adapt-ok-${S.year}`,label:'udana przebudowa stylu po urazie',phase:'breakthrough',phaseDuration:1,duration:2,growthMult:1.05,skillGrowth:{technique:1.35,distance:1.22,setup:1.18},declineProtection:.4}}],
+     [32,{skill:['fitness',-1],morale:-3,major:{peakDelta:-1},development:{id:`inj-adapt-miss-${S.year}`,label:'przebudowa bez pełnego efektu',phase:'stagnation',duration:1,growthMult:.66}}]
+    ]],
+    ['Jadę bardziej zachowawczo','Najmniejsze ryzyko nawrotu, ale akceptujesz niższy sufit fizyczny',[[100,{injuryRisk:-4,major:{peakDelta:-1,decisionDelta:1},development:{id:`inj-safe-${S.year}`,label:'ostrożniejszy styl po urazie',duration:2,declineProtection:.55,fitnessGrowthMult:.82}}]]]
+   ]
+  },
+  {
+   id:'calendar_overload',title:'Kalendarz na granicy',minAge:18,maxAge:43,weight:1.25,cooldown:5,
+   eligible:()=>previousSeasonWorkload()>=88,
+   chance:()=>clamp(.18+(previousSeasonWorkload()-88)*.008,.18,.58),
+   description:()=>{const w=previousSeasonWorkload();return `Poprzedni sezon naprawdę był przeciążony: <b>${w} biegów ekspozycji</b> łącznie z najważniejszymi cyklami i ligą. Sztab ocenia obciążenie jako <b>${workloadLabel(w)}</b>.<br><br><b>Kondycja:</b> ${S.skills.fitness} • <b>regeneracja:</b> poziom ${facilityLevel('recovery')} • <b>ryzyko urazu:</b> ${Math.round(S.injuryRisk)}%.`},
+   choices:()=>{const w=previousSeasonWorkload(),team=developmentEventTeamQuality(),handle=Math.round(clamp(32+(S.skills.fitness-65)*.9+team*3-(w-100)*.35,25,72)),recovery=scaledCareerCost(45000,.045,.9);return [
+    ['Niczego nie odpuszczam',`${handle}% → organizm wytrzymuje • ${100-handle}% → przeciążenie zmienia trajektorię sezonu`,[
+     [handle,{morale:3,major:{peakDelta:1,momentumDelta:2},development:{id:`load-hold-${S.year}`,label:'udźwignięty kalendarz',duration:1,growthMult:1.06,formBonus:.5,fitnessGrowthMult:.76}}],
+     [100-handle,{morale:-5,injuryRisk:5,skill:['fitness',-1],major:{peakDelta:-3,momentumDelta:-2},development:{id:`load-burn-${S.year}`,label:'przeciążenie karierą',phase:'slump',duration:2,growthMult:.58,fitnessGrowthMult:.35,declineBias:.75,formBonus:-1}}]
+    ]],
+    ['Priorytet: regeneracja','Mniej bodźców rozwojowych, ale duża ochrona przed spiralą zmęczenia',[[100,{morale:3,injuryRisk:-4,major:{decisionDelta:2},development:{id:`load-reset-${S.year}`,label:'kontrolowana regeneracja',phase:'recovery',duration:1,growthMult:.82,declineProtection:.8,fitnessGrowthMult:.82}}]]],
+    [`Dokładam profesjonalną regenerację — ${money(recovery)}`,'Drogo, ale możesz utrzymać szeroki program przy mniejszym ryzyku',[
+     [78,{budget:-recovery,injuryRisk:-5,major:{peakDelta:1,decisionDelta:2},development:{id:`load-pro-${S.year}`,label:'profesjonalna regeneracja',duration:1,growthMult:1.02,declineProtection:.65,formBonus:.5,fitnessGrowthMult:.92}}],
+     [22,{budget:-recovery,injuryRisk:-2,development:{id:`load-pro-mid-${S.year}`,label:'regeneracja tylko częściowo pomaga',duration:1,growthMult:.88,declineProtection:.30}}]
+    ]]
+   ]}
+  },
+  {
+   id:'important_match_failure',title:'Mecz, którego nie możesz wyrzucić z głowy',minAge:17,maxAge:43,weight:1.05,cooldown:6,
+   eligible:()=>!!lastImportantFailure(),chance:()=>.46,
+   description:()=>{const m=lastImportantFailure();return `W poprzednim sezonie naprawdę rozegrałeś ważne spotkanie: <b>${m.stage}</b> przeciwko ${clubDisplayName(m.opponent)}. Drużyna przegrała ${m.teamScore}:${m.opponentScore}, a ty zdobyłeś <b>${m.points}${m.bonus?`+${m.bonus}`:''} pkt w ${m.rides} biegach</b>. Ten mecz wraca w analizach teamu.`},
+   choices:()=>{const mental=Math.round(clamp(48+(S.skills.mental-60)*.55+(S.professionalism-50)*.18,42,78));return [
+    ['Jak najszybciej wracam na tor',`${mental}% → porażka napędza odbicie • ${100-mental}% → presja zaczyna ciążyć`,[
+     [mental,{morale:5,major:{peakDelta:1,momentumDelta:2},development:{id:`match-rebound-${S.year}`,label:'odbicie po ważnej porażce',phase:'surge',duration:1,growthMult:1.10,formBonus:.7}}],
+     [100-mental,{morale:-5,skill:['mental',-1],major:{peakDelta:-2,momentumDelta:-3},development:{id:`match-crisis-${S.year}`,label:'kryzys po ważnym meczu',phase:'slump',duration:1,growthMult:.60,formBonus:-1}}]
+    ]],
+    ['Rozbieram mecz na czynniki pierwsze','Najlepiej działa przy wysokiej psychice i dobrym zapleczu analitycznym',[
+     [72,{skill:['mental',1],major:{peakDelta:1,decisionDelta:2},development:{id:`match-analysis-${S.year}`,label:'wnioski z ważnej porażki',duration:1,skillGrowth:{mental:1.20,setup:1.12,technique:1.10}}}],
+     [28,{morale:-1,development:{id:`match-overthink-${S.year}`,label:'zbyt długa analiza porażki',duration:1,growthMult:.90}}]
+    ]],
+    ['Zamykam temat','Najbezpieczniejszy reset psychiczny bez dużego upside',[[100,{morale:3,major:{decisionDelta:1},development:{id:`match-reset-${S.year}`,label:'psychiczny reset',duration:1,declineProtection:.2}}]]]
+   ]}
+  },
+  {
+   id:'lineup_rivalry',title:'Rywalizacja o miejsce w składzie',minAge:17,maxAge:35,weight:.95,cooldown:6,
+   eligible:()=>S.league!=='Etap szkolenia'&&S.chance>=18&&S.chance<=66&&(/rezerw|rotac|walka|rywal/i.test(S.role||'')||S.chance<52),
+   chance:()=>clamp(.10+(50-Math.abs(42-S.chance))*.0015,.08,.17),
+   description:()=>`Twoja pozycja w klubie jest naprawdę niepewna. <b>Prognoza jazdy: ${lineupChanceText(S.chance)}</b> • <b>rola: ${S.role}</b> • <b>relacja z klubem: ${Math.round(S.clubRelation)}</b>. Jeden z zawodników o podobnej pozycji walczy o te same biegi.`,
+   choices:()=>{const duel=Math.round(clamp(48+(overall()-clubRequiredOverall(S.club,S.league))*2+(S.skills.mental-60)*.25,35,78)),talk=Math.round(clamp(44+(S.reputation-30)*.32+(S.professionalism-50)*.28,38,82));return [
+    ['Wchodzę w ostrą rywalizację',`${duel}% → wygrywasz hierarchię • ${100-duel}% → presja obraca się przeciwko tobie`,[
+     [duel,{chance:14,morale:4,major:{peakDelta:1,momentumDelta:2},development:{id:`lineup-win-${S.year}`,label:'wygrana rywalizacja o skład',duration:1,growthMult:1.10,formBonus:.5}}],
+     [100-duel,{chance:-10,morale:-5,clubRelation:-5,major:{peakDelta:-2,momentumDelta:-2},development:{id:`lineup-loss-${S.year}`,label:'przegrana rywalizacja o skład',duration:1,growthMult:.72}}]
+    ]],
+    ['Buduję współpracę','Mniejszy skok w hierarchii, ale lepsza atmosfera i stabilniejszy rozwój',[[100,{chance:4,clubRelation:6,loyalty:3,major:{decisionDelta:2},development:{id:`lineup-team-${S.year}`,label:'zdrowa rywalizacja w zespole',duration:1,growthMult:1.03,skillGrowth:{mental:1.10}}}]]],
+    ['Rozmawiam z trenerem o swojej roli',`${talk}% → dostajesz jaśniejszą ścieżkę do składu • ${100-talk}% → hierarchia się nie zmienia`,[
+     [talk,{chance:9,clubRelation:3,professionalism:2,major:{decisionDelta:2}}],
+     [100-talk,{professionalism:1,morale:-1}]
+    ]]
+   ]}
+  },
+  {
+   id:'training_breakthrough',title:'Przełom treningowy',minAge:17,maxAge:34,weight:1.2,cooldown:6,
+   eligible:()=>recentOverallChange(2)<=1&&S.league!=='Etap szkolenia',
+   chance:()=>clamp(.11+(S.professionalism-50)*.0015+(S.season?.heats||0)/2200,.09,.20),
+   description:()=>{const vals=['starts','corner','distance','technique','setup'].map(k=>`${skillLabel(k)} ${S.skills[k]}`).join(' • ');return `Po okresie wolniejszego progresu sztab widzi konkretne rezerwy. To nie jest darmowy wzrost — wybierasz obszar, w którym spróbujesz przełamać plateau.<br><br><b>${vals}</b>.`},
+   choices:()=>breakthroughChoices1033()
+  },
+  {
+   id:'preparation_rebuild',title:'Całkowita przebudowa przygotowań',minAge:19,maxAge:36,weight:.9,cooldown:7,
+   eligible:()=>recentOverallChange(2)<=0||['stagnation','slump'].includes(careerPhaseState().type)||[22,25].includes(S.age),
+   chance:()=>.10,
+   description:()=>`Dotychczasowy model pracy przestał dawać wyraźny progres. <b>Zmiana OVR w ostatnich latach: ${recentOverallChange(2)>=0?'+':''}${recentOverallChange(2)}</b> • <b>kondycja: ${S.skills.fitness}</b> • <b>setup: ${S.skills.setup}</b>. Trener proponuje przebudowę całego programu na co najmniej jeden sezon.`,
+   choices:()=>[
+    ['Więcej jazdy na torze','Mocniej rozwijasz start, pierwszy łuk i technikę, ale rośnie obciążenie',[
+     [70,{injuryRisk:2,major:{peakDelta:2,decisionDelta:1},development:{id:`prep-track-${S.year}`,label:'torowy model przygotowań',duration:2,growthMult:1.06,skillGrowth:{starts:1.26,corner:1.24,technique:1.18},fitnessGrowthMult:.78}}],
+     [30,{injuryRisk:3,morale:-2,major:{peakDelta:-1},development:{id:`prep-track-over-${S.year}`,label:'przeciążenie treningiem torowym',duration:1,growthMult:.72}}]
+    ]],
+    ['Więcej przygotowania fizycznego','Lepsza odporność sezonowa kosztem wolniejszego rozwoju technicznego',[[100,{injuryRisk:-2,major:{decisionDelta:1},development:{id:`prep-fit-${S.year}`,label:'fizyczny model przygotowań',duration:2,growthMult:.98,skillGrowth:{fitness:1.24},declineProtection:.28}}]]],
+    ['Analiza, dane i telemetria','Największy efekt przy dobrym teamie i wysokim Setupie',[
+     [68,{skill:['setup',1],major:{peakDelta:2,decisionDelta:2},development:{id:`prep-data-${S.year}`,label:'analityczny model przygotowań',duration:2,growthMult:1.04,skillGrowth:{setup:1.30,technique:1.20,distance:1.10},teamBonus:.7}}],
+     [32,{major:{peakDelta:-1},development:{id:`prep-data-miss-${S.year}`,label:'analityka bez przełomu',duration:1,growthMult:.80}}]
+    ]],
+    ['Program zbilansowany','Najmniejsza wariancja i stabilne tempo rozwoju',[[100,{professionalism:2,major:{decisionDelta:1},development:{id:`prep-balanced-${S.year}`,label:'zbilansowane przygotowania',duration:2,growthMult:1.04,declineProtection:.18}}]]]
+   ]
+  },
+  {
+   id:'late_understanding',title:'Późne zrozumienie żużla',minAge:29,maxAge:35,weight:.75,cooldown:99,once:true,
+   eligible:()=>S.age>=29&&S.age<=35&&overall()<91&&recentOverallChange(2)<=1,
+   chance:()=>.075,
+   description:()=>`Nie jesteś już na etapie juniorskiego rozwoju, ale coraz częściej wygrywasz doświadczeniem. <b>Wiek: ${S.age}</b> • <b>Technika: ${S.skills.technique}</b> • <b>Setup: ${S.skills.setup}</b> • <b>Psychika: ${S.skills.mental}</b>. To może być moment na zupełnie inny sposób jazdy.`,
+   choices:()=>[
+    ['Buduję przewagę na doświadczeniu','72% → prawdziwa druga młodość • 28% → tylko niewielki impuls',[
+     [72,{skill:['mental',1],major:{peakDelta:3,potentialDelta:1,decisionDelta:2,momentumDelta:2},development:{id:`late-wind-${S.year}`,label:'druga młodość',phase:'secondWind',phaseDuration:2,duration:2,growthMult:1.08,skillGrowth:{mental:1.28,setup:1.26,technique:1.22},targetDelta:2,declineProtection:.8}}],
+     [28,{major:{peakDelta:1},development:{id:`late-small-${S.year}`,label:'późny impuls',phase:'surge',duration:1,growthMult:1.10,skillGrowth:{mental:1.12,setup:1.12},declineProtection:.3}}]
+    ]],
+    ['Próbuję odbudować dynamikę','Mniejsza szansa, ale potencjalnie wracają start i fizyczność',[
+     [48,{skill:['starts',1],major:{peakDelta:2},development:{id:`late-speed-${S.year}`,label:'późna odbudowa dynamiki',duration:2,skillGrowth:{starts:1.24,fitness:1.12},declineProtection:.35}}],
+     [52,{morale:-2,major:{peakDelta:-1},development:{id:`late-speed-miss-${S.year}`,label:'wiek ogranicza dynamikę',duration:1,growthMult:.82}}]
+    ]],
+    ['Nie zmieniam rutyny','Stabilność bez próby otwarcia nowego pułapu',[[100,{professionalism:2,development:{id:`late-routine-${S.year}`,label:'rutyna doświadczonego zawodnika',duration:1,growthMult:1.02}}]]]
+   ]
+  },
+  {
+   id:'sponsor_target',title:'Sponsor stawia konkretny cel',minAge:18,maxAge:42,weight:.9,cooldown:5,
+   eligible:()=>S.league!=='Etap szkolenia'&&S.reputation>=25&&(!ensureMajorCareerState().sponsorGoal||ensureMajorCareerState().sponsorGoal.status!=='active'),
+   chance:()=>clamp(.07+(S.reputation-25)*.0012,.07,.15),
+   description:()=>{const [safe,amb]=sponsorGoalOptions();return `Sponsor proponuje premię wyłącznie za mierzalny wynik. Pieniądze nie trafiają do budżetu teraz — rozliczenie nastąpi po sezonie.<br><br><b>Cel rozsądny:</b> ${safe.label} — ${money(safe.reward)}<br><b>Cel ambitny:</b> ${amb.label} — ${money(amb.reward)}.`},
+   choices:()=>{const [safe,amb]=sponsorGoalOptions();return [
+    [`Biorę cel: ${safe.label}`,`Premia ${money(safe.reward)} tylko po wykonaniu warunku`,[[100,{major:{sponsorGoal:safe,decisionDelta:1}}]]],
+    [`Biorę ambitny cel: ${amb.label}`,`Premia ${money(amb.reward)} tylko po wykonaniu warunku`,[[100,{major:{sponsorGoal:amb,decisionDelta:2}}]]],
+    ['Nie wiążę sezonu z dodatkowym targetem','Brak premii, ale też brak dodatkowej presji',[[100,{professionalism:1}]]]
+   ]}
+  },
+  {
+   id:'risky_return',title:'Powrót po ciężkim urazie przed ważnym sezonem',minAge:18,maxAge:41,weight:.8,cooldown:10,
+   eligible:()=>{const i=latestSeriousInjury(),majorCommitment=S.sgpQualifiedYear===S.year||S.secQualifiedYear===S.year||(leagueByName(S.league)?.level===1);return !!i&&i.year===S.year-1&&i.weeks>=8&&majorCommitment},
+   chance:()=>.28,
+   description:()=>{const i=latestSeriousInjury(),commit=S.sgpQualifiedYear===S.year?'SGP':S.secQualifiedYear===S.year?'SEC':'PGE Ekstraliga';return `Po urazie <b>${i?.name}</b> (${i?.weeks} tyg. przerwy) wchodzisz w sezon z dużą stawką sportową: <b>${commit}</b>. Sztab ostrzega, że agresywne przyspieszenie powrotu zwiększa ryzyko nawrotu.`},
+   choices:()=>[
+    ['Przyspieszam powrót','Możesz szybciej złapać rytm, ale ryzykujesz ponowne zatrzymanie kariery',[
+     [55,{morale:4,major:{peakDelta:1,momentumDelta:2},development:{id:`return-fast-ok-${S.year}`,label:'udany szybki powrót',phase:'surge',duration:1,growthMult:1.08}}],
+     [45,{injuryRisk:7,skill:['fitness',-1],morale:-4,major:{peakDelta:-3,potentialDelta:-1,momentumDelta:-3},development:{id:`return-fast-fail-${S.year}`,label:'nawrót problemów po urazie',phase:'recovery',duration:2,growthMult:.52,declineBias:.6}}]
+    ]],
+    ['Kończę rehabilitację bez skrótów','Tracisz część wczesnego rytmu, ale minimalizujesz ryzyko długofalowe',[[100,{injuryRisk:-5,major:{decisionDelta:2},development:{id:`return-full-${S.year}`,label:'pełna rehabilitacja',phase:'recovery',duration:1,growthMult:.86,declineProtection:.75}}]]]
+   ]
+  },
+  {
+   id:'phenomenal_season',title:'Sezon, w którym wszystko zaczyna działać',minAge:19,maxAge:34,weight:.55,cooldown:99,once:true,
+   eligible:()=>{const p=previousCareerSeason(),recent=latestSeriousInjury();return !!p&&p.average>=1.35&&S.morale>=62&&S.professionalism>=52&&(!recent||recent.year<S.year-1)},
+   chance:()=>clamp(.022+(S.morale-62)*.00045+(S.professionalism-52)*.00035,.02,.045),
+   description:()=>`Przygotowania układają się wyjątkowo dobrze. Czasy treningowe, czucie motocykla i regeneracja są najlepsze od dawna. To nadal tylko szansa — sposób wykorzystania okresu może zdecydować, czy będzie to chwilowa forma, czy trwały przełom.<br><br><b>Morale:</b> ${Math.round(S.morale)} • <b>profesjonalizm:</b> ${Math.round(S.professionalism)} • <b>OVR:</b> ${overall()}.`,
+   choices:()=>[
+    ['Maksymalnie wykorzystuję moment','70% → sezon staje się punktem zwrotnym • 30% → przepalasz przewagę przeciążeniem',[
+     [70,{morale:6,major:{peakDelta:4,potentialDelta:2,momentumDelta:4,decisionDelta:1},development:{id:`flow-all-${S.year}`,label:'fenomenalny okres kariery',phase:'breakthrough',phaseDuration:2,duration:2,growthMult:1.20,formBonus:1.5,skillGrowth:{starts:1.12,corner:1.12,distance:1.12,technique:1.12}}}],
+     [30,{morale:-4,injuryRisk:5,major:{peakDelta:-2,momentumDelta:-3},development:{id:`flow-burn-${S.year}`,label:'przepalony fenomenalny okres',phase:'slump',duration:1,growthMult:.62,fitnessGrowthMult:.45}}]
+    ]],
+    ['Chronię formę','Mniejszy upside, ale bardzo wysoka szansa utrzymania jakości przez cały sezon',[[100,{morale:4,major:{peakDelta:2,momentumDelta:2,decisionDelta:2},development:{id:`flow-protect-${S.year}`,label:'kontrolowany fenomenalny sezon',phase:'surge',duration:2,growthMult:1.10,formBonus:1,declineProtection:.35}}]]],
+    ['Wykorzystuję moment do eksperymentów technicznych','Ryzykujesz krótką destabilizację, ale możesz utrwalić techniczny skok',[
+     [58,{skill:['setup',1],major:{peakDelta:3,potentialDelta:1,momentumDelta:2},development:{id:`flow-tech-${S.year}`,label:'techniczny przełom w świetnym sezonie',phase:'breakthrough',duration:2,growthMult:1.12,skillGrowth:{setup:1.30,technique:1.24,distance:1.12}}}],
+     [42,{equipment:-1,morale:-2,development:{id:`flow-tech-miss-${S.year}`,label:'eksperyment zakłóca rytm',duration:1,growthMult:.82,formBonus:-.4}}]
+    ]]
+   ]
+  }
+ ];
+
+ // Po rozpatrzeniu kontuzjowego eventu oznacz konkretny uraz jako obsłużony.
+ function markInjuryHandledIfNeeded(event){
+  if(event.id!=='injury_style')return;const i=latestSeriousInjury();if(i)ensureMajorCareerState().handledInjuries[`${i.year}:${i.name}`]=true;
+ }
+
+ careerDevelopmentEvent=function(next){
+  const st=ensureMajorCareerState();
+  if(S.year<st.nextEventYear){next();return}
+  const eligible=MAJOR_CAREER_EVENTS_1033.filter(e=>{
+   const seen=st.seen[e.id]||0,last=st.lastById[e.id]||-999;
+   return S.age>=(e.minAge||15)&&S.age<=(e.maxAge||50)&&!(e.once&&seen>0)&&S.year-last>=(e.cooldown||5)&&e.eligible();
+  });
+  if(!eligible.length){st.nextEventYear=S.year+1;next();return}
+  const scored=eligible.map(e=>({e,p:clamp(Number(e.chance?.()||0),0,.70)})).filter(x=>x.p>0);
+  if(!scored.length){st.nextEventYear=S.year+1;next();return}
+  // Globalna bramka steruje częstotliwością dużych punktów zwrotnych.
+  // Indywidualne p nadal decyduje, który event ma największą szansę zostać wybrany.
+  // Docelowo daje to zwykle kilka dużych zdarzeń w pełnej karierze, ale bez gwarancji.
+  const maxP=Math.max(...scored.map(x=>x.p)),gate=clamp(.14+maxP*.72+Math.max(0,scored.length-1)*.024,.18,.56);
+  if(Math.random()>=gate){st.nextEventYear=S.year+1;next();return}
+  const total=scored.reduce((s,x)=>s+x.p*(x.e.weight||1),0);let roll=Math.random()*total,chosen=scored[0].e;
+  for(const x of scored){roll-=x.p*(x.e.weight||1);if(roll<=0){chosen=x.e;break}}
+  const choices=chosen.choices().map(choice=>{
+   const roulette=buildEventRoulette(eventPseudo1033(chosen),choice);
+   return {title:choice[0],desc:eventChoiceDescription(choice,roulette),eventProb:roulette,action:()=>{markInjuryHandledIfNeeded(chosen);resolveMajorChoice1033(chosen,choice,next)}};
+  });
+  showModal('DUŻE ZDARZENIE KARIERY',chosen.title,chosen.description(),choices);
+ };
+
+ // -------------------------------------------------------------------------
+ // 7. DROBNE KOREKTY MIGRACJI / STANU
+ // -------------------------------------------------------------------------
+ const baseClearSaves1033=clearCareerSavesAndReload;
+ clearCareerSavesAndReload=function(){localStorage.removeItem('pss_v1033');return baseClearSaves1033()};
+
+ if(S){
+  ensureMajorCareerState();
+  S.pss1033={version:VERSION,majorCareerEvents:true,secTop6:true,lineupModel:'unified'};
+  normalize();save();render();
+ }
 })();
