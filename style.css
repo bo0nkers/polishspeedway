@@ -1199,9 +1199,169 @@ button,.btn,.option,.choice-card{touch-action:manipulation;-webkit-tap-highlight
 #modalOptions{transition:opacity .22s ease}
 @media(max-width:700px){.history-year>summary{grid-template-columns:1fr;gap:4px}.history-year>summary em{text-align:left;white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}.history-year-extract{font-size:.72rem}}
 
-/* 1.03.4 — subtelne wskazanie kafelka aktualnie znajdującego się pod markerem */
+/* 1.03.4 — subtelne wskazanie aktualnego segmentu bez dodatkowego repaintu kafelków */
+.roller-strip span.roller-active-tile{filter:none;box-shadow:inset 0 0 0 1px rgba(255,255,255,.08);transition:none}
+.outcome-roller .roller-marker{
+  box-shadow:0 0 0 2px rgba(255,255,255,.24),0 0 0 13px rgba(255,255,255,.11),0 0 12px rgba(255,255,255,.35);
+}
+
+/* 1.03.4 — dodatkowe unikalne barwy dla ruletki z 5–6 wynikami */
+.event-warning{color:#a65c12}.event-blue{color:#2f6fa6}.event-extra4{color:#466d77}.event-extra5{color:#8755ea}
+.event-outcome-roller .event-tile-warning{background:#e08a2e!important}.event-outcome-roller .event-tile-blue{background:#3e83bd!important}
+.event-outcome-roller .event-tile-extra4{background:#527f8a!important}.event-outcome-roller .event-tile-extra5{background:#8755ea!important}
+.event-roll-warning{background:#fff0df;color:#9c5510}.event-roll-blue{background:#e7f1fa;color:#2d6797}.event-roll-extra4{background:#e7f0f2;color:#3f6872}.event-roll-extra5{background:#eee7ff;color:#6934dd}
+
+/* ========================================================================== */
+/* 1.04.0 — anonimowe obsady / kadry klubów / mobile-first                  */
+/* ========================================================================== */
+.field-preview-1040,
+.club-roster-preview-1040{
+  margin-top:16px;
+  border:1px solid rgba(17,75,69,.18);
+  border-radius:12px;
+  background:rgba(17,75,69,.035);
+  overflow:hidden;
+}
+.field-preview-1040>summary,
+.club-roster-preview-1040>summary,
+.field-band-1040>summary{
+  list-style:none;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+  min-height:48px;
+  padding:11px 14px;
+}
+.field-preview-1040>summary::-webkit-details-marker,
+.club-roster-preview-1040>summary::-webkit-details-marker,
+.field-band-1040>summary::-webkit-details-marker{display:none}
+.field-preview-1040>summary span,
+.club-roster-preview-1040>summary span{display:flex;flex-direction:column;gap:2px;min-width:0}
+.field-preview-1040>summary b,
+.club-roster-preview-1040>summary b{font-family:var(--font-display);font-size:14px;letter-spacing:.06em;color:#164f49}
+.field-preview-1040>summary small,
+.club-roster-preview-1040>summary small{font-size:12px;color:#6d7774;font-weight:600}
+.field-preview-1040>summary em,
+.club-roster-preview-1040>summary em{font-style:normal;font-size:12px;font-weight:800;color:#277c74;white-space:nowrap}
+.field-preview-groups-1040{padding:0 10px 10px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.field-band-1040{border:1px solid rgba(30,71,67,.14);border-radius:9px;background:#fff;overflow:hidden;min-width:0}
+.field-band-1040>summary{min-height:44px;padding:9px 11px;background:rgba(18,77,70,.045)}
+.field-band-1040>summary b{font-size:12px;letter-spacing:.03em;color:#1c4945}
+.field-band-1040>summary span{font-size:11px;color:#727b78;font-weight:700;text-align:right}
+.field-band-1040>div{padding:4px 10px 8px}
+.field-rider-1040{display:flex;align-items:flex-start;gap:7px;margin:0;padding:7px 0;border-bottom:1px solid rgba(34,67,63,.08);font-size:12px;line-height:1.3;min-width:0}
+.field-rider-1040:last-child{border-bottom:0}
+.field-rider-1040 strong{flex:0 0 auto;white-space:nowrap;color:#153f3b}
+.field-rider-1040 span{min-width:0;color:#68726f;overflow-wrap:anywhere}
+.field-rider-1040.is-player{background:rgba(27,137,117,.08);margin:2px -5px;padding:7px 5px;border-radius:6px;border-bottom:0}
+.field-rider-1040.is-player span,.field-rider-1040.is-player strong{color:#0e6c5f;font-weight:900}
+.club-roster-body-1040{padding:4px 12px 12px}
+.club-roster-row-1040{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:0;padding:7px 0;border-bottom:1px solid rgba(34,67,63,.08);font-size:12px}
+.club-roster-row-1040 span{min-width:0;overflow-wrap:anywhere}.club-roster-row-1040 strong{white-space:nowrap;color:#164f49}
+.club-roster-note-1040{margin:10px 0 0;font-size:11px;line-height:1.45;color:#6d7774}
+
+@media (max-width:700px){
+  .field-preview-groups-1040{grid-template-columns:1fr;padding:0 7px 7px;gap:6px}
+  .field-preview-1040,.club-roster-preview-1040{margin-top:12px;border-radius:9px}
+  .field-preview-1040>summary,.club-roster-preview-1040>summary{padding:10px 11px;min-height:46px;gap:8px}
+  .field-preview-1040>summary em,.club-roster-preview-1040>summary em{font-size:11px}
+  .field-band-1040>summary{padding:8px 9px;min-height:42px}
+  .field-band-1040>div{padding:2px 8px 6px}
+  .field-rider-1040{font-size:11.5px;padding:6px 0;gap:6px}
+  .club-roster-body-1040{padding:2px 10px 10px}.club-roster-row-1040{font-size:11.5px;padding:6px 0}
+}
+@media (max-width:420px){
+  .field-preview-1040>summary,.club-roster-preview-1040>summary{align-items:flex-start;flex-wrap:wrap}
+  .field-preview-1040>summary em,.club-roster-preview-1040>summary em{width:100%;text-align:left}
+  .field-rider-1040{display:grid;grid-template-columns:auto 1fr}.field-rider-1040 span{overflow-wrap:anywhere}
+}
+.field-preview-note-1040{
+  grid-column:1/-1;
+  margin:0;
+  padding:9px 11px;
+  border-radius:8px;
+  background:rgba(18,77,70,.055);
+  color:#68726f;
+  font-size:11px;
+  line-height:1.45;
+}
+@media (max-width:700px){.field-preview-note-1040{padding:8px 9px;font-size:10.8px}}
+
+
+/* ========================================================================== */
+/* 1.04.1 — stabilizacja UI                                                   */
+/* ========================================================================== */
+/* Podświetlany jest faktyczny segment przechodzący pod markerem. */
 .roller-strip span.roller-active-tile{
-  filter:brightness(1.13);
-  box-shadow:inset 0 0 0 1px rgba(255,255,255,.24);
-  transition:filter 70ms linear,box-shadow 70ms linear;
+  filter:brightness(1.13)!important;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.26)!important;
+  transition:filter 70ms linear,box-shadow 70ms linear!important;
+}
+.outcome-roller .roller-marker{
+  box-shadow:0 0 0 2px rgba(255,255,255,.24),0 0 12px rgba(255,255,255,.35)!important;
+}
+/* Zwarte karty ofert: kadra jest informacją pomocniczą, nie osobną dużą kartą. */
+.club-roster-preview-1040{margin-top:7px;border-radius:8px;background:rgba(17,75,69,.025)}
+.club-roster-preview-1040>summary{min-height:34px;padding:6px 9px;gap:8px}
+.club-roster-preview-1040>summary b{font-size:12px}
+.club-roster-preview-1040>summary small{font-size:10.5px;line-height:1.2}
+.club-roster-preview-1040>summary em{font-size:10.5px}
+.club-roster-body-1040{padding:2px 9px 8px}
+.club-roster-row-1040{padding:4px 0;font-size:11px}
+.club-roster-note-1040{margin:6px 0 0;font-size:10.3px;line-height:1.35}
+.modal-options .option:has(.club-roster-preview-1040){padding-top:11px;padding-bottom:10px}
+@media(max-width:700px){
+ .club-roster-preview-1040{margin-top:6px}
+ .club-roster-preview-1040>summary{min-height:32px;padding:6px 8px}
+ .club-roster-preview-1040>summary em{width:auto;text-align:right}
+ .club-roster-row-1040{padding:4px 0}
+}
+
+
+/* 1.04.1 QA II */
+.transfer-option-wrap-1041{border:1px solid #ccd4df;border-radius:7px;background:#fff;overflow:hidden}
+.transfer-option-wrap-1041>.option{border:0;border-radius:0;padding:11px 14px 8px;box-shadow:none!important}
+.transfer-option-wrap-1041>.option:hover{box-shadow:inset 4px 0 0 var(--cyan)!important}
+.transfer-option-wrap-1041>.club-roster-preview-1040{margin:0 10px 8px;border-radius:7px}
+.transfer-option-wrap-1041>.club-roster-preview-1040>summary{min-height:30px;padding:5px 8px}
+.transfer-option-wrap-1041>.club-roster-preview-1040>summary small{display:none}
+.field-controls-1041{grid-column:1/-1;display:flex;justify-content:flex-end;margin:0 0 2px}
+.field-expand-all-1041{border:0;background:transparent;color:#277c74;font-weight:800;font-size:11.5px;padding:6px 4px;cursor:pointer}
+.full-results-1041{margin-top:14px;border:1px solid rgba(34,67,63,.18);border-radius:8px;background:#fbfcfb;overflow:hidden}
+.full-results-1041>summary{list-style:none;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 12px;cursor:pointer;color:#164f49;min-height:42px}.full-results-1041>summary::-webkit-details-marker{display:none}.full-results-1041>summary span{font-size:11px;color:#727b78;font-weight:700}
+.full-results-list-1041{padding:0 10px 8px}.full-result-row-1041{display:grid;grid-template-columns:30px minmax(0,1fr) auto;gap:8px;align-items:center;min-height:35px;border-top:1px solid rgba(34,67,63,.08);font-size:12px}.full-result-row-1041.is-player{background:rgba(63,181,168,.09);font-weight:800}.full-result-rider-1041{min-width:0}.full-result-points-1041{white-space:nowrap;font-weight:800;color:#164f49}.full-result-points-1041 em{font-style:normal;color:#1d8b5e;margin-left:5px}
+@media(max-width:700px){.transfer-option-wrap-1041>.option{padding:10px 11px 7px}.transfer-option-wrap-1041>.club-roster-preview-1040{margin:0 7px 7px}.field-controls-1041{justify-content:flex-start}.field-expand-all-1041{min-height:38px}.full-result-row-1041{grid-template-columns:26px minmax(0,1fr) auto;font-size:11.5px;gap:6px}.full-result-points-1041{font-size:11px}}
+
+/* 1.04.1 hotfix — kontrolki obsady w jednym wierszu */
+.field-summary-actions-1041{display:flex!important;align-items:center;justify-content:flex-end;gap:12px;flex:0 0 auto;white-space:nowrap}
+.field-summary-actions-1041>em{width:auto!important;text-align:right!important}
+.field-summary-actions-1041 .field-expand-all-1041{border:0;background:transparent;color:#277c74;font-weight:800;font-size:12px;padding:4px 0;cursor:pointer;min-height:0}
+@media(max-width:700px){.field-summary-actions-1041{gap:9px;margin-left:auto}.field-summary-actions-1041 .field-expand-all-1041{font-size:11px;min-height:34px}}
+@media(max-width:420px){.field-preview-1040>summary{display:grid!important;grid-template-columns:minmax(0,1fr) auto;align-items:center!important}.field-summary-actions-1041{grid-column:1/-1;justify-content:flex-start;margin-left:0;flex-wrap:wrap}.field-summary-actions-1041>em{width:auto!important;text-align:left!important}}
+
+
+/* ========================================================================== */
+/* 1.04.2 — szybka ruletka i drobne QA                                        */
+/* ========================================================================== */
+.roller-line-1042{display:flex;align-items:center;gap:10px;margin:18px 0 10px;min-width:0}
+.roller-line-1042 .outcome-roller{flex:1;min-width:0;margin:0}
+.roller-skip-1042{flex:0 0 auto;border:1px solid rgba(31,78,72,.26);background:#fff;color:#1c665f;border-radius:7px;min-height:42px;padding:0 12px;font:800 12px/1 inherit;cursor:pointer}
+.roller-skip-1042:hover{background:rgba(47,168,111,.06)}
+.roller-skip-1042:disabled{opacity:.55;cursor:default}
+@media(max-width:520px){.roller-line-1042{gap:7px}.roller-skip-1042{min-height:40px;padding:0 9px;font-size:11px}}
+
+/* 1.04.2 hotfix — kontrolki obsady naprawdę w jednym wierszu */
+.field-preview-1040>summary>.field-summary-actions-1041{
+  display:flex!important;
+  flex-direction:row!important;
+  align-items:center!important;
+  justify-content:flex-end!important;
+  gap:12px!important;
+  width:auto!important;
+  white-space:nowrap;
+}
+@media(max-width:700px){
+  .field-preview-1040>summary>.field-summary-actions-1041{flex-direction:row!important;flex-wrap:wrap;gap:8px!important;justify-content:flex-start!important;}
 }

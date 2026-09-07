@@ -1,170 +1,533 @@
 # Polish Speedway Simulator
 
-## Wersja 1.03.4 — 6.09.2026
+## Wersja 1.04.2 — mocniejsze kadry ligowe, bezpieczny rozwój i szybsza ruletka
 
-Wersja 1.03.4 jest przede wszystkim aktualizacją **różnorodności karier**. Główny cel tej wersji to ograniczenie liniowego schematu rozwoju i zwiększenie szansy na kariery, które naprawdę mają własną historię: nagły juniorski wystrzał, okres stagnacji, odbudowę, późniejszy przełom albo zmarnowany wysoki talent.
+**Data buildu: 7.09.2026**
 
-Poziom startowy nadal ma znaczenie, ale ma określać **prawdopodobieństwo i trudność pierwszych lat**, a nie z góry ustalać wynik kariery. Z każdego profilu startowego istnieje rzadka, ale realna droga do światowej gwiazdy. Jednocześnie wysoki start nie gwarantuje SGP, medali ani mistrzostwa świata.
+1.04.2 jest aktualizacją balansującą system klubowy po testach 1.04.1. Najważniejsza zmiana dotyczy kadr ligowych: ich siła nie jest już pośrednio zaniżana przez status zawodnika gracza. PGE Ekstraliga została wyraźnie wzmocniona jako najlepsza liga świata, a Metalkas 2. Ekstraliga i KLŻ dostały osobne, nakładające się rozkłady poziomu.
 
-### Najważniejsze zmiany 1.03.4
+### 1. Siła kadr niezależna od statusu gracza
 
-#### 1. Większa fluktuacja rozwoju
+Generator kadry nie korzysta już z progu wejścia do składu przeznaczonego dla gracza. Status `junior / U24 / senior` wpływa na **szansę gracza na jazdę**, ale nie obniża OVR rywali w całej drużynie.
 
-Dodano ukryty **sezonowy puls rozwojowy**. Nie jest to bezpośredni bonus `+X OVR`. Puls wpływa na tempo wykorzystywania treningu, szanse naturalnych wzrostów, fazę kariery i chwilowe odchylenie od bazowej trajektorii.
+Orientacyjny model po zmianie:
 
-Największa wariancja występuje w wieku **15–21 lat**. Junior może trafić na:
+- top PGE: liderzy najczęściej w okolicach 87–92 OVR, mocny trzon 82–89;
+- dół PGE / beniaminek: lider zwykle 83–89, trzon około 78–85;
+- top Metalkas 2. Ekstraligi: lider zwykle 80–86, trzon 74–82;
+- dół Metalkas: lider najczęściej 76–82, trzon 69–78;
+- top KLŻ: liderzy około 72–80, trzon 64–74;
+- dół KLŻ: liderzy około 67–75, trzon 58–69.
 
-- stagnację;
-- normalny rozwój;
-- dobry okres;
-- mocny impuls;
-- rzadki przełom/breakout;
-- sportowy dołek.
+To nie są twarde limity. Ligi nadal się nakładają, więc czołowy zawodnik niższej ligi może być mocniejszy od części zawodników szczebel wyżej. Juniorzy mają znacznie szerszy rozrzut.
 
-Dzięki temu rozwój ma częściej wyglądać np. `49 → 50 → 53 → 58 → 62`, albo `57 → 58 → 58 → 56 → 60`, a rzadziej jak niemal identyczne `+0/+1` w każdym sezonie.
+Status finansowy klubu wpływa na poziom kadry: projekt `NOWY INWESTOR / PROJECT ALL-IN` realnie wzmacnia górną część składu, a kryzys budżetowy może ją osłabić. Spadkowicz zachowuje część sportowej bezwładności po zmianie ligi.
 
-Po 21. roku życia zmienność stopniowo maleje. Nadal możliwe są późne przełomy, druga młodość, odbudowa i regres, ale mają inne triggery i mniejszą częstotliwość niż w okresie juniorskim.
+### 2. Składy maksymalnie wykorzystują regulamin
 
-#### 2. Juniorski wystrzał
+Podstawowa piątka seniorska jest budowana sportowo: najpierw spełniane jest wymagane minimum polskich licencji oraz pozycja U24, a pozostałe otwarte miejsca częściej trafiają do szerszej puli zagranicznej. Dzięki temu klub nie tworzy bez potrzeby nadmiaru polskich seniorów, gdy regulamin pozwala wystawić mocniejszych obcokrajowców. Polski zawodnik nadal może być liderem — narodowość nie obniża jego OVR.
 
-Do dużych zdarzeń dodano **„Juniorski wystrzał — coś nagle kliknęło”**. Może wystąpić między 16. a 21. rokiem życia, jeśli zawodnik rzeczywiście ma za sobą starty i nie jest świeżo po ciężkim urazie.
+Szeroka kadra może zawierać dodatkowych Polaków, juniorów i rezerwowych, ale meczowy trzon ma wykorzystywać przepisy możliwie efektywnie.
 
-Gracz wybiera sposób wykorzystania okresu:
+### 3. Punkty rozwoju nie znikają na limicie
 
-- mocniej idzie w pracę torową;
-- buduje fundamenty razem z klubem;
-- zachowuje dotychczasowy plan i obserwuje rozwój.
+Naprawiono przypadek, w którym np. Kondycja 95 przy aktualnym progu 94 pozwalała zapłacić PR za próbę wejścia na 96, po czym system przywracał 95.
 
-Dobry przebieg może na 1–2 sezony bardzo mocno przyspieszyć rozwój oraz lekko otworzyć miękki pułap kariery. Nie jest to gwarantowany skok OVR.
+Od 1.04.2 koszt jest pobierany wyłącznie wtedy, gdy wzrost może zostać faktycznie zapisany. Po osiągnięciu aktualnego twardego limitu przycisk rozwoju jest blokowany i pokazuje `LIMIT`. Jeśli pułap rozwoju później wzrośnie, możliwość dalszego rozwoju wraca.
 
-#### 3. Pierwsze lata mają największe znaczenie
+### 4. „Pomiń” przy ruletce
 
-Do 21. roku życia klub mocniej uczestniczy w rozwoju i finansowaniu podstawowego zaplecza. Junior nie powinien przegrywać całej kariery wyłącznie dlatego, że na starcie ma mały budżet.
+Każda animowana ruletka ma teraz przycisk `Pomiń`. Wynik jest ustalany dokładnie tak samo jak wcześniej — przycisk nie losuje ponownie i nie zmienia prawdopodobieństw. Jedynie natychmiast kończy animację na już wybranym wyniku.
 
-Klub pokrywa większą część standardowych kosztów, a własne pieniądze zawodnika służą przede wszystkim do rzeczy ponadstandardowych: dodatkowego silnika, tunera, prywatnego treningu, rozbudowanego teamu czy regeneracji.
+Poprzednie podświetlanie aktywnego kafelka pozostaje bez zmian.
 
-Jeżeli junior bardzo wcześnie staje się zawodnikiem wysokiego poziomu, może wejść w **pełny profesjonalizm** jeszcze przed 22. rokiem życia. Wtedy klub przestaje chronić go finansowo tak mocno, bo zawodnik funkcjonuje już jak profesjonalista z własnym zapleczem.
+### 5. Zapis gry
 
-#### 4. Lekko wyższe limity umiejętności
+Aktualny klucz zapisu: `pss_v1042`. Gra automatycznie przejmuje zapis z 1.04.1 i wcześniejszych obsługiwanych wersji. Przy migracji do 1.04.2 stare, zaniżone cache kadr klubowych są czyszczone i generowane ponownie według nowego modelu.
 
-Miękkie limity poszczególnych umiejętności zostały podniesione niewielką wartością. Celem nie jest łatwiejsze nabijanie 90+ OVR, lecz usunięcie sytuacji, w których rozsądny trening zbyt wcześnie nie ma już gdzie prowadzić.
+### 6. Hotfix 1.04.2 — SEC i poprawki po testach
 
-W wieku juniorskim udany przełom może chwilowo otworzyć jeszcze odrobinę dodatkowej przestrzeni.
+Numer wersji pozostaje **1.04.2**. W poprawce wdrożeniowej dopięto:
 
-#### 5. Rynek dla słabego juniora
-
-Dla zawodników do 21 lat z niskim OVR rynek działa teraz bardziej selektywnie:
-
-- pojawia się **mniej ofert**;
-- pierwszeństwo mają słabsze kluby i KLŻ;
-- oferty są sortowane mocniej pod realną szansę jazdy;
-- niski OVR nie powinien oznaczać listy kilku klubów, z których każdy proponuje prawie wyłącznie ławkę.
-
-To nie jest gwarancja jazdy. Chodzi o to, aby realistyczny klub zainteresowany słabym juniorem rzeczywiście widział dla niego możliwą ścieżkę rozwoju.
-
-#### 6. Prognoza jazdy i liczba biegów juniora
-
-Prognoza procentowa nadal oznacza przede wszystkim **szansę wejścia do składu na dany mecz**. Po wejściu do składu liczbę biegów wyznacza rola.
-
-Orientacyjnie:
-
-- rezerwa — około 1–2,5 biegu;
-- walka o skład / rywalizacja juniorska — około 2–3;
-- rotacja juniorska — około 3;
-- regularna jazda – junior — zwykle około 3–4;
-- podstawowy junior — około 3,5–4,5.
-
-Etykiety ról są również lepiej dopasowane do faktycznej prognozy.
-
-#### 7. Schodki średniej biegopunktowej
-
-Doprecyzowano ważną zasadę: schodki wieku dotyczą przede wszystkim **średniej biegopunktowej, a nie OVR**.
-
-- pierwszy sezon w wieku **22 lat** — zawodnik nie ma już biegów juniorskich, więc przy niedostatecznym poziomie może zaliczyć wyraźny spadek średniej;
-- pierwszy sezon w wieku **25 lat** — koniec U24 tworzy drugi, mniejszy schodek;
-- awans do mocniejszej ligi nadal może obniżyć średnią mimo rosnącego OVR;
-- zejście do słabszej ligi może dać naturalne odbicie wyniku.
-
-Bardzo mocni zawodnicy są na te dwa schodki mniej podatni.
-
-#### 8. Duże zdarzenia kariery
-
-W 1.03.4 pozostają wszystkie duże zdarzenia z 1.03.3, a ich kadencja została lekko zwiększona, aby pełna 20-letnia kariera nie była pozbawiona punktów zwrotnych. Każde zdarzenie zachowuje jednak własne prawdopodobieństwo — bardzo rzadki „fenomenalny sezon” nie staje się częsty tylko dlatego, że w danym roku kwalifikuje się do puli. Nadal obowiązuje zasada:
-
-**faktyczny trigger → informacje → decyzja → częściowa losowość → długofalowa konsekwencja**.
-
-Aktualna pula obejmuje 13 głównych zdarzeń:
-
-1. nowy silnik / eksperymentalny pakiet;
-2. odejście kluczowego mechanika;
-3. zmiana stylu po realnej kontuzji;
-4. przeciążony kalendarz;
-5. porażka w ważnym, faktycznie rozegranym momencie;
-6. konflikt / rywalizacja o miejsce w składzie;
-7. przełom treningowy;
-8. całkowita przebudowa przygotowań;
-9. późne zrozumienie żużla / druga młodość;
-10. sponsor z mierzalnym celem;
-11. ryzykowny powrót po realnym ciężkim urazie;
-12. bardzo rzadki fenomenalny sezon;
-13. juniorski wystrzał.
-
-Eventy nadal nie mogą tworzyć faktów znikąd. Kontuzjowy event wymaga prawdziwego urazu, przeciążenie wymaga prawdziwego workloadu, a kryzys po meczu wymaga realnego ważnego spotkania.
-
-#### 9. Ruletka — czytelniejszy segment końcowy
-
-Aktualny kafelek znajdujący się pod wskaźnikiem jest podczas animacji delikatnie rozjaśniany o około **13%**. Po zatrzymaniu rozjaśnienie pozostaje na polu końcowym.
-
-Dodatkowo ruletka nie oznacza już jednoznacznie zielonym kolorem gałęzi, która zawiera sportowy debuff, np. spadek tempa rozwoju, umiejętności, sprzętu lub wzrost ryzyka urazu.
-
-Naprawiono również dwa zgłoszone przypadki:
-
-- „Oszczędzaj siły, dopracuj sprzęt” — udany wynik nie obniża już tempa rozwoju (`×1,01` zamiast `×0,98`);
-- „Nie komentować” po rzuceniu kaskiem — zielona gałąź oznacza teraz wygaśnięcie tematu, a postępowanie komisji pozostaje negatywnym wynikiem.
-
-#### 10. Nazwy klubów na rynku
-
-Naprawiono sytuację, w której automatyczna odmiana polskich miejscowości ingerowała w nazwę własną klubu, np. tworząc `Bazarek Rymanów Ostrowie Wielkopolskim`. Na rynku nazwa własna pozostaje w mianowniku: `Bazarek Rymanów Ostrów Wielkopolski`.
-
-### Zapis gry
-
-Aktualny klucz zapisu:
-
-`pss_v1034`
-
-Gra automatycznie migruje zapis z `pss_v1033` oraz wcześniejszych obsługiwanych wersji. Nowe kariery korzystają z pełnego modelu fluktuacji 1.03.4. Istniejące kariery zachowują dotychczasową historię i DNA, ale od kolejnego sezonu mogą korzystać z nowego pulsu rozwojowego, poprawek rynku i dużych zdarzeń.
-
-### Uruchomienie
-
-Gra nie wymaga instalacji ani serwera. Otwórz `index.html` w nowoczesnej przeglądarce. Dane kariery są przechowywane lokalnie w `localStorage`.
+- poprawne przenoszenie TOP 6 SEC na kolejny sezon również przy cyklu prowadzonym runda po rundzie i przy pełnej symulacji;
+- przy równoległej jeździe w SGP zawodnik z bezpośrednim miejscem w SEC wybiera wyłącznie, czy chce połączyć oba cykle; nie trafia ponownie do eliminacji;
+- zawodnik bez bezpośredniego miejsca może przejść przez eliminacje SEC albo zrezygnować z kwalifikacji i liczyć na jedną z trzech stałych dzikich kart;
+- eliminacje SEC i SEC Challenge dają standardowy wybór: rozegrać własne pięć biegów albo zasymulować turniej;
+- nagłówek kwalifikacji został uproszczony do `Eliminacje SEC`, bez numerowania `Turniej 1/4`;
+- naprawiono przycisk `Pomiń` przy ruletce: natychmiast przechodzi do wcześniej ustalonego wyniku bez ponownego losowania;
+- dodano transakcyjne zabezpieczenie PR — jeżeli wzrost cechy nie zostanie faktycznie zapisany, punkty rozwoju nie są tracone;
+- ponownie czyszczony jest cache starych, zaniżonych kadr klubowych, aby save korzystał z aktualnego modelu siły lig;
+- `Rozwiń wszystkie` i `Pokaż siłę stawki` są utrzymywane w jednym wierszu, o ile pozwala na to szerokość ekranu.
 
 ---
 
-# Historia wersji
+## Wersja 1.04.1 — stabilizacja 1.04.0, spójniejsze obsady i sezon ligowy
 
-Poniższa historia obejmuje kolejne wydania od 1.00 do 1.03.4. Dla najstarszych wersji 1.00–1.01 część opisu została zrekonstruowana z kodu i zachowanych informacji projektowych.
+**Data buildu: 7.09.2026**
 
-## 1.03.4 — 6.09.2026
+1.04.1 jest aktualizacją stabilizującą dużą przebudowę z 1.04.0. Nie dodaje kolejnej warstwy przypadkowych systemów — porządkuje te elementy, które po pierwszych testach wymagały dopracowania: ciągłość obsad między sezonami, faktyczną liczbę meczów klubu, prognozę jazdy, obsady IMP, ruletkę, DMPJ, urazy oraz semantykę „wyjątkowego sukcesu” w interaktywnych biegach.
 
-- mocno zwiększono wariancję rozwoju, przede wszystkim w wieku 15–21 lat;
-- dodano ukryty sezonowy „puls rozwojowy”, który może tworzyć okresy stagnacji, zwykłego wzrostu, mocnego impulsu i rzadkiego breakoutu;
-- dodatnie i ujemne okresy rozwojowe mają większą bezwładność, dzięki czemu kariery częściej przebiegają falami zamiast schematem +0/+1 OVR rocznie;
-- dodano duże zdarzenie **„Juniorski wystrzał — coś nagle kliknęło”**;
-- duże zdarzenia kariery mają nieco wyższą kadencję w długich zapisach, ale każde zachowuje własną rzadkość, cooldown i realny trigger;
-- lekko podniesiono miękkie limity umiejętności; przełom juniorski może na krótko otworzyć dodatkową przestrzeń rozwoju;
-- w okresie juniorskim klub pokrywa większą część podstawowych kosztów i zapewnia bazowy bodziec szkoleniowy; własny budżet służy przede wszystkim do przewagi premium;
-- bardzo mocny junior może wcześniej wejść w model pełnego profesjonalizmu i przejąć większą część kosztów własnego teamu;
-- przy niskim OVR rynek daje mniej ofert, ale mocniej preferuje kluby KLŻ z realną szansą jazdy i rozwoju;
-- role juniorskie zostały lepiej powiązane z prognozą jazdy; „regularna jazda” oznacza po wejściu do składu zwykle około 3–4 biegów;
-- prognoza jazdy nadal odpowiada przede wszystkim za prawdopodobieństwo obecności w składzie;
-- dodano naturalny schodek **średniej biegopunktowej** w pierwszym sezonie po utracie statusu juniora (22 lata) i U24 (25 lat); OVR może w tym czasie nadal rosnąć;
-- pozostawiono osobne schodki średniej przy zmianach poziomu ligi;
-- poprawiono semantykę ruletki: zielony segment nie może oznaczać ukrytego sportowego debuffa;
-- naprawiono zdarzenie „Oszczędzaj siły, dopracuj sprzęt” — sukces nie obniża już tempa rozwoju;
-- naprawiono „Nie komentować” po rzuceniu kaskiem — pozytywna gałąź oznacza wygaśnięcie tematu, a nie karę morale;
-- aktywny kafelek ruletki jest delikatnie rozjaśniany podczas ruchu i po zatrzymaniu;
-- poprawiono wyświetlanie nazw własnych klubów na rynku transferowym, aby globalna odmiana miejscowości nie zmieniała np. „Ostrów Wielkopolski” na „Ostrowie Wielkopolskim” wewnątrz nazwy klubu;
-- zapis przeniesiono na `pss_v1034` z automatyczną migracją z 1.03.3 i wcześniejszych wspieranych wersji.
+Najważniejsza zasada pozostaje bez zmian: **świat gry ma być względnie stabilny i przyczynowo spójny, ale kariery — zarówno gracza, jak i anonimowych rywali — mają się rozwijać, zatrzymywać, eksplodować i wygasać w różnym tempie.**
+
+### 1. Ciągłość obsad i rozwój rywali
+
+Anonimowi rywale nie są już jednorazową pulą losowaną od początku przy każdym turnieju. Każdy NPC otrzymuje trwałe wewnętrzne ID oraz własny profil:
+
+- narodowość;
+- wiek;
+- aktualny OVR;
+- ukryty potencjał / miękki pułap rozwoju;
+- sezonową formę;
+- indywidualne tempo rozwoju i odporność;
+- status juniora/seniora;
+- historię udziału w najważniejszych cyklach i kwalifikacjach;
+- najważniejsze anonimowe osiągnięcia używane do opisów stawki.
+
+Co sezon świat jest aktualizowany. Juniorzy rozwijają się najbardziej nierówno i mogą zaliczać breakouty lub stagnacje; starsi zawodnicy wchodzą w plateau, regres, sporadyczną drugą młodość i ostatecznie kończą kariery. Co roku do puli dochodzi nowa fala zawodników po licencji.
+
+Ten sam anonimowy zawodnik może więc pojawić się jako `🇩🇰 DEN — wyróżniający się talent`, rok później zakwalifikować się do SGP2, po wyjściu z wieku juniora trafić do eliminacji SEC, a kilka lat później znaleźć się w otoczeniu SGP. **W interfejsie nadal nigdy nie pojawiają się nazwiska NPC.**
+
+Dodatkowo zawodnik nie może w tym samym sezonie wystąpić równolegle w kilku różnych rundach kwalifikacyjnych tego samego szczebla. Pule kwalifikacji zachowują ciągłość i rozłączność, a Challenge korzysta z zawodników, którzy faktycznie przeszli wcześniejszy etap.
+
+### 2. Faktyczna liczba meczów klubu zamiast przybliżenia
+
+Prognoza jazdy pozostaje procentową oceną sytuacji **przed sezonem**, a nie twardym limitem występów. Od 1.04.1 faktyczna liczba możliwych meczów gracza jest korygowana po rozstrzygnięciu sezonu klubowego.
+
+Model uwzględnia:
+
+- 14 spotkań rundy zasadniczej w ośmiozespołowej lidze;
+- rzeczywiście osiągnięty etap play-off;
+- rzeczywiście osiągnięty etap play-down;
+- finał i — w PGE Ekstralidze — dwumecz o 3. miejsce;
+- dwumecz o utrzymanie;
+- baraż PGE Ekstraliga / Metalkas 2. Ekstraliga, jeśli klub faktycznie jest jego uczestnikiem;
+- krótszą ścieżkę klubów odpadających wcześniej.
+
+Przykładowo klub może zakończyć sezon na 14, 16, 18 albo 20 meczach — zależnie od poziomu ligi i faktycznej ścieżki w fazie finałowej.
+
+### 3. Prognoza jazdy liczona mecz po meczu
+
+Pokazywane w kontrakcie np. `30%`, `55%` czy `90%` jest bazową szansą wejścia do składu na pojedyncze spotkanie. System zachowuje tę samą wygenerowaną sytuację kadrową przez cały sezon zamiast ponownie losować ją przy każdym przeliczeniu.
+
+W trakcie roku sytuację mogą zmienić m.in.:
+
+- kontuzja bezpośredniego konkurenta;
+- wykorzystanie otwartej szansy i przesunięcie w hierarchii;
+- forma zawodnika;
+- spadek pozycji w składzie;
+- dłuższy sezon wynikający z play-off/play-down/barażu.
+
+Dzięki temu 30% zazwyczaj oznacza mało jazdy, ale po kontuzji konkurenta może zamienić się w długą serię startów. Analogicznie wysoka prognoza nie jest gwarancją pełnego sezonu.
+
+### 4. Obsady IMP i IMP Challenge
+
+Komponent `Pokaż obsadę` został rozszerzony również na:
+
+- eliminacyjne turnieje IMP;
+- IMP Challenge.
+
+Polska stawka korzysta z tej samej rozwijającej się puli rywali co eliminacje SGP, SEC i SGP2. Rywale pozostają anonimowi, ale ich ukryty OVR, wiek i profil są konkretne i powtarzalne.
+
+### 5. Ruletka — powrót do podświetlania faktycznego kafelka
+
+Wycofano rozwiązanie z jasnym polem/poświatą sprawiającą wrażenie elementu jadącego razem z paskiem. Przywrócono wcześniejszy model:
+
+- kafelek aktualnie przechodzący pod markerem rozjaśnia się o ok. 13%;
+- wyróżnienie przeskakuje z segmentu na segment;
+- po zatrzymaniu zwycięski segment pozostaje wyróżniony;
+- mechanika hamowania i czas animacji pozostają bez zmian.
+
+Nadal obowiązuje zasada 1.04.0: **każdy różny rezultat jednej ruletki ma własny, unikalny kolor**.
+
+### 6. Rynek transferowy — bardziej kompaktowa kadra
+
+Blok `KADRA KLUBU` w ofertach został zmniejszony pionowo:
+
+- mniejsze marginesy i padding;
+- niższy nagłówek zwijanej kadry;
+- ciaśniejsze wiersze zawodników;
+- zachowane flagi, role i dokładny OVR;
+- poprawiony układ mobilny.
+
+Usunięto również samotną kropkę pojawiającą się wcześniej pod rozwijanym blokiem kadry.
+
+### 7. DMPJ — indywidualne biegi i średnia w podsumowaniu
+
+W sezonowych podsumowaniach DMPJ nie jest już sprowadzane do surowej sumy punktów typu `89 pkt.`. Najważniejsza informacja indywidualna to teraz:
+
+`liczba biegów • średnia biegopunktowa • osiągnięty etap drużyny`
+
+Np. `34 biegi • średnia 2,059 • ćwierćfinały`.
+
+Pełny model DMPJ z 1.04.0 pozostaje wieloetapowy: eliminacje → ćwierćfinały → półfinały → cztery turnieje finałowe.
+
+### 8. Zdrowie — czytelniejsze powtarzające się urazy
+
+Jeżeli w jednym sezonie wystąpią dwa urazy tego samego rodzaju, podsumowanie nie wyświetla już bezkontekstowo `stłuczenie barku, stłuczenie barku`.
+
+Przykład:
+
+`stłuczenie barku ×2 (bez przerwy + 1 tyg.)`
+
+Każdy odnotowany uraz pokazuje teraz informację o pauzie — również wtedy, gdy zawodnik nie opuścił startów (`bez przerwy`). Generator dodatkowo stara się nie losować dokładnie tego samego urazu ponownie w bardzo krótkim odstępie, jeśli dostępne są logiczne alternatywy.
+
+### 9. „Wyjątkowy sukces” w interaktywnych biegach
+
+Naprawiono sprzeczność, w której ruletka mogła pokazać `WYJĄTKOWY SUKCES`, a opis informował, że zamiaru nie udało się wykonać.
+
+Od 1.04.1:
+
+- **niepowodzenie** — zamiar może nie dojść do skutku;
+- **sukces** — wybrana intencja zostaje zrealizowana;
+- **wyjątkowy sukces** — intencja zostaje zrealizowana i, jeśli sytuacja torowa na to pozwala, pojawia się dodatkowy korzystny efekt.
+
+Jeżeli dodatkowy awans jest fizycznie niemożliwy, wyjątkowy sukces nadal gwarantuje prawidłową realizację podstawowego zamiaru.
+
+### 10. Kolejne poprawki QA w tym samym buildzie 1.04.1
+
+Do 1.04.1 scalono także poprawki wynikające z dalszych testów:
+
+- `Pokaż kadrę` jest niezależnym elementem od wyboru klubu, więc rozwinięcie kadry nie podpisuje kontraktu; sam ekran ofert jest bardziej zwarty.
+- W podglądzie stawki zawodnik gracza jest zawsze uwzględniony, a po otwarciu `Pokaż siłę stawki` można użyć `Rozwiń wszystkie / Zwiń wszystkie`.
+- Krajowe zawody korzystają z opisów pasujących do krajowego kontekstu. Z interfejsu usunięto techniczne komentarze o sposobie działania systemu rywali.
+- Po zakończeniu turnieju dostępne są `Pełne wyniki`, oparte na dokładnie tym samym zapisie, który rozstrzyga awans, historię i premie — bez ponownego losowania. Wielorundowe cykle korzystają analogicznie z jednej końcowej klasyfikacji.
+- Przy awansie z SEC Challenge celebracja pojawia się przed szerszym komunikatem.
+- W trybie przechodzenia przez cykl runda po rundzie zasymulowanie ostatniej rundy zachowuje płynne odsłonięcie jej wyniku i zmiany w generalce przed podsumowaniem. Nie dotyczy to opcji symulacji całego cyklu naraz.
+- Liczba możliwych meczów ligowych jest wyprowadzana z faktycznie rozegranych dwumeczów play-off/play-down oraz barażu, jeżeli klub jest jego uczestnikiem; procent jazdy pozostaje bazową szansą na pojedynczy mecz.
+
+### 11. Zapis gry i migracja
+
+Aktualny klucz zapisu 1.04.1:
+
+`pss_v1041`
+
+Gra automatycznie próbuje przejąć zapis z `pss_v1040` oraz wcześniejszych obsługiwanych wersji. Przy pierwszym uruchomieniu starego zapisu budowana jest pula rywali używana przez obsady 1.04.1. Do benchmarków rozwoju i równoległego świata nadal rekomendowana jest nowa kariera.
+
+---
+
+## Wersja 1.04.0 — świat zawodników, realne obsady i większa różnorodność karier
+
+**Data buildu: 7.09.2026**
+
+1.04.0 to duża aktualizacja systemowa. Jej głównym celem jest odejście od kariery rozgrywanej przeciw abstrakcyjnym progom OVR. Kluby, rynek transferowy, reprezentacja oraz najważniejsze turnieje korzystają teraz z anonimowych zawodników NPC posiadających własny ukryty poziom sportowy, narodowość, wiek i status. Gra nadal nie używa nazwisk realnych ani fikcyjnych rywali.
+
+Najważniejsze założenie pozostaje bez zmian: **poziom startowy daje przewagę lub utrudnienie, ale nie determinuje końca kariery**. Szczególnie w wieku 15–21 lat rozwój ma mieć dużo większą wariancję: możliwe są stagnacje, breakouty, nietypowo szybki progres, słabsze okresy i kariery, które niespodziewanie zmieniają trajektorię.
+
+### 1. Anonimowy świat zawodników NPC
+
+Każdy zawodnik używany w nowych obsadach ma w tle konkretny OVR, narodowość i wiek. W interfejsie **nie pojawiają się nazwiska**.
+
+W turniejach rywale są przedstawiani jako flaga + kod kraju + krótki kontekst sportowy, np.:
+
+- `🇩🇰 DEN — uczestnik SGP`;
+- `🇵🇱 POL — mistrz kraju`;
+- `🇨🇿 CZE — solidny zawodnik międzynarodowy`;
+- `🇬🇧 GBR — doświadczony reprezentant`;
+- `🇫🇷 FRA — debiutant w eliminacjach`;
+- `🇮🇹 ITA — lokalna dzika karta`.
+
+Opisy są dobierane zgodnie z poziomem i rolą zawodnika. Nie pokazujemy dokładnego OVR pojedynczego rywala w turnieju.
+
+### 2. Pięć grup siły stawki
+
+Obsady najważniejszych zawodów można rozwinąć przed startem. Zawodnicy są pogrupowani według przybliżonego poziomu.
+
+#### Seniorzy
+
+- **ELITA — OVR 88+**;
+- **WYSOKI POZIOM — OVR 82–87**;
+- **SOLIDNY MIĘDZYNARODOWY — OVR 76–81**;
+- **ŚREDNI POZIOM — OVR 70–75**;
+- **OUTSIDERZY — OVR <70**.
+
+#### SGP2 / juniorzy
+
+Skala juniorska jest celowo niższa i dopasowana do realnych możliwości rozwoju w grze:
+
+- **ELITA — OVR 78+**;
+- **WYSOKI POZIOM — OVR 72–77**;
+- **SOLIDNY MIĘDZYNARODOWY — OVR 66–71**;
+- **ŚREDNI POZIOM — OVR 60–65**;
+- **OUTSIDERZY — OVR <60**.
+
+Junior 85+ jest bardzo mocny, a 90+ ma być ekstremalnie rzadkim fenomenem, ale pozostaje możliwy także dla zawodnika gracza przy wyjątkowej ścieżce rozwoju.
+
+### 3. Obsady są częścią symulacji, a nie dekoracją
+
+Eliminacje nie są generowane jako jednolite grupy rywali o podobnym OVR. Jedna runda może być bardzo mocna, druga wyraźnie korzystniejsza. OVR nadal ma duże znaczenie, ale jednodniowy turniej zachowuje losowość formy i możliwość sensacji.
+
+Od 1.04.0 pule Challenge są budowane z anonimowych kwalifikantów z poprzednich rund, a nie z osobnego, niezależnego generatora:
+
+- eliminacje SGP → kwalifikanci → Grand Prix Challenge;
+- eliminacje SEC → kwalifikanci → SEC Challenge;
+- eliminacje SGP2 → kwalifikanci → cykl SGP2.
+
+### 4. Grand Prix — pełna ścieżka kwalifikacyjna
+
+Dla polskiego zawodnika sama wartość OVR nie daje automatycznie miejsca w światowych eliminacjach.
+
+Krajowa nominacja uwzględnia przede wszystkim:
+
+- wynik Złotego Kasku;
+- aktualną średnią i formę;
+- poziom ligi;
+- reputację;
+- ograniczoną uznaniowość PZM.
+
+Po nominacji zawodnik trafia do jednej z trzech anonimowych światowych eliminacji. Model 1.04.0 zakłada **TOP 5 z każdej eliminacji**, a pozostałe miejsce w 16-osobowym Grand Prix Challenge może przypaść gospodarzowi. **TOP 4 Grand Prix Challenge awansuje do SGP następnego sezonu.**
+
+SGP ma zdecydowanie najwyższą koncentrację elity, ale incydentalnie może trafić tam słabszy zawodnik po wyjątkowych kwalifikacjach lub dzięki odpowiedniej ścieżce wildcard.
+
+### 5. SEC — widoczne eliminacje i poprawna stała piętnastka
+
+Ścieżka SEC została przebudowana tak, aby każdy etap był widoczny dla gracza.
+
+- w sezonie występują **3 albo 4 turnieje eliminacyjne**;
+- przy 3 eliminacjach: **TOP 5 z każdej** + miejsce gospodarza tworzy 16-osobowy SEC Challenge;
+- przy 4 eliminacjach: **TOP 4 z każdej** tworzy 16-osobowy SEC Challenge;
+- **TOP 6 SEC Challenge** zdobywa miejsce w SEC;
+- **TOP 6 poprzedniego SEC** utrzymuje się;
+- do stałej piętnastki dochodzą **3 stałe dzikie karty**;
+- każdą rundę uzupełnia **1 lokalna dzika karta gospodarza**.
+
+Jeśli zawodnik nie jedzie SGP, posiadane miejsce w SEC jest wykorzystywane automatycznie, a brak miejsca prowadzi bez zbędnego pytania do kwalifikacji. Jeśli zawodnik jest jednocześnie uczestnikiem SGP, gra pyta, czy chce połączyć oba cykle. Równoległe SGP + SEC zwiększa workload, doświadczenie i ryzyko przeciążenia.
+
+### 6. SGP2 — kwalifikacje i cykl w tym samym sezonie
+
+Ścieżka juniorska różni się od seniorskiego SGP:
+
+- kwalifikacje odbywają się **w tym samym roku co cykl SGP2**;
+- są **3 rundy eliminacyjne**;
+- z każdej awansuje **TOP 4** = 12 kwalifikantów;
+- do stałej piętnastki dochodzą **3 stałe dzikie karty**;
+- na każdą rundę finałową dochodzi **1 lokalna dzika karta gospodarza**.
+
+Polska nominacja do eliminacji SGP2 bierze pod uwagę przede wszystkim:
+
+- Srebrny Kask;
+- MIMP;
+- formę ligową;
+- aktualny poziom sportowy;
+- decyzję PZM / trenera kadry;
+- zmienny limit miejsc przysługujących federacji.
+
+Sukces nie wymaga juniorsko absurdalnego OVR. Dobrze rozwinięty zawodnik może wykorzystać dobry dzień i korzystną obsadę, a nawet faworyt może odpaść w pojedynczych kwalifikacjach.
+
+### 7. Mobile-first podgląd obsad
+
+Pełna obsada nie zajmuje stale ekranu. W modalu zawodów znajduje się rozwijana sekcja **OBSADA**.
+
+Na telefonie:
+
+- grupy poziomu są osobnymi accordionami;
+- każdy zawodnik zajmuje krótki, maksymalnie dwuwierszowy wpis;
+- nie ma szerokiej tabeli ani wymuszonego przewijania poziomego;
+- użytkownik może nie rozwijać obsady i od razu przejść do zawodów.
+
+Układ był projektowany dla wąskich ekranów mobilnych i nie wymaga desktopowej szerokości.
+
+### 8. Kadry klubów z flagami i OVR
+
+Przy ofertach transferowych można rozwinąć anonimową kadrę klubu. W przeciwieństwie do turniejów tutaj OVR rywali jest jawny, ponieważ służy do świadomego oceniania szans na skład.
+
+Przykładowe wpisy:
+
+- `🇵🇱 Polski senior — OVR 72`;
+- `🇩🇰 Zagraniczny senior — OVR 75`;
+- `🇵🇱 Polski U24 — OVR 66`;
+- `🇨🇿 Zagraniczny junior — OVR 57`;
+- `🇵🇱 Polski junior — OVR 54`.
+
+Kadra może być szersza niż podstawowa siódemka: klub może mieć dodatkowych juniorów, seniorów oraz rezerwowego U23.
+
+Generator nie zakłada, że polski senior musi być słabszy od zagranicznego. Polska licencja sama w sobie może jednak podnosić wartość sportową zawodnika dla konkretnego klubu, ponieważ pomaga zbudować regulaminowy skład.
+
+Możliwy jest również **zagraniczny junior**, jeżeli cały skład meczowy nadal spełnia wymogi dotyczące zawodników z polską licencją oraz pozycji U24.
+
+### 9. Prognoza jazdy oparta na realnej konkurencji
+
+Procent przy ofercie jest teraz liczony na tle wygenerowanej kadry klubu i pozycji zawodnika. Ten sam kontekst jest używany do późniejszej symulacji wykorzystania zawodnika.
+
+Prognoza **nie jest sztywnym limitem liczby meczów**. To bazowa przedsezonowa szansa wejścia do składu.
+
+W trakcie sezonu rzeczywistość może się zmienić przez:
+
+- kontuzję bezpośredniego konkurenta;
+- dobrą lub złą serię zawodnika;
+- zmianę hierarchii;
+- wzrost formy;
+- wykorzystanie zastępstwa i przejęcie miejsca w składzie.
+
+Dlatego 30% nadal najczęściej oznacza ograniczoną jazdę, ale wyjątkowo może zamienić się w dużą część sezonu. 80–95% oznacza bardzo silną pozycję, ale również nie jest absolutną gwarancją.
+
+### 10. Rynek słabszego juniora
+
+Przy niskim OVR junior dostaje mniej ofert, ale system mocniej preferuje kluby, w których istnieje realna ścieżka do jazdy. Ma to ograniczyć sportowo-finansowy soft-lock profili „Szkółka od zera” i „Zwykły adept”.
+
+Najniższa liga ma być naturalnym miejscem zbierania biegów i rozwoju, a nie kolejnym poziomem, na którym słaby junior przez kilka lat nie otrzymuje szansy.
+
+### 11. Większa wariancja rozwoju
+
+Zachowano i rozszerzono rozwiązania z 1.03.4:
+
+- sezonowy puls rozwojowy;
+- największą wariancję w wieku 15–21 lat;
+- rzadkie juniorskie breakouty;
+- stagnacje i słabsze okresy;
+- możliwość późnego przełomu i drugiej młodości;
+- lekko podniesione miękkie limity umiejętności;
+- klubowe wsparcie podstawowego rozwoju juniora;
+- wcześniejszy „pełny profesjonalizm” dla wyjątkowo mocnego młodego zawodnika.
+
+Duże zdarzenia nie są jednorazowym `+5 OVR`. Zmieniają tempo rozwoju, miękki sufit, formę, warunki treningowe, obciążenie albo długofalową trajektorię.
+
+### 12. Duże zdarzenia kariery
+
+System zawiera wszystkie główne ustalone punkty zwrotne, m.in.:
+
+- eksperymentalny program silnikowy;
+- odejście kluczowego mechanika;
+- zmianę stylu po realnej kontuzji;
+- ryzykowny powrót po urazie;
+- przeciążenie rzeczywistym kalendarzem;
+- kryzys po realnie ważnym meczu;
+- konflikt / rywalizację o miejsce w składzie;
+- przełom treningowy z wyborem kierunku pracy;
+- przebudowę przygotowań;
+- późne zrozumienie żużla / drugą młodość;
+- sponsora stawiającego mierzalny cel;
+- bardzo rzadki fenomenalny sezon;
+- juniorski wystrzał.
+
+Częstotliwość została podniesiona względem wcześniejszych buildów, ale event nadal musi spełniać swój trigger. Gra nie tworzy kontuzji, porażki czy konfliktu tylko po to, żeby uruchomić wydarzenie.
+
+### 13. Naturalne schodki średniej ligowej
+
+Schodki **nie dotyczą automatycznego spadku OVR**.
+
+Dotyczą przede wszystkim średniej biegopunktowej:
+
+- pierwszy seniorski sezon w wieku **22 lat** — koniec biegów juniorskich;
+- sezon w wieku **25 lat** — utrata statusu U24;
+- przejście do mocniejszej lub słabszej ligi.
+
+OVR może rosnąć, podczas gdy średnia chwilowo spada ze względu na trudniejszą rolę i rywali. Dodano również osobną sezonową fluktuację wynikową, aby średnia nie rosła mechanicznie linią prostą wraz z OVR.
+
+### 14. DMPJ jako pełne rozgrywki juniorskie
+
+DMPJ nie jest już traktowane jak pojedynczy turniej.
+
+Model obejmuje:
+
+- eliminacje;
+- ćwierćfinały;
+- półfinały;
+- finał składający się z czterech turniejów.
+
+Gra liczy indywidualnie biegi i punkty zawodnika. W sekcji TURNIEJE najważniejszą informacją jest teraz np.:
+
+`18 biegów • śr. 2,11 • półfinał`
+
+Średnia juniorska jest naturalnie wyższa od ligowej u mocnych juniorów, ale zależy od OVR, wieku, jakości polskiej stawki i etapu rozgrywek. Późniejsze fazy są trudniejsze.
+
+### 15. Skrócona historia kariery
+
+Dla każdego sezonu skrót historii pokazuje:
+
+`Klub • Liga • OVR • Średnia ligowa • Średnia juniorska`
+
+Średnia juniorska jest wyświetlana tylko do 21. roku życia i jest liczona jako średnia ważona realną liczbą biegów w odpowiednich zawodach młodzieżowych.
+
+### 16. Cele sponsora
+
+Cele średniej ligowej są zaokrąglane do naturalnych progów co `0,05`, np. 1,90 / 1,95 / 2,00 / 2,05.
+
+Cel na nowy sezon uwzględnia nie tylko poprzednią średnią, ale również:
+
+- zmianę poziomu ligi;
+- aktualny OVR;
+- utratę statusu juniora/U24;
+- rolę w klubie;
+- prognozę jazdy.
+
+Rozsądny cel jest ustawiany blisko prognozowanego poziomu, a ambitny wymaga wyraźnego overperformance. Premia trafia do budżetu dopiero po faktycznym spełnieniu warunku.
+
+### 17. Reprezentacja
+
+Powołania do seniorskiej kadry zostały ograniczone.
+
+- **DME** pozostaje niższą rangą i ma szerszą rotację;
+- **DPŚ** i **Speedway of Nations** są znacznie bardziej elitarne;
+- OVR około 80 może czasem dać powołanie, ale nie powinien robić tego regularnie przy silnej konkurencji krajowej;
+- selekcja bierze pod uwagę OVR, średnią, poziom ligi, formę i reputację.
+
+### 18. Ruletka zdarzeń
+
+Każdy różny rezultat jednej ruletki ma własny kolor. Nie ma sztywnego ograniczenia do trzech kolorów — przy czterech wynikach pojawiają się cztery rozróżnialne warianty itd.
+
+Naprawiono przypadki, w których:
+
+- kara była przedstawiana zielonym wynikiem;
+- korzystny rezultat był czerwony;
+- dwie różne gałęzie miały identyczny kolor.
+
+Podświetlenie pola pozostaje subtelne, ale animacja została uproszczona: pasek porusza się wyłącznie przez `transform`, a marker ma lekką nieruchomą poświatę obejmującą aktualny segment. Eliminuje to kosztowne przełączanie filtrów i klas kafelków w każdej klatce.
+
+### 19. Osiągnięcia i nazewnictwo
+
+- usunięto etykiety `max`;
+- dla pozycji używane jest **Najwyższe miejsce**;
+- dla rozgrywek etapowych można używać **Najwyższy etap**;
+- nazwy klubów w interfejsie transferowym są wyświetlane w mianowniku i nie są przypadkowo odmieniane przez mechanizm fleksji miejscowości.
+
+### 20. Zapis gry i migracja
+
+Aktualny klucz zapisu:
+
+`pss_v1040`
+
+1.04.0 automatycznie próbuje przejąć zapis z 1.03.4 i wcześniejszych obsługiwanych wersji. Nowe elementy świata NPC, kadr i obsad są dobudowywane do starego save'a podczas dalszej gry.
+
+Przy dużych zmianach systemowych do testów balansu rekomendowana jest jednak **nowa kariera**, ponieważ tylko wtedy wszystkie nowe pule i zależności powstają od początku w modelu 1.04.0.
+
+### Uruchomienie
+
+Projekt jest statyczny. Do działania wystarczą:
+
+- `index.html`;
+- `style.css`;
+- `app.js`.
+
+Można uruchomić lokalnie przez prosty serwer HTTP albo wdrożyć jako stronę statyczną.
+
+---
+
+# Historia zmian
+
+## 1.03.4 — scalony build testowy 7.09.2026
+
+- zwiększono wariancję rozwoju, szczególnie w wieku 15–21 lat, oraz dodano ukryty sezonowy puls rozwojowy;
+- dodano rzadki juniorski breakout i lekko podniesiono miękkie limity umiejętności;
+- klub mocniej wspiera podstawowy rozwój juniora, a bardzo mocny junior może wcześniej wejść w pełny profesjonalizm;
+- przy niskim OVR rynek daje mniej, ale lepiej dopasowanych ofert rozwojowych;
+- prognoza jazdy została sprzężona z faktycznym udziałem w meczach: rzeczywista liczba występów jest losowana blisko procentu pokazanego w ofercie, z ograniczoną wariancją;
+- rola juniorskiego zawodnika określa liczbę biegów po wejściu do składu;
+- średnia biegopunktowa dostała osobną sezonową fluktuację, niezależną od wzrostu OVR;
+- wzmocniono naturalny schodek średniej w wieku 22 lat po utracie statusu juniora oraz mniejszy schodek w wieku 25 lat po utracie U24;
+- zachowano osobne schodki średniej przy zmianach poziomu ligi;
+- zwiększono kadencję dużych zdarzeń w długich karierach, ale nadal mogą uruchamiać się tylko wtedy, gdy spełniony jest realny trigger;
+- zwiększono realną szansę juniorskim wystrzałom na pojawienie się w pełnej karierze;
+- cele sponsora są zaokrąglane do naturalnych progów co 0,05 i bazują na prognozie kolejnego sezonu, z uwzględnieniem ligi, roli oraz progów 22/25 lat;
+- SEC: dodano widoczne 3 lub 4 turnieje eliminacyjne, podział 16 miejsc do Challenge (4/4/4/4 albo 5/5/6), 16-osobowy SEC Challenge i awans TOP 6;
+- stała piętnastka SEC składa się z TOP 6 poprzedniego cyklu, TOP 6 Challenge i 3 stałych dzikich kart; każdą rundę uzupełnia osobna lokalna dzika karta gospodarza;
+- bez równoległego SGP stałe miejsce SEC uruchamia cykl automatycznie, a nominacja uruchamia od razu eliminacje; przy SGP gracz sam decyduje, czy łączy oba cykle;
+- ograniczono częstotliwość powołań do reprezentacji: DME ma szerszą rotację, SoN i DPŚ wymagają znacznie mocniejszej pozycji sportowej;
+- każdy różny wynik jednej ruletki ma unikalny kolor; przy czterech wynikach używane są cztery kolory;
+- poprawiono płynność ruletki: usunięto kosztowne przełączanie filtrów na kafelkach w każdej klatce, zachowując subtelne podświetlenie pola pod markerem;
+- naprawiono pozytywne/negatywne gałęzie wydarzeń, w tym „Oszczędzaj siły, dopracuj sprzęt” i „Nie komentować”;
+- poprawiono odmianę nazw klubów na rynku;
+- w osiągnięciach usunięto `max`, wprowadzając „Najwyższe miejsce” lub „Najwyższy etap”;
+- numer wersji i klucz zapisu pozostają **1.03.4 / `pss_v1034`**, aby wszystkie poprawki były testowane jako jeden scalony build.
 
 ## 1.03.3 — 6.09.2026
 
@@ -308,8 +671,8 @@ Poniższa historia obejmuje kolejne wydania od 1.00 do 1.03.4. Dla najstarszych 
 
 ---
 
-## Założenie projektu po 1.03.4
+## Założenie projektu po 1.04.2
 
 **Talent daje prawdopodobieństwo, nie gwarancję wyniku.**
 
-Poziom startowy ma nadal realnie zmieniać trudność pierwszych lat, ale najciekawsze kariery powinny być definiowane przez połączenie rozwoju, decyzji gracza, dostępnych okazji, zdrowia, sprzętu, teamu, kalendarza i kilku dużych punktów zwrotnych. Dwie kariery zaczynające z podobnym OVR nie powinny automatycznie kończyć się w tym samym miejscu.
+Poziom startowy ma nadal realnie zmieniać trudność pierwszych lat, ale najciekawsze kariery powinny być definiowane przez połączenie rozwoju, decyzji gracza, dostępnych okazji, zdrowia, sprzętu, teamu, kalendarza, konkretnej konkurencji w klubie oraz kilku dużych punktów zwrotnych. Dwie kariery zaczynające z podobnym OVR nie powinny automatycznie kończyć się w tym samym miejscu. Od 1.04.1 obsady zachowują ciągłość między sezonami: rywale starzeją się, rozwijają, regresują, awansują między poziomami i kończą kariery. Kadry i obsady tworzą dzięki temu nie tylko kontekst dla pojedynczego turnieju, ale równoległą historię sportową całego save'a.
