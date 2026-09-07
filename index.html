@@ -23,7 +23,7 @@
   <meta name="twitter:description" content="Tekstowy symulator kariery polskiego żużlowca — od szkółki aż po walkę o największe trofea.">
   <meta name="twitter:image" content="https://polishspeedway.vercel.app/social-preview.jpg">
   <meta name="twitter:image:alt" content="Polish Speedway Simulator — tekstowa gra żużlowa">
-  <link rel="stylesheet" href="style.css?v=1.04.2-hf2">
+  <link rel="stylesheet" href="style.css?v=1.04.2-hf3">
 </head>
 <body>
 <div class="app">
@@ -299,11 +299,14 @@
 <div id="modal" class="modal hidden">
   <div class="modal-card">
     <p id="modalKicker" class="eyebrow">DECYZJA</p>
-    <h2 id="modalTitle"></h2>
+    <div class="modal-title-row-1042">
+      <h2 id="modalTitle"></h2>
+      <button id="rouletteSkipTitle1042" class="roulette-skip-title-1042 hidden" type="button">Pomiń</button>
+    </div>
     <p id="modalText" class="modal-text"></p>
     <div id="modalOptions" class="modal-options"></div>
   </div>
 </div>
-<script src="app.js?v=1.04.2-hf2"></script>
+<script src="app.js?v=1.04.2-hf3"></script>
 </body>
 </html>

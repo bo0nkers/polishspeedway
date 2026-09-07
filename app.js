@@ -14162,3 +14162,144 @@ function formatSeasonInjuries1041(injuries=[]){
  // --------------------------------------------------------------------------
  if(S){S.pss1042??={};S.pss1042.version='1.04.2';S.pss1042.hotfix=HOTFIX;S.pss1042.features={...(S.pss1042.features||{}),rouletteSkipFixed:true,secRetentionFixed:true,secInteractiveQualifiers:true,secPermanentWildcardDecision:true,rosterModel4:true,skillSpendTransactional:true};save();render();}
 })();
+
+// ============================================================================
+// Polish Speedway Simulator 1.04.2 — HOTFIX RULETKI III
+// Stały modal, stała geometria paska i działające „Pomiń” przy tytule.
+// ============================================================================
+(()=>{
+ const HOTFIX='1.04.2-roulette-ui-hf3';
+ let activeRollerControl1042=null;
+
+ function rouletteSkipButton1042(){return document.getElementById('rouletteSkipTitle1042')}
+ function resetRouletteUi1042(){
+  activeRollerControl1042=null;
+  const modal=document.getElementById('modal');
+  if(modal){modal.classList.remove('roulette-stable-1042');modal.style.removeProperty('--roulette-top-1042')}
+  const b=rouletteSkipButton1042();
+  if(b){b.classList.add('hidden');b.classList.remove('roulette-skip-finished-1042');b.disabled=false;b.onclick=null}
+ }
+ function lockRouletteModal1042(){
+  const modal=document.getElementById('modal'),card=modal?.querySelector('.modal-card');
+  if(!modal||!card||window.matchMedia?.('(max-width: 650px)').matches)return;
+  const top=Math.max(20,Math.round(card.getBoundingClientRect().top));
+  modal.style.setProperty('--roulette-top-1042',`${top}px`);
+  modal.classList.add('roulette-stable-1042');
+ }
+ function prepareRouletteSkip1042(){
+  const b=rouletteSkipButton1042();if(!b)return;
+  b.classList.remove('hidden','roulette-skip-finished-1042');b.disabled=true;b.onclick=null;
+ }
+ function armRouletteSkip1042(control){
+  activeRollerControl1042=control;
+  const b=rouletteSkipButton1042();if(!b)return;
+  b.classList.remove('hidden','roulette-skip-finished-1042');b.disabled=false;
+  b.onclick=e=>{e.preventDefault();e.stopPropagation();if(b.disabled)return;b.disabled=true;activeRollerControl1042?.skip?.()};
+ }
+ function finishRouletteSkipChrome1042(){
+  const b=rouletteSkipButton1042();
+  if(b){b.disabled=true;b.classList.add('roulette-skip-finished-1042')}
+  activeRollerControl1042=null;
+ }
+
+ // Każdy zwykły modal startuje z czystym chrome. Ruletka blokuje pozycję
+ // dopiero po zbudowaniu własnej zawartości.
+ const showModalRouletteBase1042=showModal;
+ showModal=function(...args){resetRouletteUi1042();return showModalRouletteBase1042(...args)};
+ const closeModalRouletteBase1042=closeModal;
+ closeModal=function(...args){resetRouletteUi1042();return closeModalRouletteBase1042(...args)};
+
+ // Animowany jest WYŁĄCZNIE wewnętrzny track. Kontener i marker nie zmieniają
+ // położenia. Skip korzysta z tej samej, wcześniej wyliczonej pozycji końcowej.
+ animateRollerWithBrake=function(stripEl,startOffset,finalOffset,duration,done){
+  const delta=finalOffset-startOffset,startTime=performance.now(),ms=Math.max(4000,duration*1000);
+  stripEl.style.transition='none';
+  stripEl.style.transform=`translate3d(${-startOffset}px,0,0)`;
+  const roller=stripEl.closest('.outcome-roller'),tile=stripEl.querySelector('span'),style=getComputedStyle(stripEl),tw=tile?.getBoundingClientRect().width||24,gap=parseFloat(style.columnGap||style.gap)||2,step=tw+gap,marker=roller?.querySelector('.roller-marker'),rr=roller?.getBoundingClientRect(),mr=marker?.getBoundingClientRect(),markerX=rr&&mr?mr.left-rr.left+mr.width/2:(roller?.clientWidth||0)*.5;
+  let active=null,finished=false,raf=0;
+  const markActive=offset=>{
+   const idx=Math.round((offset+markerX-tw/2)/step),next=stripEl.querySelector(`span[data-index="${idx}"]`);
+   if(next===active)return;
+   active?.classList.remove('roller-active-tile');next?.classList.add('roller-active-tile');active=next||null;
+  };
+  const finish=skipped=>{
+   if(finished)return;finished=true;
+   if(raf)cancelAnimationFrame(raf);
+   stripEl.style.transition='none';
+   stripEl.style.transform=`translate3d(${-finalOffset}px,0,0)`;
+   stripEl.dataset.finalOffset=String(finalOffset);
+   markActive(finalOffset);
+   finishRouletteSkipChrome1042();
+   setTimeout(()=>done?.(),skipped?0:90);
+  };
+  const speed=t=>{const x=clamp(t,0,1);return Math.exp(-2.4*Math.pow(x,1.25))*Math.pow(Math.max(0,1-x),.65)},N=480,cum=new Array(N+1).fill(0),vel=new Array(N+1);
+  for(let i=0;i<=N;i++)vel[i]=speed(i/N);
+  for(let i=1;i<=N;i++)cum[i]=cum[i-1]+(vel[i-1]+vel[i])*.5/N;
+  const total=cum[N]||1,motion=t=>{const f=clamp(t,0,1)*N,i=Math.min(N-1,Math.floor(f)),u=f-i;return (cum[i]+(cum[i+1]-cum[i])*u)/total};
+  markActive(startOffset);
+  const control={stripEl,skip:()=>finish(true)};
+  armRouletteSkip1042(control);
+  const frame=now=>{
+   if(finished)return;
+   const t=clamp((now-startTime)/ms,0,1),offset=startOffset+delta*motion(t);
+   stripEl.style.transform=`translate3d(${-offset}px,0,0)`;markActive(offset);
+   if(t<1)raf=requestAnimationFrame(frame);else finish(false);
+  };
+  raf=requestAnimationFrame(frame);
+ };
+
+ // Interaktywne biegi — zachowujemy dotychczasową semantykę i teksty,
+ // zmieniamy wyłącznie konstrukcję paska/skipu i stabilność modala.
+ showOutcomeRoller=function({title,subtitle="",mode="attack",prob,outcome,onDone,resultText=""}){
+  const phaseResult=/^(Start i pierwszy łuk|Środek biegu|Końcówka biegu)$/i.test(String(title||""))&&subtitle;
+  const preText=phaseResult?"":subtitle,revealText=resultText||(phaseResult?subtitle:"");
+  const base=rollerSegments(prob,100),hits=base.map((s,i)=>s.key===outcome?i:-1).filter(i=>i>=0),hit=pick(hits.length?hits:[50]);
+  const cycles=9,segments=[];for(let c=0;c<cycles;c++)segments.push(...base.map(s=>({...s})));
+  const targetIndex=500+hit,startIndex=targetIndex-rand(68,86),counts={super:0,success:0,fail:0,incident:0};base.forEach(x=>counts[x.key]++);
+  const legend=`<div class="roller-legend"><span><i class="roller-dot roller-super"></i>${counts.super}% wyjątkowy sukces</span><span><i class="roller-dot roller-success"></i>${counts.success}% sukces</span><span><i class="roller-dot roller-fail"></i>${counts.fail}% niepowodzenie</span><span><i class="roller-dot roller-incident"></i>${counts.incident}% incydent</span></div>`;
+  const strip=`<div class="outcome-roller outcome-roller-loop"><div class="roller-marker"></div><div class="roller-strip" id="rollerStrip">${segments.map((s,i)=>`<span data-index="${i}" data-key="${s.key}" class="${s.className}"></span>`).join("")}</div></div>`;
+  showModal("ROZSTRZYGNIĘCIE",title,`${preText}<p><b>Realna szansa powodzenia wybranej decyzji:</b></p>${strip}${legend}`,[{title:"Losowanie trwa…",desc:"",action:()=>{}}]);
+  const opts=$("modalOptions");if(opts)opts.style.display="none";
+  prepareRouletteSkip1042();
+  lockRouletteModal1042();
+  requestAnimationFrame(()=>{
+   const stripEl=document.getElementById("rollerStrip"),roller=document.querySelector(".outcome-roller");if(!stripEl||!roller)return;
+   const tile=stripEl.querySelector("span"),style=getComputedStyle(stripEl),tw=tile?.getBoundingClientRect().width||24,gap=parseFloat(style.columnGap||style.gap)||2,step=tw+gap;
+   const start=startIndex*step+tw/2-pssRollerMarkerX(roller),end=targetIndex*step+tw/2-pssRollerMarkerX(roller),duration=4.00+Math.random()*.45;
+   stripEl.dataset.expectedOutcome=outcome;stripEl.dataset.targetIndex=String(targetIndex);
+   animateRollerWithBrake(stripEl,start,end,duration,()=>{
+    const box=$("modalText");if(box)box.insertAdjacentHTML("beforeend",`<div class="roller-result roller-result-${outcome}">${outcomeLabel(outcome)}</div>${revealText?`<div class="roller-sport-effect">${revealText}</div>`:""}`);
+    const options=$("modalOptions");if(options){
+     options.style.display="";options.innerHTML="";const b=document.createElement("button");b.className="option";b.innerHTML="<strong>KONTYNUUJ</strong><small>Przejdź do dalszej części biegu.</small>";
+     b.onclick=()=>{if(b.dataset.busy==="1")return;b.dataset.busy="1";b.disabled=true;try{onDone?.()}catch(error){console.error("Błąd po ruletce:",error);b.dataset.busy="0";b.disabled=false;if(S?.seasonFlowActive){recoverSeasonFlow(error);return}showModal("BŁĄD INTERAKTYWNEGO BIEGU","Gra odzyskała kontrolę",`Nie udało się przejść dalej.<br><b>Błąd techniczny:</b> ${String(error?.message||error||"Nieznany błąd")}`,[{title:"Wróć do gry",desc:"Zamknij komunikat i spróbuj ponownie.",action:()=>closeModal()}])}};
+     options.appendChild(b);
+    }
+   });
+  });
+ };
+
+ // Zdarzenia kariery — analogicznie, bez przycisku w tym samym wierszu co pasek.
+ showEventOutcomeRoller=function(eventTitle,choiceTitle,variants,next){
+  const base=eventRollerTiles(variants),chosenIndex=rand(0,99),chosen=base[chosenIndex];
+  const cycles=9,segments=[];for(let c=0;c<cycles;c++)segments.push(...base.map(v=>({...v})));
+  const targetIndex=500+chosenIndex,startIndex=targetIndex-rand(68,86),legend=eventProbSummary(variants);
+  const strip=`<div class="outcome-roller event-outcome-roller outcome-roller-loop"><div class="roller-marker"></div><div class="roller-strip" id="eventRollerStrip">${segments.map((v,i)=>`<span data-index="${i}" data-key="${v.key}" class="event-tile-${v.tone}"></span>`).join("")}</div></div>`;
+  showModal("ROZSTRZYGNIĘCIE",choiceTitle,`${strip}${legend}`,[{title:"Losowanie trwa…",desc:"",action:()=>{}}]);
+  const opts=$("modalOptions");if(opts)opts.style.display="none";
+  prepareRouletteSkip1042();
+  lockRouletteModal1042();
+  requestAnimationFrame(()=>{
+   const stripEl=document.getElementById("eventRollerStrip"),roller=document.querySelector(".event-outcome-roller");if(!stripEl||!roller)return;
+   const tile=stripEl.querySelector("span"),style=getComputedStyle(stripEl),tw=tile?.getBoundingClientRect().width||24,gap=parseFloat(style.columnGap||style.gap)||2,step=tw+gap;
+   const start=startIndex*step+tw/2-pssRollerMarkerX(roller),end=targetIndex*step+tw/2-pssRollerMarkerX(roller),duration=4.05+Math.random()*.45;
+   stripEl.dataset.expectedKey=chosen.key;stripEl.dataset.targetIndex=String(targetIndex);
+   animateRollerWithBrake(stripEl,start,end,duration,()=>{
+    applyEffect(chosen.effect);const desc=effectDescription(chosen.effect),box=$("modalText");
+    if(box)box.insertAdjacentHTML("beforeend",`<div class="event-roll-result event-roll-${chosen.tone}">${chosen.label}</div><p><b>Skutek:</b> ${desc}.</p>`);
+    const options=$("modalOptions");if(options){options.style.display="";options.innerHTML="";const b=document.createElement("button");b.className="option";b.innerHTML="<strong>KONTYNUUJ</strong><small>Przejdź do dalszej części sezonu.</small>";b.onclick=()=>{addHistory(eventTitle,`${choiceTitle}. ${chosen.label}. Skutek: ${desc}.`);closeModal();next()};options.appendChild(b)}
+   });
+  });
+ };
+
+ if(S){S.pss1042??={};S.pss1042.version='1.04.2';S.pss1042.hotfix=HOTFIX;S.pss1042.features={...(S.pss1042.features||{}),rouletteTitleSkip:true,rouletteStableTop:true,rouletteFixedGeometry:true};save();}
+})();

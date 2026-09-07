@@ -1365,3 +1365,58 @@ button,.btn,.option,.choice-card{touch-action:manipulation;-webkit-tap-highlight
 @media(max-width:700px){
   .field-preview-1040>summary>.field-summary-actions-1041{flex-direction:row!important;flex-wrap:wrap;gap:8px!important;justify-content:flex-start!important;}
 }
+
+/* ========================================================================== */
+/* 1.04.2 — hotfix ruletki: stały layout + Pomiń przy tytule                  */
+/* ========================================================================== */
+.modal-title-row-1042{
+ display:flex;
+ align-items:flex-start;
+ justify-content:space-between;
+ gap:14px;
+ min-width:0;
+}
+.modal-title-row-1042>h2{flex:1 1 auto;min-width:0}
+.roulette-skip-title-1042{
+ flex:0 0 auto;
+ margin-top:2px;
+ border:1px solid rgba(31,78,72,.28);
+ background:#fff;
+ color:#1c665f;
+ border-radius:7px;
+ min-height:42px;
+ padding:0 14px;
+ font:800 12px/1 inherit;
+ cursor:pointer;
+ white-space:nowrap;
+}
+.roulette-skip-title-1042:hover{background:rgba(47,168,111,.06)}
+.roulette-skip-title-1042:disabled{opacity:.55;cursor:default}
+.roulette-skip-title-1042.roulette-skip-finished-1042{
+ visibility:hidden!important;
+ pointer-events:none!important;
+}
+/* Stary przycisk obok paska nie jest już używany. */
+.roller-line-1042{display:block;margin:18px 0 10px;min-width:0}
+.roller-line-1042 .outcome-roller{width:100%;margin:0}
+.roller-line-1042>.roller-skip-1042{display:none!important}
+
+/* Na desktopie pozycja górnej krawędzi modala jest zapamiętana przed startem
+   ruletki. Wynik i przycisk Kontynuuj rozwijają kartę tylko w dół. */
+@media(min-width:651px){
+ .modal.roulette-stable-1042{
+  place-items:start center;
+  padding:var(--roulette-top-1042,20px) 20px 20px;
+ }
+ .modal.roulette-stable-1042>.modal-card{
+  max-height:calc(100vh - var(--roulette-top-1042,20px) - 20px);
+ }
+}
+@media(max-width:650px){
+ .modal-title-row-1042{gap:9px}
+ .roulette-skip-title-1042{min-height:38px;padding:0 10px;font-size:11px;margin-top:0}
+}
+@media(max-width:370px){
+ .modal-title-row-1042{gap:7px}
+ .roulette-skip-title-1042{padding:0 8px;min-width:58px}
+}
