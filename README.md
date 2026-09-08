@@ -1,5 +1,25 @@
 # Polish Speedway Simulator
 
+## Wersja 1.04.3 — spójniejsze cykle, ruletka i balans IMP
+
+1.04.3 zbiera poprawki wynikające z dalszych testów 1.04.2. Aktualizacja skupia się na spójności wyników, czytelności ruletki, klasyfikacjach cykli oraz balansie krajowych eliminacji.
+
+### Najważniejsze zmiany 1.04.3
+
+- **Ruletka:** biały marker pozostaje nieruchomo na środku, ale zwycięski segment może zatrzymać się w losowym punkcie od **10% do 90%** jego szerokości. Rozjaśnienie pola nadal wskazuje wylosowany wynik. „Pomiń” prowadzi do dokładnie tego samego wcześniej ustalonego punktu.
+- **Teksty biegów:** dodano defensywną deduplikację identycznych zdań, aby jeden incydent nie był opisywany dwa razy pod rząd.
+- **Rozwój:** miękkie progi umiejętności zostały umiarkowanie podniesione o kilka punktów. Mechanika progów nadal działa, ale nie ogranicza wydawania PR tak wcześnie.
+- **Eliminacje IMP:** stawki zostały osłabione względem IMP Challenge i finału. W zwykłej eliminacji zawodnicy 88+ są wyjątkowi, a trzon stawki częściej mieści się w przedziale 62–81 OVR.
+- **Kluczowe mecze ligowe:** po symulacji ważnego meczu wyświetla się końcowy wynik drużynowy oraz dorobek gracza. Tryb interaktywny zachowuje swój dotychczasowy ekran wyniku.
+- **Kontuzje w cyklach:** jeżeli uraz wymagający przerwy powstaje podczas symulowanej rundy, zawodnik zostaje wycofany w trakcie zawodów. Wynik rundy jest wtedy korygowany do punktów zdobytych przed urazem; nie występuje już sprzeczność typu wygrana pełnej rundy i jednocześnie kilkutygodniowa pauza po upadku.
+- **Klasyfikacje cykli:** punkty lokalnych dzikich kart i innych dodatkowych uczestników rund są uwzględniane w generalce. Główny ekran końcowej klasyfikacji pokazuje **TOP 16**, ale pozycje są liczone z uwzględnieniem wszystkich punktujących zawodników.
+
+### Zapis gry
+
+Aktualny klucz zapisu: `pss_v1043`. Gra automatycznie przejmuje zapis z `pss_v1042` i starszych obsługiwanych wersji.
+
+---
+
 ## Wersja 1.04.2 — mocniejsze kadry ligowe, bezpieczny rozwój i szybsza ruletka
 
 **Data buildu: 7.09.2026**
@@ -43,7 +63,7 @@ Poprzednie podświetlanie aktywnego kafelka pozostaje bez zmian.
 
 ### 5. Zapis gry
 
-Aktualny klucz zapisu: `pss_v1042`. Gra automatycznie przejmuje zapis z 1.04.1 i wcześniejszych obsługiwanych wersji. Przy migracji do 1.04.2 stare, zaniżone cache kadr klubowych są czyszczone i generowane ponownie według nowego modelu.
+Poprzedni klucz zapisu: `pss_v1042`. Gra automatycznie przejmuje zapis z 1.04.1 i wcześniejszych obsługiwanych wersji. Przy migracji do 1.04.2 stare, zaniżone cache kadr klubowych są czyszczone i generowane ponownie według nowego modelu.
 
 ### 6. Hotfix 1.04.2 — SEC i poprawki po testach
 
@@ -671,7 +691,7 @@ Można uruchomić lokalnie przez prosty serwer HTTP albo wdrożyć jako stronę 
 
 ---
 
-## Założenie projektu po 1.04.2
+## Założenie projektu po 1.04.3
 
 **Talent daje prawdopodobieństwo, nie gwarancję wyniku.**
 
