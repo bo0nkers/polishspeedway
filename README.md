@@ -1,5 +1,24 @@
 # Polish Speedway Simulator
 
+## Wersja 1.04.4 — narodowości kadr klubów zagranicznych
+
+1.04.4 porządkuje generator kadr klubów zagranicznych startujących lub mogących wystartować w polskich rozgrywkach. „Krajowy” oznacza teraz zawodnika z kraju siedziby klubu, a nie automatycznie Polaka.
+
+### Najważniejsze zmiany 1.04.4
+
+- **Landshut Devils** i **MSC Wölfe Wittstock**: zawodnicy krajowi są Niemcami (`GER`).
+- **Lokomotiv Daugavpils**: zawodnicy krajowi są Łotyszami (`LAT`).
+- **AMK Zlatá Přilba Pardubice**: zawodnicy krajowi są Czechami (`CZE`).
+- Pula **zagranicznych** zawodników zawsze wyklucza kraj danego klubu. Dzięki temu np. Niemiec nie jest generowany jako „zagraniczny” w Landshut/Wittstock.
+- W klubach zagranicznych wśród obcokrajowców mogą pojawić się **Polacy**. W klubach polskich zachowano dotychczasową zasadę: Polacy są zawodnikami krajowymi, a pula zagraniczna ich nie zawiera.
+- Zasada obejmuje seniorów, U24, juniorów i rezerwowych. Stare wygenerowane kadry z zapisów 1.04.3 są omijane przez nowy klucz generatora i odświeżają się według poprawnej narodowości.
+
+### Zapis gry
+
+Aktualny klucz zapisu: `pss_v1044`. Gra automatycznie przejmuje zapis z `pss_v1043` i starszych obsługiwanych wersji.
+
+---
+
 ## Wersja 1.04.3 — spójniejsze cykle, ruletka i balans IMP
 
 1.04.3 zbiera poprawki wynikające z dalszych testów 1.04.2. Aktualizacja skupia się na spójności wyników, czytelności ruletki, klasyfikacjach cykli oraz balansie krajowych eliminacji.
@@ -350,7 +369,7 @@ Układ był projektowany dla wąskich ekranów mobilnych i nie wymaga desktopowe
 
 Przy ofertach transferowych można rozwinąć anonimową kadrę klubu. W przeciwieństwie do turniejów tutaj OVR rywali jest jawny, ponieważ służy do świadomego oceniania szans na skład.
 
-Przykładowe wpisy:
+Przykładowe wpisy dla klubu polskiego:
 
 - `🇵🇱 Polski senior — OVR 72`;
 - `🇩🇰 Zagraniczny senior — OVR 75`;
@@ -358,9 +377,11 @@ Przykładowe wpisy:
 - `🇨🇿 Zagraniczny junior — OVR 57`;
 - `🇵🇱 Polski junior — OVR 54`.
 
+W klubach zagranicznych krajowość jest liczona względem siedziby klubu. Przykładowo w Landshut/Wittstock krajowy senior jest Niemcem, w Daugavpils Łotyszem, a w Pardubicach Czechem. Polak może wtedy pojawić się jako zawodnik zagraniczny.
+
 Kadra może być szersza niż podstawowa siódemka: klub może mieć dodatkowych juniorów, seniorów oraz rezerwowego U23.
 
-Generator nie zakłada, że polski senior musi być słabszy od zagranicznego. Polska licencja sama w sobie może jednak podnosić wartość sportową zawodnika dla konkretnego klubu, ponieważ pomaga zbudować regulaminowy skład.
+Generator nie zakłada, że zawodnik krajowy musi być słabszy od zagranicznego. W klubach polskich rolę krajowych pełnią Polacy, a w klubach zagranicznych zawodnicy z kraju siedziby klubu.
 
 Możliwy jest również **zagraniczny junior**, jeżeli cały skład meczowy nadal spełnia wymogi dotyczące zawodników z polską licencją oraz pozycji U24.
 

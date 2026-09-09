@@ -2077,10 +2077,11 @@ function createPlayer(){
  $("newsBox").innerHTML=`<p class="eyebrow">PRZED LICENCJĄ</p><h3>${background.title.toUpperCase()}</h3><p>${background.text}</p><p><b>Zaplecze:</b> ${support.title}. Budżet początkowy: ${money(S.budget)}.</p>${openingReport?`<div class="guidance-report"><span>RAPORT SZKÓŁKI</span><p>${openingReport.text}</p></div>`:""}`;
  save();
 }
-function save(){localStorage.setItem("pss_v1043",JSON.stringify(S))}
+function save(){localStorage.setItem("pss_v1044",JSON.stringify(S))}
 function load(){
  try{
-  const newest=localStorage.getItem("pss_v1043");
+  const newest=localStorage.getItem("pss_v1044");
+  const previousV1043=localStorage.getItem("pss_v1043");
   const previousV1042=localStorage.getItem("pss_v1042");
   const previousV1041=localStorage.getItem("pss_v1041");
   const previousV1040=localStorage.getItem("pss_v1040");
@@ -2100,24 +2101,25 @@ function load(){
   const previousVersion=localStorage.getItem("pss_v100");
   const previousBrand=localStorage.getItem("pzs_v200");
   if(newest)return JSON.parse(newest);
-  if(previousV1042){localStorage.setItem("pss_v1043",previousV1042); return JSON.parse(previousV1042);}
-  if(previousV1041){localStorage.setItem("pss_v1043",previousV1041); return JSON.parse(previousV1041);}
-  if(previousV1040){localStorage.setItem("pss_v1043",previousV1040); return JSON.parse(previousV1040);}
-  if(previousV1034){localStorage.setItem("pss_v1043",previousV1034); return JSON.parse(previousV1034);}
-  if(previousV1033){localStorage.setItem("pss_v1043",previousV1033); return JSON.parse(previousV1033);}
-  if(previousV1032){localStorage.setItem("pss_v1043",previousV1032); return JSON.parse(previousV1032);}
-  if(previousV1031){localStorage.setItem("pss_v1043",previousV1031); return JSON.parse(previousV1031);}
-  if(previousV1030){localStorage.setItem("pss_v1043",previousV1030); return JSON.parse(previousV1030);}
-  if(previousV1026Test){localStorage.setItem("pss_v1043",previousV1026Test); return JSON.parse(previousV1026Test);}
-  if(previousV1025){localStorage.setItem("pss_v1043",previousV1025); return JSON.parse(previousV1025);}
-  if(previousV1024){localStorage.setItem("pss_v1043",previousV1024); return JSON.parse(previousV1024);}
-  if(previousV1023){localStorage.setItem("pss_v1043",previousV1023); return JSON.parse(previousV1023);}
-  if(previousV1022){localStorage.setItem("pss_v1043",previousV1022); return JSON.parse(previousV1022);}
-  if(previousV1021){localStorage.setItem("pss_v1043",previousV1021); return JSON.parse(previousV1021);}
-  if(previousV102){localStorage.setItem("pss_v1043",previousV102); return JSON.parse(previousV102);}
-  if(previousV101){localStorage.setItem("pss_v1043",previousV101); return JSON.parse(previousV101);}
-  if(previousVersion){localStorage.setItem("pss_v1043",previousVersion); return JSON.parse(previousVersion);}
-  if(previousBrand){localStorage.setItem("pss_v1043",previousBrand); return JSON.parse(previousBrand);}
+  if(previousV1043){localStorage.setItem("pss_v1044",previousV1043); return JSON.parse(previousV1043);}
+  if(previousV1042){localStorage.setItem("pss_v1044",previousV1042); return JSON.parse(previousV1042);}
+  if(previousV1041){localStorage.setItem("pss_v1044",previousV1041); return JSON.parse(previousV1041);}
+  if(previousV1040){localStorage.setItem("pss_v1044",previousV1040); return JSON.parse(previousV1040);}
+  if(previousV1034){localStorage.setItem("pss_v1044",previousV1034); return JSON.parse(previousV1034);}
+  if(previousV1033){localStorage.setItem("pss_v1044",previousV1033); return JSON.parse(previousV1033);}
+  if(previousV1032){localStorage.setItem("pss_v1044",previousV1032); return JSON.parse(previousV1032);}
+  if(previousV1031){localStorage.setItem("pss_v1044",previousV1031); return JSON.parse(previousV1031);}
+  if(previousV1030){localStorage.setItem("pss_v1044",previousV1030); return JSON.parse(previousV1030);}
+  if(previousV1026Test){localStorage.setItem("pss_v1044",previousV1026Test); return JSON.parse(previousV1026Test);}
+  if(previousV1025){localStorage.setItem("pss_v1044",previousV1025); return JSON.parse(previousV1025);}
+  if(previousV1024){localStorage.setItem("pss_v1044",previousV1024); return JSON.parse(previousV1024);}
+  if(previousV1023){localStorage.setItem("pss_v1044",previousV1023); return JSON.parse(previousV1023);}
+  if(previousV1022){localStorage.setItem("pss_v1044",previousV1022); return JSON.parse(previousV1022);}
+  if(previousV1021){localStorage.setItem("pss_v1044",previousV1021); return JSON.parse(previousV1021);}
+  if(previousV102){localStorage.setItem("pss_v1044",previousV102); return JSON.parse(previousV102);}
+  if(previousV101){localStorage.setItem("pss_v1044",previousV101); return JSON.parse(previousV101);}
+  if(previousVersion){localStorage.setItem("pss_v1044",previousVersion); return JSON.parse(previousVersion);}
+  if(previousBrand){localStorage.setItem("pss_v1044",previousBrand); return JSON.parse(previousBrand);}
   const v1361=localStorage.getItem("pzs_v1361");
   if(v1361)return JSON.parse(v1361);
   const v136=localStorage.getItem("pzs_v136");
@@ -8754,7 +8756,7 @@ createPlayer=function(){
 };
 
 function clearCareerSavesAndReload(){
- const keys=["pss_v1043","pss_v1042","pss_v1041","pss_v1040","pss_v1034","pss_v1033","pss_v1032","pss_v1031","pss_v1030","pss_v1026test","pss_v1025","pss_v1024","pss_v1023","pss_v1022","pss_v1021","pss_v102","pss_v101","pss_v100","pzs_v200","pzs_v1361","pzs_v136","pzs_v135","pzs_v134","pzs_v1331","pzs_v133","pzs_v132","pzs_v131","pzs_v1301","pzs_v130","pzs_v129","pzs_v128","pzs_v127","pzs_v126","pzs_v1252","pzs_v1251","pzs_v125","pzs_v124","pzs_v123","pzs_v122","pzs_v121","pzs_v120","pzs_v119","pzs_v118","pzs_v117","pzs_v116","pzs_v115","pzs_v114","pzs_v113","pzs_v112","pzs_v111","pzs_v110","pzs_v109","pzs_v108","pzs_v107","pzs_v106","pzs_v105","pzs_v104","pzs_v103","pzs_v102","pzs_v101","pzs_v100","pzs_v305","pzs_v304","pzs_v303","pzs_v302","pzs_v301","pzs_final30","pzs_v30","pzs_v29","pzs_v28","pzs_v27","pzs_v26","pzs_v25","pzs_v24","pzs_v23","pzs_v22","pzs_v2"];
+ const keys=["pss_v1044","pss_v1043","pss_v1042","pss_v1041","pss_v1040","pss_v1034","pss_v1033","pss_v1032","pss_v1031","pss_v1030","pss_v1026test","pss_v1025","pss_v1024","pss_v1023","pss_v1022","pss_v1021","pss_v102","pss_v101","pss_v100","pzs_v200","pzs_v1361","pzs_v136","pzs_v135","pzs_v134","pzs_v1331","pzs_v133","pzs_v132","pzs_v131","pzs_v1301","pzs_v130","pzs_v129","pzs_v128","pzs_v127","pzs_v126","pzs_v1252","pzs_v1251","pzs_v125","pzs_v124","pzs_v123","pzs_v122","pzs_v121","pzs_v120","pzs_v119","pzs_v118","pzs_v117","pzs_v116","pzs_v115","pzs_v114","pzs_v113","pzs_v112","pzs_v111","pzs_v110","pzs_v109","pzs_v108","pzs_v107","pzs_v106","pzs_v105","pzs_v104","pzs_v103","pzs_v102","pzs_v101","pzs_v100","pzs_v305","pzs_v304","pzs_v303","pzs_v302","pzs_v301","pzs_final30","pzs_v30","pzs_v29","pzs_v28","pzs_v27","pzs_v26","pzs_v25","pzs_v24","pzs_v23","pzs_v22","pzs_v2"];
  keys.forEach(k=>localStorage.removeItem(k));location.reload();
 }
 function showCareerEndSupportPopup(){
@@ -13574,11 +13576,23 @@ if(S){S.pss1031={version:'1.03.1'};save();}
  // -------------------------------------------------------------------------
  // KADRY KLUBÓW + PROGNOZA JAZDY
  // -------------------------------------------------------------------------
+ const CLUB_HOME_COUNTRY_1044={
+  'Landshut Devils':'GER',
+  'Lokomotiv Daugavpils':'LAT',
+  'MSC Wölfe Wittstock':'GER',
+  'AMK Zlatá Přilba Pardubice':'CZE'
+ };
  function clubCountryCode1040(club){
-  const b=clubBaseName(club);if(/Landshut|Wittstock/i.test(b))return 'GER';if(/Daugavpils/i.test(b))return 'LAT';if(/Pardubice|Zlat/i.test(b))return 'CZE';return 'POL';
+  const b=clubBaseName(club);return CLUB_HOME_COUNTRY_1044[b]||'POL';
+ }
+ function homeRiderAdjective1044(code){
+  return ({POL:'Polski',GER:'Niemiecki',LAT:'Łotewski',CZE:'Czeski'})[code]||'Krajowy';
  }
  function foreignNation1040(rng,home='POL'){
-  const pool=[{code:'DEN',w:18},{code:'SWE',w:12},{code:'GBR',w:11},{code:'AUS',w:10},{code:'CZE',w:9},{code:'GER',w:7},{code:'LAT',w:6},{code:'FRA',w:5},{code:'FIN',w:4},{code:'SLO',w:4},{code:'USA',w:2}].filter(x=>x.code!==home);return weighted1040(rng,pool).code;
+  // „Zagraniczny” zawsze oznacza zagraniczny względem kraju klubu.
+  // Dlatego w Landshut/Wittstock, Daugavpils czy Pardubicach pula może zawierać Polaków,
+  // ale nigdy Niemca/Łotysza/Czecha będącego zawodnikiem krajowym danego klubu.
+  const pool=[{code:'POL',w:16},{code:'DEN',w:18},{code:'SWE',w:12},{code:'GBR',w:11},{code:'AUS',w:10},{code:'CZE',w:9},{code:'GER',w:7},{code:'LAT',w:6},{code:'FRA',w:5},{code:'FIN',w:4},{code:'SLO',w:4},{code:'USA',w:2}].filter(x=>x.code!==home);return weighted1040(rng,pool).code;
  }
  function rosterLeaguePercentile1042(leagueName,strength){
   const league=leagueByName(leagueName),vals=(league?.teams||[]).map(t=>Number(t[1])||0);if(!vals.length)return .5;
@@ -13594,35 +13608,39 @@ if(S){S.pss1031={version:'1.03.1'};save();}
  }
  function shuffle1042(rng,a){a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(rng()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
  function clubRoster1040(club,leagueName){
-  ensure1040();const base=clubBaseName(club),key=`${S.year}|${base}|${leagueName}`;if(S.pss1040.clubRosters[key])return S.pss1040.clubRosters[key];
-  const rng=rng1040(`${key}|roster1042`),level=leagueByName(leagueName)?.level||3,home=clubCountryCode1040(club),rows=[],core=rosterCoreRating1042(club,leagueName,rng),strength=teamData(club)?.strength||leagueBaseline(leagueName),p=rosterLeaguePercentile1042(leagueName,strength);
+  ensure1040();const base=clubBaseName(club),home=clubCountryCode1040(club),key=`${S.year}|${base}|${leagueName}|home-${home}|nat1044`;if(S.pss1040.clubRosters[key])return S.pss1040.clubRosters[key];
+  const rng=rng1040(`${key}|roster1044`),level=leagueByName(leagueName)?.level||3,rows=[],core=rosterCoreRating1042(club,leagueName,rng),strength=teamData(club)?.strength||leagueBaseline(leagueName),p=rosterLeaguePercentile1042(leagueName,strength);
   const finance=S.clubFinance?.[base]||{specialType:null};
-  const add=(type,code,rating,extra={})=>rows.push({id:`${base}-${S.year}-${rows.length}`,type,code,flag:FLAGS[code]||'🏁',rating:clamp(Math.round(rating),36,97),...extra});
+  const localAdj=homeRiderAdjective1044(home);
+  const add=(type,code,rating,extra={})=>rows.push({id:`${base}-${S.year}-${rows.length}`,type,code,flag:FLAGS[code]||'🏁',rating:clamp(Math.round(rating),36,97),homeNation:home,isDomestic:code===home,...extra});
+  const localType=category=>category==='senior'?`${localAdj} senior`:category==='u24'?`${localAdj} U24`:category==='junior'?`${localAdj} junior`:category==='reserveU23'?`Rezerwowy U23 (${localAdj.toLowerCase()})`:`Rezerwowy senior (${localAdj.toLowerCase()})`;
+  const foreignType=category=>category==='senior'?'Zagraniczny senior':category==='u24'?'Zagraniczny U24':category==='junior'?'Zagraniczny junior':category==='reserveU23'?'Zagraniczny rezerwowy U23':'Zagraniczny rezerwowy senior';
 
-  // Regulamin wykorzystujemy sportowo: najpierw minimalna wymagana liczba polskich licencji,
-  // potem pozostałe otwarte miejsca trafiają do najlepszej szerszej puli zagranicznej.
+  // Krajowość zawsze liczymy względem siedziby klubu: POL dla klubów polskich, GER dla
+  // Landshut/Wittstock, LAT dla Daugavpils i CZE dla Pardubic. Pozostałe miejsca
+  // wypełnia pula zagraniczna, która wyklucza kraj gospodarza, ale może zawierać POL.
   const foreignJunior=(level===1&&rng()<.14)||(level===2&&rng()<.055)||(level===3&&rng()<.02);
-  const u24Polish=rng()<(level===1?.34:level===2?.40:.46);
-  const requiredPolishSeniorGroup=foreignJunior?3:2;
-  const openPoles=Math.max(0,requiredPolishSeniorGroup-(u24Polish?1:0));
-  const openCodes=shuffle1042(rng,[...Array(openPoles).fill('POL'),...Array(4-openPoles).fill(null).map(()=>foreignNation1040(rng,home))]);
+  const u24Home=rng()<(level===1?.34:level===2?.40:.46);
+  const requiredHomeSeniorGroup=foreignJunior?3:2;
+  const openHome=Math.max(0,requiredHomeSeniorGroup-(u24Home?1:0));
+  const openCodes=shuffle1042(rng,[...Array(openHome).fill(home),...Array(4-openHome).fill(null).map(()=>foreignNation1040(rng,home))]);
   const slotOffsets=[5.6+rng()*1.8,3.2+rng()*1.6,1.2+rng()*1.5,-.2+rng()*1.7];
   if(rng()<(level===1?.09:level===2?.045:.025))slotOffsets[0]+=2+rng()*2.5;
   for(let i=0;i<4;i++){
    const code=openCodes[i],rating=core+slotOffsets[i]+(finance.specialType==='inwestor' && i<2 ? .7 : 0);
-   add(code==='POL'?'Polski senior':'Zagraniczny senior',code,rating,{category:'senior',matchday:true});
+   add(code===home?localType('senior'):foreignType('senior'),code,rating,{category:'senior',matchday:true});
   }
-  const u24Code=u24Polish?'POL':foreignNation1040(rng,home),u24Base=core-(level===1?4.8:level===2?5.2:5.7)+(rng()-.5)*2.8+(rng()<.07?2.5:0);
-  add(u24Code==='POL'?'Polski U24':'Zagraniczny U24',u24Code,u24Base,{category:'u24',age:int1040(rng,20,24),matchday:true});
+  const u24Code=u24Home?home:foreignNation1040(rng,home),u24Base=core-(level===1?4.8:level===2?5.2:5.7)+(rng()-.5)*2.8+(rng()<.07?2.5:0);
+  add(u24Code===home?localType('u24'):foreignType('u24'),u24Code,u24Base,{category:'u24',age:int1040(rng,20,24),matchday:true});
 
   const jrCore=(level===1?56:level===2?48:41)+p*10+(finance.specialType==='inwestor'?1.7:finance.specialType==='kryzys'?-1.4:0)+(rng()-.5)*2;
   const juniorCount=3+(rng()<.60?1:0),jrOffsets=[3.0,.2,-2.4,-4.5];
   for(let i=0;i<juniorCount;i++){
-   const code=(foreignJunior&&i===0)?foreignNation1040(rng,home):'POL';let rating=jrCore+(jrOffsets[i]??-5)+(rng()-.5)*3.5;if(rng()<.035)rating+=4+rng()*5;
-   add(code==='POL'?'Polski junior':'Zagraniczny junior',code,rating,{category:'junior',age:int1040(rng,16,21),matchday:i<2});
+   const code=(foreignJunior&&i===0)?foreignNation1040(rng,home):home;let rating=jrCore+(jrOffsets[i]??-5)+(rng()-.5)*3.5;if(rng()<.035)rating+=4+rng()*5;
+   add(code===home?localType('junior'):foreignType('junior'),code,rating,{category:'junior',age:int1040(rng,16,21),matchday:i<2});
   }
-  if(rng()<.70){const code=rng()<.58?'POL':foreignNation1040(rng,home);add(code==='POL'?'Rezerwowy U23':'Zagraniczny rezerwowy U23',code,core-(level===1?7:level===2?6.5:6)+(rng()-.5)*5,{category:'reserve',age:int1040(rng,19,23),reserve:true})}
-  if(rng()<.36){const code=rng()<.34?'POL':foreignNation1040(rng,home);add(code==='POL'?'Rezerwowy senior':'Zagraniczny rezerwowy senior',code,core-4+(rng()-.5)*6,{category:'senior',reserve:true})}
+  if(rng()<.70){const code=rng()<.58?home:foreignNation1040(rng,home);add(code===home?localType('reserveU23'):foreignType('reserveU23'),code,core-(level===1?7:level===2?6.5:6)+(rng()-.5)*5,{category:'reserve',age:int1040(rng,19,23),reserve:true})}
+  if(rng()<.36){const code=rng()<.34?home:foreignNation1040(rng,home);add(code===home?localType('reserveSenior'):foreignType('reserveSenior'),code,core-4+(rng()-.5)*6,{category:'senior',reserve:true})}
   S.pss1040.clubRosters[key]=rows;return rows;
  }
  globalThis.PSS1040ClubRoster=(club,league)=>clubRoster1040(club,league).map(r=>({...r}));
@@ -13636,16 +13654,17 @@ if(S){S.pss1031={version:'1.03.1'};save();}
   }
   const sen=roster.filter(r=>['senior','u24'].includes(r.category)).map(r=>r.rating).sort((a,b)=>b-a);return sen[Math.min(4,sen.length-1)]??75;
  }
- function playerStructuralBonus1040(roster,status){
-  if(status==='junior'){const polish=roster.filter(r=>r.category==='junior'&&r.code==='POL').length;return polish<2?7:3}
-  if(status==='u24'){const u24=roster.filter(r=>r.category==='u24').length;return u24<=1?6:2}
-  const polish=roster.filter(r=>['senior','u24'].includes(r.category)&&r.code==='POL').length;return polish<=2?6:polish===3?3:1;
+ function playerStructuralBonus1040(roster,status,club){
+  const home=clubCountryCode1040(club),playerIsHome=home==='POL';
+  if(status==='junior'){const local=roster.filter(r=>r.category==='junior'&&r.code===home).length;return playerIsHome?(local<2?7:3):1}
+  if(status==='u24'){const u24=roster.filter(r=>r.category==='u24').length;return (u24<=1?6:2)+(playerIsHome?1:0)}
+  const local=roster.filter(r=>['senior','u24'].includes(r.category)&&r.code===home).length;return playerIsHome?(local<=2?6:local===3?3:1):1;
  }
  const projectedLineupChance1040Base=projectedLineupChance;
  projectedLineupChance=function(club,leagueName,{stay=false,role='',form=null}={}){
   const roster=clubRoster1040(club,leagueName),status=rosterStatusForAge(),threshold=rosterThreshold1040(roster,status),formValue=form===null?currentFormRating():form;
   const delta=overall()-threshold,roleText=String(role||'').toLowerCase();
-  let chance=46+delta*(status==='junior'?5.2:status==='u24'?4.8:4.4)+playerStructuralBonus1040(roster,status)+(formValue-overall())*.65;
+  let chance=46+delta*(status==='junior'?5.2:status==='u24'?4.8:4.4)+playerStructuralBonus1040(roster,status,club)+(formValue-overall())*.65;
   if(roleText.includes('regularna'))chance+=7;else if(roleText.includes('podstawowy'))chance+=6;else if(roleText.includes('rotacja'))chance+=2;else if(roleText.includes('rezerw'))chance-=10;else if(roleText.includes('walka')||roleText.includes('rywalizacja'))chance-=2;
   if(stay)chance+=(S.clubRelation-50)*.10+(S.loyalty-50)*.04;
   if(S.season?.heats)chance+=clamp((Number(S.season.avg||0)-1.45)*9,-8,10);
@@ -14446,6 +14465,19 @@ function formatSeasonInjuries1041(injuries=[]){
  if(S){
   S.pss1043??={};S.pss1043.version=VERSION;
   S.pss1043.features={rouletteLandingRange:'10-90',deduplicatedRaceCopy:true,raisedSkillThresholds:true,balancedImpQualifiers:true,keyMatchSimulationResult:true,cycleGuestStandings:true,inRoundInjuryWithdrawal:true};
+  save();render();
+ }
+})();
+
+// ============================================================================
+// Polish Speedway Simulator 1.04.4 — narodowości kadr klubów zagranicznych
+// 10.09.2026
+// ============================================================================
+(()=>{
+ const VERSION='1.04.4';
+ if(S){
+  S.pss1044??={};S.pss1044.version=VERSION;
+  S.pss1044.features={foreignClubHomeNationRosters:true,foreignPoolsExcludeHomeNation:true,polishRidersAllowedAsForeignAbroad:true};
   save();render();
  }
 })();
