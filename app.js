@@ -16,7 +16,7 @@ const LEAGUES=[
   ["Hunters PSŻ Poznań",67],["H. Skrzydlewska Orzeł Łódź",65],["Polonia Piła",63],["Moonfin Magnus Ostrów Wielkopolski",64]
  ]},
  {id:3,name:"Krajowa Liga Żużlowa",level:3,teams:[
-  ["Wybrzeże Gdańsk",61],["ULTRAPUR Start Gniezno",60],["TRANS MF Landshut Devils",59],["OK Kolejarz Opole",55],
+  ["Wybrzeże Gdańsk",61],["ULTRAPUR OMEGA Gniezno",60],["TRANS MF Landshut Devils",59],["OK Kolejarz Opole",55],
   ["LVBET Lokomotiv Daugavpils",57],["Speedway Kraków",49],["Śląsk Świętochłowice",48]
  ]}
 ];
@@ -40,7 +40,7 @@ const TRACK_PROFILES={
  "Polonia Piła":{label:"tor sprzyjający odważnej jeździe i wyprzedzaniu",skill:"overtaking",bonus:"wyprzedzanie"},
  "Moonfin Magnus Ostrów Wielkopolski":{label:"szybki tor, na którym liczy się dystans",skill:"distance",bonus:"jazda na dystansie"},
  "Wybrzeże Gdańsk":{label:"techniczny tor wymagający dobrego prowadzenia motocykla",skill:"technique",bonus:"technika"},
- "ULTRAPUR Start Gniezno":{label:"tor premiujący dobry start",skill:"starts",bonus:"start"},
+ "ULTRAPUR OMEGA Gniezno":{label:"tor premiujący dobry start",skill:"starts",bonus:"start"},
  "TRANS MF Landshut Devils":{label:"szybki i szeroki tor",skill:"distance",bonus:"jazda na dystansie"},
  "OK Kolejarz Opole":{label:"krótki tor techniczny",skill:"technique",bonus:"technika"},
  "LVBET Lokomotiv Daugavpils":{label:"długi tor wymagający jazdy na dystansie",skill:"distance",bonus:"jazda na dystansie"},
@@ -134,7 +134,7 @@ const LOCAL_MENTORS={
   {name:"Krzysztof Cegielski",tier:"regional",cost:30000,desc:"psychika, profesjonalizm i świadome prowadzenie kariery",effects:{mental:3,fitness:1},pro:3},
   {name:"Renat Gafurow",tier:"regional",cost:33000,desc:"waleczność, dystans i regularność",effects:{distance:3,overtaking:2,mental:1}}
  ],
- "ULTRAPUR Start Gniezno":[
+ "ULTRAPUR OMEGA Gniezno":[
   {name:"Tomasz Fajfer",tier:"local",cost:22000,desc:"start, pierwszy łuk i gnieźnieńska szkoła jazdy",effects:{starts:3,corner:2}},
   {name:"Krzysztof Jabłoński",tier:"local",cost:25000,desc:"technika, dystans i doświadczenie turniejowe",effects:{technique:2,distance:2,mental:1}},
   {name:"Adam Fajfer",tier:"local",cost:21000,desc:"regularność i przygotowanie fizyczne",effects:{fitness:2,mental:2,starts:1}}
@@ -191,7 +191,7 @@ const REGION_CLUBS={
  "Śląskie":["KRONO-PLAST Włókniarz Częstochowa","INNPRO ROW Rybnik","Śląsk Świętochłowice"],
  "Świętokrzyskie":["Speedway Kraków","Dakar Development Stal Rzeszów","KRONO-PLAST Włókniarz Częstochowa"],
  "Warmińsko-mazurskie":["Wybrzeże Gdańsk","PRES Grupa Deweloperska Toruń"],
- "Wielkopolskie":["FOGO Unia Leszno","Hunters PSŻ Poznań","Polonia Piła","ULTRAPUR Start Gniezno","Moonfin Magnus Ostrów Wielkopolski"],
+ "Wielkopolskie":["FOGO Unia Leszno","Hunters PSŻ Poznań","Polonia Piła","ULTRAPUR OMEGA Gniezno","Moonfin Magnus Ostrów Wielkopolski"],
  "Zachodniopomorskie":["Polonia Piła","Wybrzeże Gdańsk","Hunters PSŻ Poznań"]
 };
 const FOREIGN_POLISH_LEAGUE_CLUBS=new Set(["Landshut Devils","Lokomotiv Daugavpils","MSC Wölfe Wittstock","AMK Zlatá Přilba Pardubice"]);
@@ -406,10 +406,10 @@ const INDIVIDUAL_EVENTS=[
 const DMPJ_ROUNDS=["eliminacje","ćwierćfinały","półfinały","finał"];
 
 const FACILITY_DEFS={
- technical:{name:"Zaplecze techniczne",maxLevel:3,baseCost:520000,maintenance:105000,desc:"Warsztat, silniki, niezawodność sprzętu i ograniczenie defektów.",effect:["sprzęt +3/poziom","ustawienia +1/poziom","mniejsze zużycie i ryzyko awarii"]},
- training:{name:"Trening i analiza",maxLevel:3,baseCost:430000,maintenance:82000,desc:"Tor treningowy, telemetria, analiza wideo i szybszy rozwój.",effect:["+2 pkt rozwoju/poziom","kondycja +1/poziom","wyższy próg rozwoju i premia meczowa"]},
- recovery:{name:"Regeneracja i zdrowie",maxLevel:3,baseCost:360000,maintenance:70000,desc:"Fizjoterapia, odnowa, krótsza rehabilitacja i profilaktyka ciężkich urazów.",effect:["ryzyko urazu -4 p.p./poziom","morale +3/poziom","krótsza przerwa po ciężkim urazie"]},
- operations:{name:"Logistyka i sponsoring",maxLevel:3,baseCost:410000,maintenance:90000,desc:"Transport teamu, niższe koszty operacyjne i obsługa partnerów.",effect:["utrzymanie bazy do -22%","większy przychód sponsorski","medialność +1/poziom"]}
+ technical:{name:"Zaplecze techniczne",maxLevel:4,baseCost:520000,maintenance:105000,desc:"Warsztat, silniki, niezawodność sprzętu i ograniczenie defektów.",effect:["poziomy 1–3: rozwój sprzętu i ustawień","poziom 4: elitarna niezawodność i obsługa jednostek","mniejsze zużycie i ryzyko awarii"]},
+ training:{name:"Trening i analiza",maxLevel:4,baseCost:430000,maintenance:82000,desc:"Tor treningowy, telemetria, analiza wideo i szybszy rozwój.",effect:["poziomy 1–3: punkty rozwoju i analiza","poziom 4: elitarne przygotowanie i utrzymanie poziomu","bez dużego dodatkowego dopalacza OVR"]},
+ recovery:{name:"Regeneracja i zdrowie",maxLevel:4,baseCost:360000,maintenance:70000,desc:"Fizjoterapia, odnowa, krótsza rehabilitacja i profilaktyka ciężkich urazów.",effect:["poziomy 1–3: regeneracja i profilaktyka","poziom 4: elitarny sztab medyczny","krótsza rehabilitacja i lepsza ochrona przy przeciążeniu"]},
+ operations:{name:"Logistyka i sponsoring",maxLevel:4,baseCost:410000,maintenance:90000,desc:"Transport teamu, niższe koszty operacyjne i obsługa partnerów.",effect:["poziomy 1–3: logistyka i sponsoring","poziom 4: struktura klasy światowej","utrzymanie bazy do -30% i wyższa komercjalizacja"]}
 };
 function facilityLevel(key){
  return S.facilities?.[key]||0;
@@ -420,7 +420,7 @@ function facilityBuildCost(key){
 }
 function facilityMaintenance(){
  const gross=Object.entries(FACILITY_DEFS).reduce((sum,[key,def])=>sum+facilityLevel(key)*def.maintenance,0);
- const operations=facilityLevel("operations"),discount=[0,.07,.14,.22][operations]||0;
+ const operations=facilityLevel("operations"),discount=[0,.07,.14,.22,.30][Math.min(4,operations)]||0;
  return Math.round(gross*(1-discount));
 }
 function sponsorFacilityIncome(){
@@ -431,10 +431,19 @@ function sponsorFacilityIncome(){
 }
 function applyFacilityPreseasonEffects(){
  const technical=facilityLevel("technical"),training=facilityLevel("training"),recovery=facilityLevel("recovery"),operations=facilityLevel("operations");
- if(technical){S.skills.setup+=technical;S.equipment+=technical*3;S.injuryRisk-=technical}
- if(training){S.devPoints+=training*2;S.skills.fitness+=training;if(training>=2)S.skills.technique+=1;if(training>=3)S.skills.mental+=1}
- if(recovery){S.injuryRisk-=recovery*4;applyMetaDelta("morale",recovery*3)}
- if(operations)S.media+=operations;
+ // Poziom 4 jest przede wszystkim elitarnym zapleczem / money sinkiem. Bezpośredni
+ // rozwój sportowy jest liczony najwyżej jak dla poziomu 3, żeby bogata gwiazda nie
+ // kupowała sobie kolejnego dużego skoku OVR.
+ const tSport=Math.min(3,technical),trSport=Math.min(3,training),rSport=Math.min(3,recovery),oSport=Math.min(3,operations);
+ if(tSport){S.skills.setup+=tSport;S.equipment+=tSport*3;S.injuryRisk-=tSport}
+ if(trSport){S.devPoints+=trSport*2;S.skills.fitness+=trSport;if(trSport>=2)S.skills.technique+=1;if(trSport>=3)S.skills.mental+=1}
+ if(rSport){S.injuryRisk-=rSport*4;applyMetaDelta("morale",rSport*3)}
+ if(oSport)S.media+=oSport;
+ // Elitarne poziomy wzmacniają utrzymanie i zaplecze, nie sufit umiejętności.
+ if(technical>=4){S.equipment+=1;S.injuryRisk-=1}
+ if(training>=4){S.devPoints+=1;applyMetaDelta("professionalism",1)}
+ if(recovery>=4){S.injuryRisk-=3;applyMetaDelta("morale",1)}
+ if(operations>=4){S.media+=1;applyMetaDelta("reputation",1)}
  normalize();
 }
 function buildFacility(key){
@@ -687,7 +696,7 @@ const COMPETITION_FIELD_PROFILES={
  "SEC":{buckets:[{min:87,max:93,w:.14},{min:83,max:88,w:.31},{min:79,max:84,w:.37},{min:74,max:80,w:.18}]},
  "GP Challenge":{buckets:[{min:87,max:93,w:.18},{min:83,max:88,w:.34},{min:79,max:84,w:.34},{min:74,max:80,w:.14}]},
  "MIMP":{buckets:[{min:78,max:86,w:.15},{min:73,max:80,w:.34},{min:68,max:75,w:.35},{min:63,max:70,w:.16}]},
- "SGP2":{buckets:[{min:82,max:89,w:.14},{min:77,max:84,w:.34},{min:72,max:79,w:.36},{min:67,max:74,w:.16}]}
+ "SGP2":{buckets:[{min:82,max:85,w:.05},{min:77,max:81,w:.20},{min:71,max:76,w:.40},{min:64,max:70,w:.27},{min:58,max:63,w:.08}]}
 };
 function competitionProfileKey(key){
  if(key==="Indywidualne Mistrzostwa Polski")return "IMP";
@@ -712,7 +721,7 @@ const COMPETITION_LEVELS={
  "Brązowy Kask":{mean:58,spread:7,field:16},
  "Srebrny Kask":{mean:66,spread:7,field:16},
  "MIMP":{mean:68,spread:7,field:16},
- "SGP2":{mean:76,spread:7,field:16},
+ "SGP2":{mean:73,spread:6,field:16},
  "IMP":{mean:87,spread:7,field:16},
  "Złoty Kask":{mean:84,spread:7,field:16},
  "Memoriał Jancarza":{mean:85,spread:8,field:16},
@@ -1217,37 +1226,77 @@ const SPONSOR_POOLS={
 };
 
 const CLUB_BASE_NAME_OVERRIDES={
- "Abramczyk Polonia Bydgoszcz":"Polonia Bydgoszcz",
- "Cellfast Wilki Krosno":"Wilki Krosno",
+ // PGE Ekstraliga — oddzielamy pełny człon sponsora tytularnego od sportowej tożsamości klubu.
+ "PRES Grupa Deweloperska Toruń":"Toruń",
  "ORLEN OIL Motor Lublin":"Motor Lublin",
  "ORLEN Oil Motor Lublin":"Motor Lublin",
  "Betard Sparta Wrocław":"Sparta Wrocław",
+ "BAYERSYSTEM GKM Grudziądz":"GKM Grudziądz",
+ "Stelmet Falubaz Zielona Góra":"Falubaz Zielona Góra",
+ "FOGO Unia Leszno":"Unia Leszno",
  "KRONO-PLAST Włókniarz Częstochowa":"Włókniarz Częstochowa",
+ "GEZET Stal Gorzów":"Stal Gorzów",
+ // Metalkas 2. Ekstraliga.
+ "Abramczyk Polonia Bydgoszcz":"Polonia Bydgoszcz",
+ "Cellfast Wilki Krosno":"Wilki Krosno",
  "INNPRO ROW Rybnik":"ROW Rybnik",
  "Dakar Development Stal Rzeszów":"Stal Rzeszów",
- "H. Skrzydlewska Orzeł Łódź":"Orzeł Łódź",
  "Hunters PSŻ Poznań":"PSŻ Poznań",
+ "H. Skrzydlewska Orzeł Łódź":"Orzeł Łódź",
  "Moonfin Malesa Ostrów Wielkopolski":"Ostrów Wielkopolski",
  "Moonfin Magnus Ostrów Wielkopolski":"Ostrów Wielkopolski",
- "GEZET Stal Gorzów":"Stal Gorzów",
+ // Krajowa Liga Żużlowa.
+ "ULTRAPUR OMEGA Gniezno":"Start Gniezno",
+ "ULTRAPUR Start Gniezno":"Start Gniezno", // zgodność ze stanem sprzed dołączenia OMEGA
  "TRANS MF Landshut Devils":"Landshut Devils",
+ "OK Kolejarz Opole":"Kolejarz Opole",
  "LVBET Lokomotiv Daugavpils":"Lokomotiv Daugavpils"
 };
 
 const CLUB_INITIAL_SPONSORS={
+ "Toruń":"PRES Grupa Deweloperska",
+ "Motor Lublin":"ORLEN OIL",
+ "Sparta Wrocław":"Betard",
+ "GKM Grudziądz":"BAYERSYSTEM",
+ "Falubaz Zielona Góra":"Stelmet",
+ "Unia Leszno":"FOGO",
+ "Włókniarz Częstochowa":"KRONO-PLAST",
+ "Stal Gorzów":"GEZET",
  "Polonia Bydgoszcz":"Abramczyk",
  "Wilki Krosno":"Cellfast",
- "Motor Lublin":"ORLEN Oil",
- "Sparta Wrocław":"Betard",
- "Włókniarz Częstochowa":"KRONO-PLAST",
  "ROW Rybnik":"INNPRO",
  "Stal Rzeszów":"Dakar Development",
- "Orzeł Łódź":"H. Skrzydlewska",
  "PSŻ Poznań":"Hunters",
- "Ostrów Wielkopolski":"Moonfin",
- "Stal Gorzów":"GEZET",
+ "Orzeł Łódź":"H. Skrzydlewska",
+ "Ostrów Wielkopolski":"Moonfin Magnus",
+ "Start Gniezno":"ULTRAPUR OMEGA",
  "Landshut Devils":"TRANS MF",
+ "Kolejarz Opole":"OK",
  "Lokomotiv Daugavpils":"LVBET"
+};
+
+// Dokładna nazwa wyświetlana na starcie gry. Nie zawsze jest prostym „Sponsor + pełna nazwa klubu”
+// (np. ULTRAPUR OMEGA Gniezno), dlatego zachowujemy ją osobno.
+const CLUB_INITIAL_DISPLAY_NAMES={
+ "Toruń":"PRES Grupa Deweloperska Toruń",
+ "Motor Lublin":"ORLEN OIL Motor Lublin",
+ "Sparta Wrocław":"Betard Sparta Wrocław",
+ "GKM Grudziądz":"BAYERSYSTEM GKM Grudziądz",
+ "Falubaz Zielona Góra":"Stelmet Falubaz Zielona Góra",
+ "Unia Leszno":"FOGO Unia Leszno",
+ "Włókniarz Częstochowa":"KRONO-PLAST Włókniarz Częstochowa",
+ "Stal Gorzów":"GEZET Stal Gorzów",
+ "Polonia Bydgoszcz":"Abramczyk Polonia Bydgoszcz",
+ "Wilki Krosno":"Cellfast Wilki Krosno",
+ "ROW Rybnik":"INNPRO ROW Rybnik",
+ "Stal Rzeszów":"Dakar Development Stal Rzeszów",
+ "PSŻ Poznań":"Hunters PSŻ Poznań",
+ "Orzeł Łódź":"H. Skrzydlewska Orzeł Łódź",
+ "Ostrów Wielkopolski":"Moonfin Magnus Ostrów Wielkopolski",
+ "Start Gniezno":"ULTRAPUR OMEGA Gniezno",
+ "Landshut Devils":"TRANS MF Landshut Devils",
+ "Kolejarz Opole":"OK Kolejarz Opole",
+ "Lokomotiv Daugavpils":"LVBET Lokomotiv Daugavpils"
 };
 
 function clubBaseName(rawName){
@@ -1291,13 +1340,24 @@ function ensureClubIdentity(){
 
  for(const league of LEAGUES){
   for(const [rawName] of league.teams){
-   const base=clubBaseName(rawName);
+   const base=clubBaseName(rawName),initial=CLUB_INITIAL_SPONSORS[base]||"",initialDisplay=CLUB_INITIAL_DISPLAY_NAMES[base]||(initial?`${initial} ${base}`:base);
+   // 1.05.1: przenosimy zapisane w 1.05.0 tożsamości, w których sponsor był błędnie częścią nazwy bazowej.
    if(!S.clubIdentity[base]){
-    const initial=CLUB_INITIAL_SPONSORS[base]||"";
+    const legacyKey=Object.keys(S.clubIdentity).find(k=>k!==base&&CLUB_BASE_NAME_OVERRIDES[k]===base);
+    if(legacyKey){
+     const legacy=S.clubIdentity[legacyKey];delete S.clubIdentity[legacyKey];legacy.baseName=base;
+     if((legacy.changeCount||0)===0&&(legacy.sponsorType==="none"||legacy.sponsorType==="legacy")){
+      legacy.sponsor=initial;legacy.displayName=initialDisplay;legacy.sponsorType=initial?"legacy":"none";legacy.sponsorSince=2026;legacy.sponsorUntil=initial?(legacy.sponsorUntil||2026+rand(10,18)):null;legacy.lastChangeYear=2026;
+     }else if(legacy.sponsor){legacy.displayName=`${legacy.sponsor} ${base}`}
+     S.clubIdentity[base]=legacy;
+     if(S.clubFinance?.[legacyKey]&&!S.clubFinance[base]){S.clubFinance[base]=S.clubFinance[legacyKey];delete S.clubFinance[legacyKey]}
+    }
+   }
+   if(!S.clubIdentity[base]){
     S.clubIdentity[base]={
      baseName:base,
      sponsor:initial,
-     displayName:initial?`${initial} ${base}`:base,
+     displayName:initialDisplay,
      sponsorType:initial?"legacy":"none",
      sponsorSince:2026,
      sponsorUntil:initial?2026+rand(10,18):null,
@@ -1306,8 +1366,30 @@ function ensureClubIdentity(){
     };
    }
    const identity=S.clubIdentity[base];
+   // Niezmienione partnerstwa startowe z zapisów 1.05.0 dostają pełny, zweryfikowany człon tytularny.
+   if((identity.changeCount||0)===0&&identity.lastChangeYear<=2026&&(identity.sponsorType==="legacy"||identity.sponsorType==="none")){
+    identity.baseName=base;identity.sponsor=initial;identity.displayName=initialDisplay;identity.sponsorType=initial?"legacy":"none";identity.sponsorSince=2026;if(initial&&!identity.sponsorUntil)identity.sponsorUntil=2026+rand(10,18);
+   }
    if(identity?.displayName)S.clubNameHistory[identity.displayName]=base;
    S.clubNameHistory[base]=base;
+  }
+ }
+ // Stare aliasy sponsorskie również wskazują od teraz na czystą tożsamość sportową klubu.
+ for(const [display,historicalBase] of Object.entries(S.clubNameHistory)){
+  if(CLUB_BASE_NAME_OVERRIDES[historicalBase])S.clubNameHistory[display]=CLUB_BASE_NAME_OVERRIDES[historicalBase];
+ }
+ // Archiwa 1.05.0 mogły używać całej nazwy sponsorskiej jako klucza klubu.
+ // Przenosimy tylko klucze, nie zmieniamy zapisanej historycznej nazwy wyświetlanej.
+ for(const root of [S.clubNameArchive,S.worldLeagueArchive]){
+  if(!root||typeof root!=="object")continue;
+  for(const snapshot of Object.values(root)){
+   if(!snapshot||typeof snapshot!=="object")continue;
+   for(const key of Object.keys(snapshot)){
+    const migrated=CLUB_BASE_NAME_OVERRIDES[key];
+    if(!migrated||migrated===key)continue;
+    if(snapshot[migrated]===undefined)snapshot[migrated]=snapshot[key];
+    delete snapshot[key];
+   }
   }
  }
  resolveDuplicateActiveSponsors();
@@ -1329,6 +1411,95 @@ function clubDisplayNameForSeason(name,year=S.year){
   if(season?.club)return season.club;
  }
  return clubDisplayName(base);
+}
+
+// 1.05.2: odmiana nazw klubów w tekstach narracyjnych. Sponsor tytularny pozostaje
+// częścią marki, a odmieniana jest sportowa część nazwy (lub miejscowość, jeśli
+// oficjalna nazwa składa się wyłącznie ze sponsora i miasta).
+const CLUB_NAME_CASES={
+ "Toruń":{gen:"Torunia",dat:"Toruniowi",acc:"Toruń",ins:"Toruniem",loc:"Toruniu"},
+ "Motor Lublin":{gen:"Motoru Lublin",dat:"Motorowi Lublin",acc:"Motor Lublin",ins:"Motorem Lublin",loc:"Motorze Lublin"},
+ "Sparta Wrocław":{gen:"Sparty Wrocław",dat:"Sparcie Wrocław",acc:"Spartę Wrocław",ins:"Spartą Wrocław",loc:"Sparcie Wrocław"},
+ "GKM Grudziądz":{gen:"GKM-u Grudziądz",dat:"GKM-owi Grudziądz",acc:"GKM Grudziądz",ins:"GKM-em Grudziądz",loc:"GKM-ie Grudziądz"},
+ "Falubaz Zielona Góra":{gen:"Falubazu Zielona Góra",dat:"Falubazowi Zielona Góra",acc:"Falubaz Zielona Góra",ins:"Falubazem Zielona Góra",loc:"Falubazie Zielona Góra"},
+ "Unia Leszno":{gen:"Unii Leszno",dat:"Unii Leszno",acc:"Unię Leszno",ins:"Unią Leszno",loc:"Unii Leszno"},
+ "Włókniarz Częstochowa":{gen:"Włókniarza Częstochowa",dat:"Włókniarzowi Częstochowa",acc:"Włókniarza Częstochowa",ins:"Włókniarzem Częstochowa",loc:"Włókniarzu Częstochowa"},
+ "Stal Gorzów":{gen:"Stali Gorzów",dat:"Stali Gorzów",acc:"Stal Gorzów",ins:"Stalą Gorzów",loc:"Stali Gorzów"},
+ "Polonia Bydgoszcz":{gen:"Polonii Bydgoszcz",dat:"Polonii Bydgoszcz",acc:"Polonię Bydgoszcz",ins:"Polonią Bydgoszcz",loc:"Polonii Bydgoszcz"},
+ "Wilki Krosno":{gen:"Wilków Krosno",dat:"Wilkom Krosno",acc:"Wilki Krosno",ins:"Wilkami Krosno",loc:"Wilkach Krosno"},
+ "ROW Rybnik":{gen:"ROW-u Rybnik",dat:"ROW-owi Rybnik",acc:"ROW Rybnik",ins:"ROW-em Rybnik",loc:"ROW-ie Rybnik"},
+ "Stal Rzeszów":{gen:"Stali Rzeszów",dat:"Stali Rzeszów",acc:"Stal Rzeszów",ins:"Stalą Rzeszów",loc:"Stali Rzeszów"},
+ "PSŻ Poznań":{gen:"PSŻ-u Poznań",dat:"PSŻ-owi Poznań",acc:"PSŻ Poznań",ins:"PSŻ-em Poznań",loc:"PSŻ Poznań"},
+ "Orzeł Łódź":{gen:"Orła Łódź",dat:"Orłowi Łódź",acc:"Orła Łódź",ins:"Orłem Łódź",loc:"Orle Łódź"},
+ "Polonia Piła":{gen:"Polonii Piła",dat:"Polonii Piła",acc:"Polonię Piła",ins:"Polonią Piła",loc:"Polonii Piła"},
+ "Ostrów Wielkopolski":{gen:"Ostrowa Wielkopolskiego",dat:"Ostrowowi Wielkopolskiemu",acc:"Ostrów Wielkopolski",ins:"Ostrowem Wielkopolskim",loc:"Ostrowie Wielkopolskim"},
+ "Wybrzeże Gdańsk":{gen:"Wybrzeża Gdańsk",dat:"Wybrzeżu Gdańsk",acc:"Wybrzeże Gdańsk",ins:"Wybrzeżem Gdańsk",loc:"Wybrzeżu Gdańsk"},
+ "Start Gniezno":{gen:"Startu Gniezno",dat:"Startowi Gniezno",acc:"Start Gniezno",ins:"Startem Gniezno",loc:"Starcie Gniezno"},
+ "Landshut Devils":{gen:"Landshut Devils",dat:"Landshut Devils",acc:"Landshut Devils",ins:"Landshut Devils",loc:"Landshut Devils"},
+ "Kolejarz Opole":{gen:"Kolejarza Opole",dat:"Kolejarzowi Opole",acc:"Kolejarza Opole",ins:"Kolejarzem Opole",loc:"Kolejarzu Opole"},
+ "Lokomotiv Daugavpils":{gen:"Lokomotivu Daugavpils",dat:"Lokomotivowi Daugavpils",acc:"Lokomotiv Daugavpils",ins:"Lokomotivem Daugavpils",loc:"Lokomotivie Daugavpils"},
+ "Speedway Kraków":{gen:"Speedway Kraków",dat:"Speedway Kraków",acc:"Speedway Kraków",ins:"Speedway Kraków",loc:"Speedway Kraków"},
+ "Śląsk Świętochłowice":{gen:"Śląska Świętochłowice",dat:"Śląskowi Świętochłowice",acc:"Śląsk Świętochłowice",ins:"Śląskiem Świętochłowice",loc:"Śląsku Świętochłowice"},
+ "Unia Tarnów":{gen:"Unii Tarnów",dat:"Unii Tarnów",acc:"Unię Tarnów",ins:"Unią Tarnów",loc:"Unii Tarnów"},
+ "Rawicz Speedway":{gen:"Rawicz Speedway",dat:"Rawicz Speedway",acc:"Rawicz Speedway",ins:"Rawicz Speedway",loc:"Rawicz Speedway"},
+ "Victoria Machowa":{gen:"Victorii Machowa",dat:"Victorii Machowa",acc:"Victorię Machowa",ins:"Victorią Machowa",loc:"Victorii Machowa"},
+ "Silesia Katowice":{gen:"Silesii Katowice",dat:"Silesii Katowice",acc:"Silesię Katowice",ins:"Silesią Katowice",loc:"Silesii Katowice"},
+ "Warszawski Klub Żużlowy":{gen:"Warszawskiego Klubu Żużlowego",dat:"Warszawskiemu Klubowi Żużlowemu",acc:"Warszawski Klub Żużlowy",ins:"Warszawskim Klubem Żużlowym",loc:"Warszawskim Klubie Żużlowym"},
+ "Gryfy Szczecin":{gen:"Gryfów Szczecin",dat:"Gryfom Szczecin",acc:"Gryfy Szczecin",ins:"Gryfami Szczecin",loc:"Gryfach Szczecin"},
+ "Kielce Speedway":{gen:"Kielce Speedway",dat:"Kielce Speedway",acc:"Kielce Speedway",ins:"Kielce Speedway",loc:"Kielce Speedway"},
+ "Podlasie Białystok":{gen:"Podlasia Białystok",dat:"Podlasiu Białystok",acc:"Podlasie Białystok",ins:"Podlasiem Białystok",loc:"Podlasiu Białystok"},
+ "MSC Wölfe Wittstock":{gen:"MSC Wölfe Wittstock",dat:"MSC Wölfe Wittstock",acc:"MSC Wölfe Wittstock",ins:"MSC Wölfe Wittstock",loc:"MSC Wölfe Wittstock"},
+ "AMK Zlatá Přilba Pardubice":{gen:"AMK Zlatá Přilba Pardubice",dat:"AMK Zlatá Přilba Pardubice",acc:"AMK Zlatá Přilba Pardubice",ins:"AMK Zlatá Přilba Pardubice",loc:"AMK Zlatá Přilba Pardubice"}
+};
+const CLUB_DISPLAY_CASE_OVERRIDES={
+ "PRES Grupa Deweloperska Toruń":{gen:"PRES Grupy Deweloperskiej Toruń",dat:"PRES Grupie Deweloperskiej Toruń",acc:"PRES Grupę Deweloperską Toruń",ins:"PRES Grupą Deweloperską Toruń",loc:"PRES Grupie Deweloperskiej Toruń"},
+ "ULTRAPUR OMEGA Gniezno":{gen:"ULTRAPUR OMEGA Gniezna",dat:"ULTRAPUR OMEGA Gnieznu",acc:"ULTRAPUR OMEGA Gniezno",ins:"ULTRAPUR OMEGA Gnieznem",loc:"ULTRAPUR OMEGA Gnieźnie"}
+};
+function clubNameCaseFromDisplay(display,base,grammaticalCase="nom"){
+ const shown=String(display||base||"");
+ if(grammaticalCase==="nom"||!shown)return shown;
+ const exact=CLUB_DISPLAY_CASE_OVERRIDES[shown]?.[grammaticalCase];if(exact)return exact;
+ const form=CLUB_NAME_CASES[base]?.[grammaticalCase];if(!form)return shown;
+ if(shown===base)return form;
+ if(shown.endsWith(` ${base}`))return shown.slice(0,-base.length)+form;
+ // Historyczna nazwa Gniezna z 2026 nie zawierała członu „Start”.
+ if(base==="Start Gniezno"&&shown.endsWith(" Gniezno")){
+  const city={gen:"Gniezna",dat:"Gnieznu",acc:"Gniezno",ins:"Gnieznem",loc:"Gnieźnie"}[grammaticalCase]||"Gniezno";
+  return shown.slice(0,-"Gniezno".length)+city;
+ }
+ return shown;
+}
+function clubNameCase(name,grammaticalCase="nom",year=null){
+ const base=clubBaseName(name);
+ const shown=year===null?clubDisplayName(base):clubDisplayNameForSeason(base,year);
+ return clubNameCaseFromDisplay(shown,base,grammaticalCase);
+}
+function knownClubDisplayNames(){
+ const names=new Map();
+ const add=(display,base)=>{display=String(display||"").trim();base=clubBaseName(base||display);if(display&&base)names.set(display,base)};
+ for(const league of LEAGUES)for(const [raw] of league.teams){const base=clubBaseName(raw);add(raw,base);add(base,base);add(clubDisplayName(base),base)}
+ for(const club of EXPANSION_CLUBS){const base=clubBaseName(club.name);add(club.name,base);add(base,base);add(S?.clubIdentity?.[base]?.displayName,base)}
+ for(const [display,base] of Object.entries(S?.clubNameHistory||{}))add(display,base);
+ for(const archive of Object.values(S?.clubNameArchive||{}))for(const [base,display] of Object.entries(archive||{}))add(display,base);
+ return [...names.entries()].sort((a,b)=>b[0].length-a[0].length);
+}
+function applyClubGrammarToText(text){
+ let out=String(text??"");
+ const esc=value=>value.replace(/[.*+?^${}()|[\]\\]/g,"\\$&");
+ for(const [display,base] of knownClubDisplayNames()){
+  const e=esc(display),form=c=>clubNameCaseFromDisplay(display,base,c);
+  // Przyimki o jednoznacznym przypadku.
+  out=out.replace(new RegExp(String.raw`\b(do|dla|od|bez) (${e})(?=[\s.,;:!?<]|$)`,`g`),(m,p)=>`${p} ${form("gen")}`);
+  out=out.replace(new RegExp(String.raw`\b(w|we) (${e})(?=[\s.,;:!?<]|$)`,`g`),(m,p)=>`${p} ${form("loc")}`);
+  out=out.replace(new RegExp(String.raw`\bprzeciwko (${e})(?=[\s.,;:!?<]|$)`,`g`),()=>`przeciwko ${form("dat")}`);
+  out=out.replace(new RegExp(String.raw`\bZwycięstwo (${e})(?=[\s.,;:!?<]|$)`,`g`),()=>`Zwycięstwo ${form("gen")}`);
+  out=out.replace(new RegExp(String.raw`\bzwycięstwo (${e})(?=[\s.,;:!?<]|$)`,`g`),()=>`zwycięstwo ${form("gen")}`);
+  // „z” jest wieloznaczne, więc odmieniamy je tylko w rozpoznawalnych konstrukcjach.
+  out=out.replace(new RegExp(String.raw`(kontrakt(?:u|em|owi|y|ów)?|umow(?:a|y|ę|ie|ą)|baraż(?:u|em|owi|e)?|współprac(?:a|y|ę|ą|e)) z (${e})(?=[\s.,;:!?<]|$)`,`gi`),(m,p)=>`${p} z ${form("ins")}`);
+  out=out.replace(new RegExp(String.raw`(wracasz|powrót|wypożyczenie) z[: ]+(${e})(?=[\s.,;:!?<]|$)`,`gi`),(m,p)=>`${p} z ${form("gen")}`);
+  out=out.replace(new RegExp(String.raw`w barwach (${e})(?=[\s.,;:!?<]|$)`,`gi`),()=>`w barwach ${form("gen")}`);
+ }
+ return out;
 }
 function captureSeasonClubNameSnapshot(year=S.year){
  S.clubNameArchive??={};
@@ -1954,7 +2125,7 @@ function normalize(){
 const START_PROFILES={
  raw:{age:15,base:39,budget:7000,equipment:36,reputation:2,morale:68,chance:12,role:"Adept od podstaw"},
  academy:{age:15,base:44,budget:12000,equipment:42,reputation:5,morale:70,chance:20,role:"Adept szkółki"},
- license:{age:16,base:50,budget:18000,equipment:46,reputation:7,morale:72,chance:26,role:"Licencjonowany junior"},
+ license:{age:16,base:50,budget:18000,equipment:46,reputation:7,morale:72,chance:26,role:"Zaawansowany adept"},
  talent:{age:16,base:57,budget:26000,equipment:50,reputation:12,morale:74,chance:34,role:"Talent szkółki"},
  reserve:{age:17,base:53,budget:23000,equipment:48,reputation:8,morale:71,chance:42,role:"Rezerwowy junior"}
 };
@@ -2077,9 +2248,12 @@ function createPlayer(){
  $("newsBox").innerHTML=`<p class="eyebrow">PRZED LICENCJĄ</p><h3>${background.title.toUpperCase()}</h3><p>${background.text}</p><p><b>Zaplecze:</b> ${support.title}. Budżet początkowy: ${money(S.budget)}.</p>${openingReport?`<div class="guidance-report"><span>RAPORT SZKÓŁKI</span><p>${openingReport.text}</p></div>`:""}`;
  save();
 }
-function save(){localStorage.setItem("pss_v1044",JSON.stringify(S))}
+function save(){localStorage.setItem("pss_v1052",JSON.stringify(S))}
 function load(){
  try{
+  const newest1052=localStorage.getItem("pss_v1052");
+  const newest1051=localStorage.getItem("pss_v1051");
+  const newest1050=localStorage.getItem("pss_v1050");
   const newest=localStorage.getItem("pss_v1044");
   const previousV1043=localStorage.getItem("pss_v1043");
   const previousV1042=localStorage.getItem("pss_v1042");
@@ -2100,26 +2274,29 @@ function load(){
   const previousV101=localStorage.getItem("pss_v101");
   const previousVersion=localStorage.getItem("pss_v100");
   const previousBrand=localStorage.getItem("pzs_v200");
-  if(newest)return JSON.parse(newest);
-  if(previousV1043){localStorage.setItem("pss_v1044",previousV1043); return JSON.parse(previousV1043);}
-  if(previousV1042){localStorage.setItem("pss_v1044",previousV1042); return JSON.parse(previousV1042);}
-  if(previousV1041){localStorage.setItem("pss_v1044",previousV1041); return JSON.parse(previousV1041);}
-  if(previousV1040){localStorage.setItem("pss_v1044",previousV1040); return JSON.parse(previousV1040);}
-  if(previousV1034){localStorage.setItem("pss_v1044",previousV1034); return JSON.parse(previousV1034);}
-  if(previousV1033){localStorage.setItem("pss_v1044",previousV1033); return JSON.parse(previousV1033);}
-  if(previousV1032){localStorage.setItem("pss_v1044",previousV1032); return JSON.parse(previousV1032);}
-  if(previousV1031){localStorage.setItem("pss_v1044",previousV1031); return JSON.parse(previousV1031);}
-  if(previousV1030){localStorage.setItem("pss_v1044",previousV1030); return JSON.parse(previousV1030);}
-  if(previousV1026Test){localStorage.setItem("pss_v1044",previousV1026Test); return JSON.parse(previousV1026Test);}
-  if(previousV1025){localStorage.setItem("pss_v1044",previousV1025); return JSON.parse(previousV1025);}
-  if(previousV1024){localStorage.setItem("pss_v1044",previousV1024); return JSON.parse(previousV1024);}
-  if(previousV1023){localStorage.setItem("pss_v1044",previousV1023); return JSON.parse(previousV1023);}
-  if(previousV1022){localStorage.setItem("pss_v1044",previousV1022); return JSON.parse(previousV1022);}
-  if(previousV1021){localStorage.setItem("pss_v1044",previousV1021); return JSON.parse(previousV1021);}
-  if(previousV102){localStorage.setItem("pss_v1044",previousV102); return JSON.parse(previousV102);}
-  if(previousV101){localStorage.setItem("pss_v1044",previousV101); return JSON.parse(previousV101);}
-  if(previousVersion){localStorage.setItem("pss_v1044",previousVersion); return JSON.parse(previousVersion);}
-  if(previousBrand){localStorage.setItem("pss_v1044",previousBrand); return JSON.parse(previousBrand);}
+  if(newest1052)return JSON.parse(newest1052);
+  if(newest1051){localStorage.setItem("pss_v1052",newest1051);return JSON.parse(newest1051);}
+  if(newest1050){localStorage.setItem("pss_v1052",newest1050);return JSON.parse(newest1050);}
+  if(newest){localStorage.setItem("pss_v1052",newest);return JSON.parse(newest);}
+  if(previousV1043){localStorage.setItem("pss_v1052",previousV1043); return JSON.parse(previousV1043);}
+  if(previousV1042){localStorage.setItem("pss_v1052",previousV1042); return JSON.parse(previousV1042);}
+  if(previousV1041){localStorage.setItem("pss_v1052",previousV1041); return JSON.parse(previousV1041);}
+  if(previousV1040){localStorage.setItem("pss_v1052",previousV1040); return JSON.parse(previousV1040);}
+  if(previousV1034){localStorage.setItem("pss_v1052",previousV1034); return JSON.parse(previousV1034);}
+  if(previousV1033){localStorage.setItem("pss_v1052",previousV1033); return JSON.parse(previousV1033);}
+  if(previousV1032){localStorage.setItem("pss_v1052",previousV1032); return JSON.parse(previousV1032);}
+  if(previousV1031){localStorage.setItem("pss_v1052",previousV1031); return JSON.parse(previousV1031);}
+  if(previousV1030){localStorage.setItem("pss_v1052",previousV1030); return JSON.parse(previousV1030);}
+  if(previousV1026Test){localStorage.setItem("pss_v1052",previousV1026Test); return JSON.parse(previousV1026Test);}
+  if(previousV1025){localStorage.setItem("pss_v1052",previousV1025); return JSON.parse(previousV1025);}
+  if(previousV1024){localStorage.setItem("pss_v1052",previousV1024); return JSON.parse(previousV1024);}
+  if(previousV1023){localStorage.setItem("pss_v1052",previousV1023); return JSON.parse(previousV1023);}
+  if(previousV1022){localStorage.setItem("pss_v1052",previousV1022); return JSON.parse(previousV1022);}
+  if(previousV1021){localStorage.setItem("pss_v1052",previousV1021); return JSON.parse(previousV1021);}
+  if(previousV102){localStorage.setItem("pss_v1052",previousV102); return JSON.parse(previousV102);}
+  if(previousV101){localStorage.setItem("pss_v1052",previousV101); return JSON.parse(previousV101);}
+  if(previousVersion){localStorage.setItem("pss_v1052",previousVersion); return JSON.parse(previousVersion);}
+  if(previousBrand){localStorage.setItem("pss_v1052",previousBrand); return JSON.parse(previousBrand);}
   const v1361=localStorage.getItem("pzs_v1361");
   if(v1361)return JSON.parse(v1361);
   const v136=localStorage.getItem("pzs_v136");
@@ -3498,24 +3675,43 @@ function raceAdviceText(rivals,phase="start",teammate=null,context={}){
 
 
 const MINOR_INJURIES=[
- {name:"stłuczenie barku",weeks:[0,1],severity:"drobny"},{name:"lekki uraz nadgarstka",weeks:[0,2],severity:"drobny"},
- {name:"stłuczenie żeber",weeks:[1,2],severity:"drobny"},{name:"naciągnięcie mięśnia",weeks:[1,2],severity:"drobny"},
- {name:"lekki uraz kolana",weeks:[0,2],severity:"drobny"}
+ {name:"silne stłuczenie i poobijanie",weeks:[0,1],severity:"drobny"},
+ {name:"stłuczenie barku",weeks:[0,2],severity:"drobny"},
+ {name:"stłuczenie żeber",weeks:[0,2],severity:"drobny"},
+ {name:"lekki uraz nadgarstka",weeks:[0,2],severity:"drobny"},
+ {name:"naciągnięcie mięśnia",weeks:[1,2],severity:"drobny"},
+ {name:"lekki uraz kolana",weeks:[0,2],severity:"drobny"},
+ {name:"lekkie wstrząśnienie mózgu",weeks:[1,3],severity:"drobny"}
 ];
 const MODERATE_INJURIES=[
- {name:"skręcenie nadgarstka",weeks:[2,4],severity:"umiarkowany"},{name:"uraz barku",weeks:[2,5],severity:"umiarkowany"},
- {name:"pęknięcie żebra",weeks:[2,5],severity:"umiarkowany"},{name:"skręcenie stawu skokowego",weeks:[2,4],severity:"umiarkowany"},
- {name:"uraz dłoni",weeks:[1,4],severity:"umiarkowany"}
+ {name:"uraz barku",weeks:[2,8],severity:"umiarkowany"},
+ {name:"skręcenie nadgarstka",weeks:[2,5],severity:"umiarkowany"},
+ {name:"uraz dłoni",weeks:[1,4],severity:"umiarkowany"},
+ {name:"złamanie palca lub kości śródręcza",weeks:[2,5],severity:"umiarkowany"},
+ {name:"pęknięcie jednego lub dwóch żeber",weeks:[2,5],severity:"umiarkowany"},
+ {name:"skręcenie stawu skokowego",weeks:[2,5],severity:"umiarkowany"},
+ {name:"złamanie kości promieniowej",weeks:[4,7],severity:"umiarkowany"},
+ {name:"złamanie obojczyka bez przemieszczenia",weeks:[3,5],severity:"umiarkowany"}
 ];
 
 const SERIOUS_INJURIES=[
- {name:"złamanie obojczyka",weeks:[5,10],severity:2,skills:["fitness"],loss:[0,1]},
- {name:"złamanie nogi",weeks:[10,20],severity:4,skills:["fitness","starts"],loss:[1,2]},
- {name:"poważny uraz barku",weeks:[8,16],severity:3,skills:["technique","fitness"],loss:[0,2]}
+ {name:"złamanie obojczyka z przemieszczeniem lub wieloodłamowe",weeks:[5,10],severity:2,skills:["fitness"],loss:[0,1]},
+ {name:"złamanie łopatki",weeks:[5,9],severity:2,skills:["fitness","technique"],loss:[0,1]},
+ {name:"złamanie nadgarstka",weeks:[5,9],severity:2,skills:["starts","technique"],loss:[0,1]},
+ {name:"skomplikowane złamanie nadgarstka",weeks:[7,12],severity:3,skills:["starts","technique"],loss:[0,2]},
+ {name:"złamanie łokcia",weeks:[7,14],severity:3,skills:["technique","fitness"],loss:[0,2]},
+ {name:"wielokrotne złamanie żeber",weeks:[3,7],severity:2,skills:["fitness"],loss:[0,1]},
+ {name:"złamania żeber z odmą lub urazem płuca",weeks:[4,9],severity:3,skills:["fitness"],loss:[0,2]},
+ {name:"złamanie kostki lub stawu skokowego",weeks:[6,12],severity:3,skills:["fitness","starts"],loss:[0,2]},
+ {name:"złamanie piszczeli lub strzałki",weeks:[8,16],severity:4,skills:["fitness","starts"],loss:[1,2]},
+ {name:"złamanie kości udowej",weeks:[8,16],severity:4,skills:["fitness","starts"],loss:[1,2]},
+ {name:"poważne uszkodzenie więzadeł kolana",weeks:[8,20],severity:4,skills:["fitness","distance"],loss:[1,2]},
+ {name:"złamanie miednicy",weeks:[10,20],severity:5,skills:["fitness","distance"],loss:[1,3]},
+ {name:"stabilne złamanie kręgu",weeks:[5,12],severity:4,skills:["fitness","mental"],loss:[0,2]}
 ];
 const CATASTROPHIC_INJURIES=[
  {name:"poważny uraz kręgosłupa",weeks:[16,32],severity:6,skills:["fitness","mental","distance"],loss:[2,4],potentialLoss:[1,3]},
- {name:"wielonarządowe obrażenia po bardzo ciężkim upadku",weeks:[22,40],severity:7,skills:["fitness","distance","mental","technique"],loss:[2,4],potentialLoss:[2,4]}
+ {name:"wielonarządowe obrażenia po bardzo ciężkim upadku",weeks:[20,40],severity:7,skills:["fitness","distance","mental","technique"],loss:[2,4],potentialLoss:[2,4]}
 ];
 function ensureHealthStats(){
  S.healthStats??={injuries:0,seriousInjuries:0,weeksMissed:0,leagueMatchesMissed:0,individualEventsMissed:0,history:[]};
@@ -3572,7 +3768,7 @@ function recordInjury(name,weeks,severity="drobny"){
 
 function applySeriousInjury(injury,treatment){
  ensureHealthStats();
- const rec=facilityLevel("recovery"),weeks=Math.max(3,Math.round(rand(injury.weeks[0],injury.weeks[1])*treatment.weeks*([1,.94,.86,.78][rec]||1)));
+ const rec=facilityLevel("recovery"),weeks=Math.max(3,Math.round(rand(injury.weeks[0],injury.weeks[1])*treatment.weeks*([1,.94,.86,.78,.70][Math.min(4,rec)]||.70)));
  const matchesMissed=clamp(Math.round(weeks/2.2),1,14),eventsMissed=clamp(Math.round(weeks/5),0,6);
  S.budget-=treatment.cost;S.injuryRisk=clamp(S.injuryRisk+treatment.risk+injury.severity*2-rec*2,0,100);
  S.healthStats.injuries++;S.careerStats.injuries=S.healthStats.injuries;S.healthStats.seriousInjuries++;S.healthStats.weeksMissed+=weeks;S.healthStats.leagueMatchesMissed+=matchesMissed;S.healthStats.individualEventsMissed+=eventsMissed;
@@ -4446,7 +4642,7 @@ function completeLeagueRaceResult(result,ctx,pair,heatNo,next,mode){
  if(result.incident?.serious)ctx.withdrawn=true;
  if(place===1){S.morale+=2;S.reputation+=1}else if(place===4)S.morale-=1;
  const sc=importantMatchScoreContext(ctx);
- const decisionNarrative=result.decisionNarrative?`<p class="heat-narrative">${result.decisionNarrative}</p>`:"";
+ const decisionNarrative=result.decisionNarrative&&!result.incident?`<p class="heat-narrative">${result.decisionNarrative}</p>`:"";
  const incident=result.incident&&result.incident.type!=="majorMistake"?`<p class="heat-incident">${result.incident.text}</p>`:"";
  showModal("WYNIK BIEGU",`${place}. miejsce — ${points}${bonus?"*":""} pkt`,
   `Bieg ${heatNo}: ${heat.ownPts}:${heat.awayPts}. Po biegu: ${sc.match}${sc.aggregate?` • ${sc.aggregate}`:""}.<br><b>Twój dorobek:</b> ${playerScoreLine(ctx)}.${decisionNarrative}${incident}`,
@@ -4482,7 +4678,7 @@ function finishLeagueRace(mode,ctx,pair,heatNo,next,snap,c=null,prob=null){
      let result=finishRaceFromSnapshot(lateSnap,opt.key,{teamRace:true,rivals:pair.away,teammate:pair.own[1],context:lateContext,suppressIncident:true});result=ensurePlayerResultPosition(result,last.targetPosition);
      updateRaceState(lateContext,beforeLate,result.position,last.outcome,opt.key);
      result.decisionNarrative=last.outcome==="incident"?last.narrative:contextualRaceNarrative(opt.key,last.outcome,beforeLate,result.position,lateContext);
-     if(last.incident)result.incident={type:last.incident.key,serious:false,text:last.incident.text};
+     if(last.incident)result.incident={...last.incident,type:last.incident.key||last.incident.type,serious:!!last.incident.serious,text:last.incident.text};
      completeLeagueRaceResult(result,ctx,pair,heatNo,next,opt.key);
     }});
    }}});
@@ -4790,8 +4986,16 @@ function mentorEligible(m){
  if((m.minOverall||0)>overall())return false;
  return true;
 }
+function localMentorsForClub(name){
+ if(!name)return [];
+ if(LOCAL_MENTORS[name])return LOCAL_MENTORS[name];
+ const base=clubBaseName(name);
+ const key=Object.keys(LOCAL_MENTORS).find(club=>clubBaseName(club)===base);
+ return key?LOCAL_MENTORS[key]:[];
+}
 function weightedMentorPool(){
- const local=(LOCAL_MENTORS[S.club]||LOCAL_MENTORS[S.academyClub]||[]).filter(mentorEligible);
+ const clubLocal=localMentorsForClub(S.club),academyLocal=localMentorsForClub(S.academyClub);
+ const local=(clubLocal.length?clubLocal:academyLocal).filter(mentorEligible);
  const national=NATIONAL_MENTORS.filter(mentorEligible);
  const pool=[];
  // Lokalni mentorzy dominują, szczególnie we wczesnej karierze.
@@ -5556,11 +5760,11 @@ function eventSelectionScore(key,basePph){
  return overall()+leagueBonus+formBonus+reputationBonus+ridesBonus+juniorBonus-agePenalty-eventBottomPenalty(key);
 }
 const CLUB_CITY_MAP={
- "PRES Grupa Deweloperska Toruń":"Toruń","Motor Lublin":"Lublin","Sparta Wrocław":"Wrocław","BAYERSYSTEM GKM Grudziądz":"Grudziądz",
- "Stelmet Falubaz Zielona Góra":"Zielona Góra","FOGO Unia Leszno":"Leszno","Włókniarz Częstochowa":"Częstochowa","Stal Gorzów":"Gorzów Wielkopolski",
+ "Toruń":"Toruń","Motor Lublin":"Lublin","Sparta Wrocław":"Wrocław","GKM Grudziądz":"Grudziądz",
+ "Falubaz Zielona Góra":"Zielona Góra","Unia Leszno":"Leszno","Włókniarz Częstochowa":"Częstochowa","Stal Gorzów":"Gorzów Wielkopolski",
  "Polonia Bydgoszcz":"Bydgoszcz","Wilki Krosno":"Krosno","ROW Rybnik":"Rybnik","Stal Rzeszów":"Rzeszów","PSŻ Poznań":"Poznań",
- "Orzeł Łódź":"Łódź","Polonia Piła":"Piła","Ostrów Wielkopolski":"Ostrów Wielkopolski","Wybrzeże Gdańsk":"Gdańsk","ULTRAPUR Start Gniezno":"Gniezno",
- "Landshut Devils":"Landshut","OK Kolejarz Opole":"Opole","Lokomotiv Daugavpils":"Daugavpils","Speedway Kraków":"Kraków","Śląsk Świętochłowice":"Świętochłowice",
+ "Orzeł Łódź":"Łódź","Polonia Piła":"Piła","Ostrów Wielkopolski":"Ostrów Wielkopolski","Wybrzeże Gdańsk":"Gdańsk","Start Gniezno":"Gniezno",
+ "Landshut Devils":"Landshut","Kolejarz Opole":"Opole","Lokomotiv Daugavpils":"Daugavpils","Speedway Kraków":"Kraków","Śląsk Świętochłowice":"Świętochłowice",
  "Jaskółki Tarnów":"Tarnów","Rawicz Speedway":"Rawicz","Wicher Machowa":"Machowa","Silesia Katowice":"Katowice","Warszawski Klub Żużlowy":"Warszawa",
  "Gryfy Szczecin":"Szczecin","Kielce Speedway":"Kielce","Podlasie Białystok":"Białystok","MSC Wölfe Wittstock":"Wittstock","AMK Zlatá Přilba Pardubice":"Pardubice"
 };
@@ -6067,11 +6271,12 @@ function playFiveInteractiveTournamentHeats({key,label,prefix="",startingCyclePo
  const eventToken=`${S.year}:${key}:${label}`;
  const day=ensureDayForm(key,eventToken);
  const state={heat:0,points:0,wins:0,results:[],eventToken,dayModifier:day.modifier};
+ const scheduledRivalGroups=(rivalPool?.length>=15?CLASSIC_16_SCHEDULE.flatMap(round=>round).filter(heat=>heat.includes(0)).map(heat=>heat.filter(i=>i!==0).map(i=>rivalPool[i-1]).filter(Boolean)):[]);
  const nextHeat=()=>{
   if(state.heat>=5){done(state);return}
   const heatNo=state.heat+1;
   const rivals=rivalPool?.length
-   ?rivalPool.slice().sort(()=>Math.random()-.5).slice(0,3).map((r,i)=>({label:`Rywal ${i+1}`,rating:Math.round(r.rating+(r.seasonForm||0))}))
+   ?(scheduledRivalGroups[state.heat]?.length===3?scheduledRivalGroups[state.heat]:rivalPool.slice(state.heat*3,state.heat*3+3)).map((r,i)=>({id:r.id||`heat-${state.heat}-${i}`,label:`Rywal ${i+1}`,rating:Math.round(r.rating),code:r.code||r.country||'',country:r.country||r.code||'',flag:r.flag||'',description:r.description||'',source:r}))
    :Array.from({length:3},(_,i)=>({label:`Rywal ${i+1}`,rating:drawCompetitionRating(key)}));
   const rivalText=rivals.map(r=>`${r.label}: OVR ${r.rating}`).join(" • ");
   const startContext=mentorAdviceContext(rivals,"start",null,{
@@ -6130,13 +6335,19 @@ function playFiveInteractiveTournamentHeats({key,label,prefix="",startingCyclePo
    showOutcomeRoller({title:"Końcówka biegu",subtitle:`<p>${resolved.narrative}</p>`,mode,prob,outcome:resolved.outcome,onDone:()=>{
     let out=finishRaceFromSnapshot(snap,mode,{teamRace:false,rivals,context:c,suppressIncident:true});
     out=ensurePlayerResultPosition(out,resolved.targetPosition);out.decisionNarrative=resolved.outcome==="incident"?resolved.narrative:contextualRaceNarrative(mode,resolved.outcome,position,out.position,c);
-    if(resolved.incident)out.incident={type:resolved.incident.key,serious:false,text:resolved.incident.text};
+    if(resolved.incident)out.incident={...resolved.incident,type:resolved.incident.key||resolved.incident.type,serious:!!resolved.incident.serious,text:resolved.incident.text};
     state.heat++;state.points+=out.points;if(out.points===3)state.wins++;
     state.results.push({heat:state.heat,points:out.points,place:out.position,incident:out.incident?.type||null});
     const cycleText=startingCyclePoints?` • w całym cyklu: ${startingCyclePoints+state.points} pkt`:"";
-    showModal("WYNIK BIEGU",`${out.position}. miejsce — ${out.points} pkt`,
-     `Twój dorobek w tej rundzie: <b>${state.points} pkt</b>${cycleText}. ${out.decisionNarrative||""}${out.incident?` ${out.incident.text}`:""}`,
-     [{title:state.heat<5?"Kolejny bieg":"Zakończ rundę",desc:state.heat<5?"Przejdź do kolejnego startu.":"Przejdź do klasyfikacji po fazie zasadniczej.",action:()=>{closeModal();nextHeat()}}]);
+    const incidentText=out.incident&&String(out.incident.text||"").trim()!==String(out.decisionNarrative||"").trim()?` ${out.incident.text}`:"";
+    const withdraw=!!(out.incident?.withdrawEvent||out.incident?.injuryData?.weeks>0);
+    if(withdraw){
+     while(state.results.length<5)state.results.push({heat:state.results.length+1,points:0,place:4,withdrawn:true,incident:'withdrawn'});
+     state.heat=5;state.withdrawn=true;
+    }
+    showModal(withdraw?"KONTUZJA — KONIEC ZAWODÓW":"WYNIK BIEGU",`${out.position}. miejsce — ${out.points} pkt`,
+     `Twój dorobek w tej rundzie: <b>${state.points} pkt</b>${cycleText}. ${out.decisionNarrative||""}${incidentText}${withdraw?` <b>Nie wystartujesz w pozostałych biegach tych zawodów.</b>`:""}`,
+     [{title:withdraw?"Zakończ zawody":state.heat<5?"Kolejny bieg":"Zakończ rundę",desc:withdraw?"Pozostałe starty zostają zapisane jako nieodbyte z powodu kontuzji.":state.heat<5?"Przejdź do kolejnego startu.":"Przejdź do klasyfikacji po fazie zasadniczej.",action:()=>{closeModal();withdraw?done(state):nextHeat()}}]);
    }});
   }
  };
@@ -8756,7 +8967,7 @@ createPlayer=function(){
 };
 
 function clearCareerSavesAndReload(){
- const keys=["pss_v1044","pss_v1043","pss_v1042","pss_v1041","pss_v1040","pss_v1034","pss_v1033","pss_v1032","pss_v1031","pss_v1030","pss_v1026test","pss_v1025","pss_v1024","pss_v1023","pss_v1022","pss_v1021","pss_v102","pss_v101","pss_v100","pzs_v200","pzs_v1361","pzs_v136","pzs_v135","pzs_v134","pzs_v1331","pzs_v133","pzs_v132","pzs_v131","pzs_v1301","pzs_v130","pzs_v129","pzs_v128","pzs_v127","pzs_v126","pzs_v1252","pzs_v1251","pzs_v125","pzs_v124","pzs_v123","pzs_v122","pzs_v121","pzs_v120","pzs_v119","pzs_v118","pzs_v117","pzs_v116","pzs_v115","pzs_v114","pzs_v113","pzs_v112","pzs_v111","pzs_v110","pzs_v109","pzs_v108","pzs_v107","pzs_v106","pzs_v105","pzs_v104","pzs_v103","pzs_v102","pzs_v101","pzs_v100","pzs_v305","pzs_v304","pzs_v303","pzs_v302","pzs_v301","pzs_final30","pzs_v30","pzs_v29","pzs_v28","pzs_v27","pzs_v26","pzs_v25","pzs_v24","pzs_v23","pzs_v22","pzs_v2"];
+ const keys=["pss_v1052","pss_v1051","pss_v1050","pss_v1044","pss_v1043","pss_v1042","pss_v1041","pss_v1040","pss_v1034","pss_v1033","pss_v1032","pss_v1031","pss_v1030","pss_v1026test","pss_v1025","pss_v1024","pss_v1023","pss_v1022","pss_v1021","pss_v102","pss_v101","pss_v100","pzs_v200","pzs_v1361","pzs_v136","pzs_v135","pzs_v134","pzs_v1331","pzs_v133","pzs_v132","pzs_v131","pzs_v1301","pzs_v130","pzs_v129","pzs_v128","pzs_v127","pzs_v126","pzs_v1252","pzs_v1251","pzs_v125","pzs_v124","pzs_v123","pzs_v122","pzs_v121","pzs_v120","pzs_v119","pzs_v118","pzs_v117","pzs_v116","pzs_v115","pzs_v114","pzs_v113","pzs_v112","pzs_v111","pzs_v110","pzs_v109","pzs_v108","pzs_v107","pzs_v106","pzs_v105","pzs_v104","pzs_v103","pzs_v102","pzs_v101","pzs_v100","pzs_v305","pzs_v304","pzs_v303","pzs_v302","pzs_v301","pzs_final30","pzs_v30","pzs_v29","pzs_v28","pzs_v27","pzs_v26","pzs_v25","pzs_v24","pzs_v23","pzs_v22","pzs_v2"];
  keys.forEach(k=>localStorage.removeItem(k));location.reload();
 }
 function showCareerEndSupportPopup(){
@@ -10071,6 +10282,7 @@ const saved=load();if(saved){S=saved;S.seasonFlowActive=false;normalize();repair
 (() => {
  const SPECIAL_PROFILE_VERSION=1;
  const SPECIAL_GORZOW="GEZET Stal Gorzów";
+ const SPECIAL_BYDGOSZCZ="Abramczyk Polonia Bydgoszcz";
  const SPECIAL_SKILL_KEYS=["starts","corner","distance","technique","fitness","setup","mental","overtaking"];
 
  function specialNameKey(value){
@@ -10083,6 +10295,7 @@ const saved=load();if(saved){S=saved;S.seasonFlowActive=false;normalize();repair
  function detectSpecialProfile(name,number){
   const key=specialNameKey(name);
   if(key==="bartosz zmarzlik"&&number===95)return "zmarzlik95";
+  if(key==="tomasz gollob"&&number===20)return "gollob20";
   if(key==="jakub woznik")return "woznik";
   if(key==="super burschi")return "superBurschi";
   return null;
@@ -10111,6 +10324,9 @@ const saved=load();if(saved){S=saved;S.seasonFlowActive=false;normalize();repair
   if(id==="zmarzlik95"){
    Object.assign(dna,{potential:98,growthRate:1.30,curveType:"phenom",peakAge:rand(27,31),peakWidth:rand(1,3),declineRate:.86,consistency:.95,pressure:1.10,durability:1.04,adaptability:1.10,juniorGift:1.42,juniorPhenomenon:true,breakoutChance:.18,lateBloom:false,earlyPeak:true,exceptionalLongevity:Math.random()<.18});
    for(const k of SPECIAL_SKILL_KEYS)dna.capOffsets[k]=rand(3,8);
+  }else if(id==="gollob20"){
+   Object.assign(dna,{potential:97.5,growthRate:1.26,curveType:"phenom",peakAge:rand(29,33),peakWidth:rand(2,4),declineRate:.90,consistency:.92,pressure:1.07,durability:1.01,adaptability:1.12,juniorGift:1.35,juniorPhenomenon:true,breakoutChance:.18,lateBloom:false,earlyPeak:true,exceptionalLongevity:Math.random()<.24});
+   for(const k of SPECIAL_SKILL_KEYS)dna.capOffsets[k]=rand(2,8);
   }else if(id==="woznik"){
    Object.assign(dna,{potential:97,growthRate:1.22,curveType:"volatile",peakAge:rand(28,34),peakWidth:rand(1,3),declineRate:.94,consistency:.78,pressure:1.01,durability:.98,adaptability:1.09,juniorGift:1.28,juniorPhenomenon:true,breakoutChance:.17,lateBloom:false,earlyPeak:false,exceptionalLongevity:Math.random()<.16});
    for(const k of SPECIAL_SKILL_KEYS)dna.capOffsets[k]=rand(1,7);
@@ -10125,6 +10341,12 @@ const saved=load();if(saved){S=saved;S.seasonFlowActive=false;normalize();repair
    {title:"W GORZOWIE ROBI SIĘ GŁOŚNO",text:"Pierwsze poważniejsze jazdy wystarczyły, żeby starsi zawodnicy przestali pytać, czy masz talent. Teraz zastanawiają się, gdzie właściwie jest jego granica. W klubie coraz częściej pada słowo „wyjątkowy”."},
    {title:"OCZEKIWANIA ROSNĄ BARDZO SZYBKO",text:"Mechanicy patrzą po sobie, trenerzy zapisują kolejne czasy, a przy bandzie słychać, że czegoś takiego dawno nie widziano. Kariera dopiero się zaczyna, ale w Gorzowie już wiedzą, że mają do czynienia z niezwykłym talentem."}
   ],
+  gollob20:[
+   {title:"WSZYSTKO ZACZĘŁO SIĘ W WARSZTACIE OJCA",text:"Od najmłodszych lat motocykle były blisko ciebie. Twój ojciec, Władysław, prowadzi warsztat mechaniczny i to właśnie on wprowadza cię w świat dwóch kółek. Zanim naprawdę zaczynasz ścigać się na żużlu, potrafisz już słuchać silnika, rozumiesz sprzęt i godzinami podpatrujesz pracę przy motocyklach."},
+   {title:"PIŁKA, HOKEJ, MOTOCROSS... I W KOŃCU ŻUŻEL",text:"Długo nie ograniczasz się do jednej dyscypliny. Trenujesz piłkę nożną w juniorskich zespołach Polonii i Zawiszy Bydgoszcz, próbujesz też hokeja, ale największą frajdę daje ci ściganie na motocyklu. Motocross szybko pokazuje, że masz wyjątkowe czucie maszyny i odwagę potrzebną do walki koło w koło."},
+   {title:"Z MOTOCROSSU NA BYDGOSKI OWAL",text:"Zanim na dobre trafiasz na tor żużlowy, masz za sobą starty motocrossowe i wyścigi motocyklowe. Jazda w trudnych warunkach uczy cię panowania nad motocyklem, szukania przyczepności i reagowania wtedy, gdy maszyna zaczyna żyć własnym życiem. W Bydgoszczy szybko zauważają, że tych nawyków nie da się nauczyć na kilku treningach."},
+   {title:"OJCIEC WYBIERA MOTOCYKL. TY RESZTĘ ROBISZ SAM",text:"Władysław Gollob od początku mocno popycha cię w stronę sportów motocyklowych. To dzięki niemu dostajesz pierwsze prawdziwe możliwości jazdy, ale na torze nikt nie daje ci taryfy ulgowej. Łączysz mechaniczne obycie wyniesione z rodzinnego warsztatu z doświadczeniem z innych sportów i coraz wyraźniej widać, że numer 20 może znaczyć w Bydgoszczy coś wyjątkowego."}
+  ],
   woznik:[
    {title:"A W SUMIE TO NIE WIEM",text:"Żużel zawsze kręcił cię bardziej, niż rozsądek podpowiadał. Problem w tym, że ostatnio niemal wszystko działało przeciwko tobie. Pewnego dnia człowiek od marketingu zapytał: „Po co ci to?”. Odpowiedziałeś: „A w sumie to nie wiem”. Wróciłeś do domu, poszedłeś spać, a rano obudziłeś się z przekonaniem, że właśnie teraz wszystko zaczyna się od nowa."},
    {title:"JEDNA NOC, ZUPEŁNIE NOWY CZŁOWIEK",text:"Motocykle, koszty, siniaki i ciągłe pytania, czy to wszystko ma sens. Kiedy usłyszałeś w końcu „po co ci to?”, nie znalazłeś lepszej odpowiedzi niż „a w sumie to nie wiem”. Wyspałeś się. Rano odpowiedź była już dużo prostsza: jeszcze nie pokazałeś, na co naprawdę cię stać."},
@@ -10138,24 +10360,27 @@ const saved=load();if(saved){S=saved;S.seasonFlowActive=false;normalize();repair
  };
  function specialProfileConfig(id){
   if(id==="zmarzlik95")return {target:72,spread:7,equipment:74,floor:62,ceiling:84,bias:{starts:2,corner:2,overtaking:2},professionalism:88,morale:72,reputation:28,media:22,chance:76};
+  if(id==="gollob20")return {target:71,spread:6,equipment:72,floor:61,ceiling:83,bias:{distance:3,overtaking:3,technique:2},professionalism:84,morale:73,reputation:25,media:20,chance:74};
   if(id==="woznik")return {target:69,spread:7,equipment:67,floor:58,ceiling:80,bias:{distance:1,overtaking:2,mental:1},professionalism:70,morale:68,reputation:20,media:16,chance:70};
   return {target:76,spread:5,equipment:82,floor:69,ceiling:86,bias:{technique:1,setup:1,fitness:1},professionalism:99,morale:80,reputation:31,media:18,chance:82};
  }
  function applySpecialProfile(id){
   const cfg=specialProfileConfig(id),copy=pick(SPECIAL_COPY[id]);
-  S.specialProfileId=id;S.specialProfileVersion=SPECIAL_PROFILE_VERSION;S.specialProfileLabel=id==="zmarzlik95"?"Bartosz Zmarzlik #95":id==="woznik"?"Jakub Woźnik":"Super Burschi";
-  if(id==="zmarzlik95"){
-   S.region="Lubuskie";S.academyClub=SPECIAL_GORZOW;
+  S.specialProfileId=id;S.specialProfileVersion=SPECIAL_PROFILE_VERSION;S.specialProfileLabel=id==="zmarzlik95"?"Bartosz Zmarzlik #95":id==="gollob20"?"Tomasz Gollob #20":id==="woznik"?"Jakub Woźnik":"Super Burschi";
+  if(id==="zmarzlik95"||id==="gollob20"){
+   const specialClub=id==="zmarzlik95"?SPECIAL_GORZOW:SPECIAL_BYDGOSZCZ;
+   S.region=id==="zmarzlik95"?"Lubuskie":"Kujawsko-pomorskie";S.academyClub=specialClub;
    if(S.startProfile==="reserve"){
-    S.club=SPECIAL_GORZOW;S.league="PGE Ekstraliga";S.tableLeague=S.league;S.tableClub=S.club;
+    S.club=specialClub;S.league=clubLeagueName(specialClub)||"PGE Ekstraliga";S.tableLeague=S.league;S.tableClub=S.club;
    }else if(S.club==="Szkółka regionalna"){
-    const role=(START_PROFILES[S.startProfile]||START_PROFILES.academy).role;S.role=`${role} ${SPECIAL_GORZOW}`;
+    const role=(START_PROFILES[S.startProfile]||START_PROFILES.academy).role;S.role=`${role} ${specialClub}`;
    }
   }
   exactSpecialSkills(cfg.target,cfg);
   S.professionalism=Math.max(S.professionalism||0,cfg.professionalism);S.morale=Math.max(S.morale||0,cfg.morale);S.reputation=Math.max(S.reputation||0,cfg.reputation);S.media=Math.max(S.media||0,cfg.media);S.chance=Math.max(S.chance||0,cfg.chance);
   if(id==="superBurschi")S.injuryRisk=Math.min(S.injuryRisk,8);
   if(id==="zmarzlik95")S.injuryRisk=Math.min(S.injuryRisk,10);
+  if(id==="gollob20")S.injuryRisk=Math.min(S.injuryRisk,11);
   tuneSpecialDNA(id);
   // Normalizacja może skorygować Fitness; po niej ponownie dopinamy dokładny OVR.
   normalize();exactSpecialSkills(cfg.target,cfg);
@@ -10163,7 +10388,7 @@ const saved=load();if(saved){S=saved;S.seasonFlowActive=false;normalize();repair
   S.preLicenseBackground={id:`special-${id}`,title:copy.title,text:copy.text};
   addHistory("Wyjątkowy początek",`${copy.title}. ${copy.text}`);
   const support=S.preLicenseSupport?.title?`<p><b>Zaplecze:</b> ${S.preLicenseSupport.title}. Budżet początkowy: ${money(S.budget)}.</p>`:"";
-  const clubLine=id==="zmarzlik95"?`<p><b>Ośrodek:</b> ${SPECIAL_GORZOW}. Numer 95 od początku zwraca uwagę.</p>`:"";
+  const clubLine=id==="zmarzlik95"?`<p><b>Ośrodek:</b> ${SPECIAL_GORZOW}. Numer 95 od początku zwraca uwagę.</p>`:id==="gollob20"?`<p><b>Ośrodek:</b> ${SPECIAL_BYDGOSZCZ}. Numer 20 szybko staje się rozpoznawalny.</p>`:"";
   save();render();
   const box=$("newsBox");if(box)box.innerHTML=`<p class="eyebrow">WYJĄTKOWY POCZĄTEK</p><h3>${copy.title}</h3><p>${copy.text}</p>${clubLine}${support}`;
   save();
@@ -11785,7 +12010,8 @@ function pssRollerMarkerX(roller){
  function playManualImpSecRound(state,round,done){
   const host=state.hosts[round-1]||'',before=(state.riders.find(r=>r.id==='player')?.rounds?.length||0)?pssStandingContext(state):{place:null,points:0,important:false,text:''};
   withCycleRoundEvent(state.key,round,host,before,ev=>{
-   playFiveInteractiveTournamentHeats({key:state.key,label:`${state.key} — runda ${round}/${state.hosts.length}${host?` — ${host}`:''}`,prefix:round===1?'Otwierasz cykl. ':`Przed rundą masz ${before.points||0} pkt${before.place?` i zajmujesz ${before.place}. miejsce`:''}. `,startingCyclePoints:before.points||0,playerRatingBonus:ev.ratingBonus||0,contextNote:ev.contextNote||''},heatState=>{
+   const previewEntrants=impSecRoundEntrants(state,round,state.playerBase),rivalPool=previewEntrants.filter(r=>r.id!=='player');
+   playFiveInteractiveTournamentHeats({key:state.key,label:`${state.key} — runda ${round}/${state.hosts.length}${host?` — ${host}`:''}`,prefix:round===1?'Otwierasz cykl. ':`Przed rundą masz ${before.points||0} pkt${before.place?` i zajmujesz ${before.place}. miejsce`:''}. `,startingCyclePoints:before.points||0,playerRatingBonus:ev.ratingBonus||0,contextNote:ev.contextNote||'',rivalPool},heatState=>{
     const playerRating=clamp(state.playerBase+heatState.dayModifier*.72+(ev.ratingBonus||0),48,99),entrants=impSecRoundEntrants(state,round,playerRating),rows=eliteRoundRows(entrants,state.key,{playerHeatPoints:heatState.points,playerRideResults:heatState.results,playerRatingOverride:playerRating,heatVariance:state.key==='IMP'?16:14});
     playInteractiveImpSecPostHeats({key:state.key,label:state.key,rows,dayToken:heatState.eventToken,playerRatingBonus:ev.ratingBonus||0,contextNote:ev.contextNote||''},resolved=>{addImpSecRound(state,round,rows,resolved,{eventTitle:ev.title||''});setRoundMeta(state.riders,round,{manual:true});ev.after?.();const row=playerRound(state.riders,round);maybeRoundInjury(state.key,row,state.calendar[round-1],state);done()});
    });
@@ -13268,11 +13494,11 @@ if(S){S.pss1031={version:'1.03.1'};save();}
   {id:'out',label:'OUTSIDERZY',min:0,max:69,range:'OVR <70'}
  ];
  const JUNIOR_BANDS=[
-  {id:'elite',label:'ELITA',min:78,max:99,range:'OVR 78+'},
-  {id:'high',label:'WYSOKI POZIOM',min:72,max:77,range:'OVR 72–77'},
-  {id:'solid',label:'SOLIDNY MIĘDZYNARODOWY',min:66,max:71,range:'OVR 66–71'},
-  {id:'medium',label:'ŚREDNI POZIOM',min:60,max:65,range:'OVR 60–65'},
-  {id:'out',label:'OUTSIDERZY',min:0,max:59,range:'OVR <60'}
+  {id:'elite',label:'ELITA JUNIORSKA',min:82,max:99,range:'OVR 82+'},
+  {id:'high',label:'WYSOKI POZIOM',min:77,max:81,range:'OVR 77–81'},
+  {id:'solid',label:'SOLIDNY MIĘDZYNARODOWY',min:71,max:76,range:'OVR 71–76'},
+  {id:'medium',label:'ŚREDNI POZIOM',min:64,max:70,range:'OVR 64–70'},
+  {id:'out',label:'OUTSIDERZY',min:0,max:63,range:'OVR <64'}
  ];
  function hash1040(value){let h=2166136261>>>0;for(const ch of String(value)){h^=ch.charCodeAt(0);h=Math.imul(h,16777619)}return h>>>0}
  function rng1040(seed){let a=hash1040(seed)||1;return ()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return ((t^t>>>14)>>>0)/4294967296}}
@@ -13313,8 +13539,8 @@ if(S){S.pss1031={version:'1.03.1'};save();}
    case 'SEC':return [14,30,34,18,4];
    case 'SEC Challenge':return [10,27,35,22,6];
    case 'SEC Qualifier':return [6,18,32,29,15];
-   case 'SGP2':return [15,31,33,17,4];
-   case 'SGP2 Qualifier':return [7,20,31,27,15];
+   case 'SGP2':return [3,18,37,30,12];
+   case 'SGP2 Qualifier':return [1,8,27,38,26];
    case 'IMP':return [8,25,37,25,5];
    case 'IMP Challenge':return [5,20,36,29,10];
    case 'IMP Qualifier':return [2,13,32,35,18];
@@ -13373,12 +13599,13 @@ if(S){S.pss1031={version:'1.03.1'};save();}
  }
  function npcInitialRating1041(age,rng){
   let lo,hi;
-  if(age<=16){lo=42;hi=58}else if(age<=18){lo=48;hi=67}else if(age<=21){lo=55;hi=78}
+  if(age<=16){lo=41;hi=56}else if(age<=18){lo=47;hi=64}else if(age<=21){lo=54;hi=75}
   else if(age<=25){lo=61;hi=83}else if(age<=31){lo=66;hi=90}else if(age<=36){lo=65;hi=89}
   else if(age<=40){lo=61;hi=86}else{lo=56;hi=82}
   let rating=int1040(rng,lo,hi);
-  if(age<=21&&rng()<.018)rating=int1040(rng,79,85);
-  if(age<=21&&rng()<.0015)rating=int1040(rng,86,91);
+  if(age<=21&&rng()<.015)rating=int1040(rng,76,82);
+  if(age<=21&&rng()<.0022)rating=int1040(rng,83,86);
+  if(age<=21&&rng()<.00025)rating=int1040(rng,87,89);
   return rating;
  }
  function npcCountry1041(rng,junior=false){
@@ -13444,7 +13671,7 @@ if(S){S.pss1031={version:'1.03.1'};save();}
    const available=r=>!oneQualifierPerYear||r.series?.[k]?.assignedYear!==S.year||r.series?.[k]?.assignedVariant===variant;
    let candidates=world.riders.filter(r=>r.active&&!picked.includes(r.id)&&!excluded.has(r.id)&&available(r)&&(junior?r.age<=21:r.age>=18)&&r.rating>=Math.max(floor,band.min)&&r.rating<=band.max&&r.code===targetNation);
    if(!candidates.length)candidates=world.riders.filter(r=>r.active&&!picked.includes(r.id)&&!excluded.has(r.id)&&available(r)&&(junior?r.age<=21:r.age>=18)&&r.rating>=Math.max(floor,band.min-3)&&r.rating<=Math.min(99,band.max+3));
-   if(!candidates.length){const lo=Math.max(floor,band.min),hi=Math.max(lo,Math.min(junior?88:96,band.max));candidates=[createNpc1041(rng,{junior,code:targetNation,rating:int1040(rng,lo,hi),age:junior?int1040(rng,17,21):int1040(rng,19,39)})];}
+   if(!candidates.length){const lo=Math.max(floor,band.min),hi=Math.max(lo,Math.min(junior?86:96,band.max));candidates=[createNpc1041(rng,{junior,code:targetNation,rating:int1040(rng,lo,hi),age:junior?int1040(rng,17,21):int1040(rng,19,39)})];}
    let best=null,bestScore=-1e9;for(const r of candidates){const hist=r.series?.[k],repeat=hist?.lastYear===S.year-1?.65:hist?.appearances?.18:0,nation=r.code===targetNation?.16:0,score=rng()+repeat+nation+(r.form||0)*.012;if(score>bestScore){bestScore=score;best=r}}
    const r=best;picked.push(r.id);r.series??={};r.series[k]??={appearances:0,lastYear:null};r.series[k].appearances++;r.series[k].lastYear=S.year;if(oneQualifierPerYear){r.series[k].assignedYear=S.year;r.series[k].assignedVariant=variant;}
    const desc=npcDescriptor1041(r,k,`${cacheKey}|${r.id}`);state.worldFields[cacheKey]=state.worldFields[cacheKey]||[];
@@ -13462,7 +13689,7 @@ if(S){S.pss1031={version:'1.03.1'};save();}
  globalThis.PSS1040LocalWildcard=(key,round=1,variant='')=>{
   const junior=isJuniorField1040(key),rng=rng1040(`${S.year}|${key}|local-wc|${round}|${variant}`),pool=nationPool1040(key),nation=weighted1040(rng,pool).code;
   let rating=junior?int1040(rng,59,74):int1040(rng,70,83);if(rng()<.08)rating+=int1040(rng,2,4);
-  return {id:`wc-${canonicalFieldKey1040(key)}-${round}`,rating:clamp(rating,50,junior?86:91),country:nation,code:nation,flag:FLAGS[nation]||'🏁',description:riderDescription1040({rating,code:nation,key,seed:`wc-${round}`,localWildcard:true}),localWildcard:true};
+  return {id:`wc-${canonicalFieldKey1040(key)}-${round}`,rating:clamp(rating,50,junior?84:91),country:nation,code:nation,flag:FLAGS[nation]||'🏁',description:riderDescription1040({rating,code:nation,key,seed:`wc-${round}`,localWildcard:true}),localWildcard:true};
  };
  function qualifierAdvancers1040(key,variants,spotsPerRound){
   const k=canonicalFieldKey1040(key),picked=[];
@@ -13985,7 +14212,7 @@ function formatSeasonInjuries1041(injuries=[]){
 // ============================================================================
 (()=>{
  const SENIOR_BANDS_1041=[{label:'ELITA',min:88,max:99,range:'OVR 88+'},{label:'WYSOKI POZIOM',min:82,max:87,range:'OVR 82–87'},{label:'SOLIDNY MIĘDZYNARODOWY',min:76,max:81,range:'OVR 76–81'},{label:'ŚREDNI POZIOM',min:70,max:75,range:'OVR 70–75'},{label:'OUTSIDERZY',min:0,max:69,range:'OVR <70'}];
- const JUNIOR_BANDS_1041=[{label:'ELITA',min:78,max:99,range:'OVR 78+'},{label:'WYSOKI POZIOM',min:72,max:77,range:'OVR 72–77'},{label:'SOLIDNY MIĘDZYNARODOWY',min:66,max:71,range:'OVR 66–71'},{label:'ŚREDNI POZIOM',min:60,max:65,range:'OVR 60–65'},{label:'OUTSIDERZY',min:0,max:59,range:'OVR <60'}];
+ const JUNIOR_BANDS_1041=[{label:'ELITA JUNIORSKA',min:82,max:99,range:'OVR 82+'},{label:'WYSOKI POZIOM',min:77,max:81,range:'OVR 77–81'},{label:'SOLIDNY MIĘDZYNARODOWY',min:71,max:76,range:'OVR 71–76'},{label:'ŚREDNI POZIOM',min:64,max:70,range:'OVR 64–70'},{label:'OUTSIDERZY',min:0,max:63,range:'OVR <64'}];
  function juniorContext(label,title=''){return /SGP2|IMŚJ|JUNIOR|MIMP|SREBRNY KASK|BRĄZOWY KASK/i.test(`${label} ${title}`)}
  function domesticContext(label,title=''){return /IMP|MIMP|KASK|JANCARZA|SMOCZYKA|KRYTERIUM/i.test(`${label} ${title}`)&&!/SGP|SEC/i.test(`${label} ${title}`)}
  function domesticDesc(r,{junior=false}={}){const age=Number(r?.age||25),rating=Number(r?.rating||70),old=String(r?.description||'').toLowerCase();if(/uczestnik sgp/.test(old))return 'były uczestnik SGP';if(/uczestnik sec/.test(old))return 'uczestnik SEC';if(junior){if(rating>=78)return 'jeden z czołowych juniorów w kraju';if(rating>=72)return age<=18?'wyróżniający się młody talent':'mocny zawodnik młodzieżowy';if(rating>=66)return 'regularny uczestnik zawodów juniorskich';if(rating>=60)return 'junior walczący o krajową czołówkę';return 'debiutant w dużej imprezie juniorskiej'}if(age>=35&&rating>=72)return 'weteran krajowych torów';if(age<=24&&rating>=74)return 'młody zawodnik w dobrej formie';if(rating>=84)return 'jeden z faworytów krajowej stawki';if(rating>=78)return 'mocny zawodnik krajowy';if(rating>=72)return 'doświadczony ligowiec';if(rating>=66)return 'ligowiec niższego szczebla';return 'zawodnik spoza krajowej czołówki'}
@@ -14122,7 +14349,7 @@ function formatSeasonInjuries1041(injuries=[]){
    const hasDecision=ops.some(x=>x.key==='SEC Entry Decision');
    const hasQualifier=ops.some(x=>x.key==='SEC Qualifier Path');
    if(!hasDecision&&!hasQualifier){
-    ops.push({key:'SEC Entry Decision',name:'Speedway Euro Championship',mode:'wildcardOnly',currentSGP:true,qualificationReason:'Nie masz bezpośredniego miejsca w SEC. Możesz odpuścić kwalifikacje i liczyć na jedną ze stałych dzikich kart.'});
+    ops.push({key:'SEC Entry Decision',name:'Speedway Euro Championship',mode:'wildcardOnly',currentSGP:true,qualificationReason:'Nie masz bezpośredniego miejsca w SEC. Droga do cyklu prowadzi przez eliminacje.'});
    }
   }
   // Deduplikacja po wcześniejszych wrapperach.
@@ -14152,7 +14379,7 @@ function formatSeasonInjuries1041(injuries=[]){
  function secResultModalHot(kind,r,{finish,enterCycle}={}){
   const html=globalThis.PSS1041FullResultsHtml?.(r)||'';
   if(kind==='qualifier'){
-   if(!r.advanced){showModal('ELIMINACJE SEC',`${r.place}. miejsce — bez awansu`,`Zdobywasz <b>${r.points} pkt</b>. Awans dawało TOP ${r.qualificationSpots}.${html}`,[{title:'Kontynuuj sezon',desc:'W tym sezonie ścieżka SEC jest zakończona.',action:()=>{closeModal();finish()}}]);return}
+   if(!r.advanced){if(globalThis.PSS1050AfterFailedSECQualifier){globalThis.PSS1050AfterFailedSECQualifier(r,{finish,enterCycle,html});return}showModal('ELIMINACJE SEC',`${r.place}. miejsce — bez awansu`,`Zdobywasz <b>${r.points} pkt</b>. Awans dawało TOP ${r.qualificationSpots}.${html}`,[{title:'Kontynuuj sezon',desc:'W tym sezonie ścieżka SEC jest zakończona.',action:()=>{closeModal();finish()}}]);return}
    showModal('ELIMINACJE SEC',`${r.place}. miejsce — awans do SEC Challenge`,`Zdobywasz <b>${r.points} pkt</b> i przechodzisz do SEC Challenge.${html}`,[{title:'Przejdź do SEC Challenge',desc:'Ostatni etap kwalifikacji do cyklu SEC.',action:()=>{closeModal();secChallengeFlowHot(r.basePph,{finish,enterCycle})}}]);return;
   }
   if(!r.advanced){showModal('SEC CHALLENGE',`${r.place}. miejsce — bez awansu`,`Zdobywasz <b>${r.points} pkt</b>. Do cyklu SEC awansuje sześciu najlepszych.${html}`,[{title:'Kontynuuj sezon',desc:'Koniec tegorocznej ścieżki SEC.',action:()=>{closeModal();finish()}}]);return}
@@ -14203,15 +14430,14 @@ function formatSeasonInjuries1041(injuries=[]){
   const enterCycle=reason=>{S.secActiveYear=S.year;const rest=(S.pendingMajorCompetitions||[]).filter(x=>x.key!=='SEC Wild Card');S.pendingMajorCompetitions=[{key:'SEC',name:'Speedway Euro Championship',qualificationReason:reason},...rest];if(currentSGP)addDualCycleLoadHot();save();finish();};
   if(decision.key==='SEC Qualifier Path'){secQualifierFlowHot(basePph,{finish,enterCycle});return}
   if(decision.mode==='wildcardOnly'){
-   showModal('SPEEDWAY EURO CHAMPIONSHIP','Powrót do SEC?','Nie masz bezpośredniego miejsca w cyklu. Możesz zrezygnować z kwalifikacji i liczyć na jedną z trzech stałych dzikich kart.',[
-    {title:'Liczę na stałą dziką kartę',desc:'Odpuszczasz kwalifikacje i czekasz na decyzję organizatorów.',action:()=>{closeModal();trySecPermanentWildcardHot({finish,enterCycle})}},
-    {title:'Odpuść SEC w tym sezonie',desc:'Skupiasz się na SGP i pozostałych rozgrywkach.',action:()=>{closeModal();finish()}}
+   showModal('SPEEDWAY EURO CHAMPIONSHIP','Powrót do SEC?','Nie masz bezpośredniego miejsca w cyklu. Jeśli chcesz wystartować w SEC, musisz przejść przez eliminacje. Rezygnacja z eliminacji oznacza rezygnację z pełnego cyklu w tym sezonie.',[
+    {title:'Podchodzę do eliminacji SEC',desc:'Najpierw eliminacje, następnie ewentualny SEC Challenge.',action:()=>{closeModal();secQualifierFlowHot(basePph,{finish,enterCycle})}},
+    {title:'Odpuść SEC w tym sezonie',desc:'Rezygnujesz z eliminacji i z pełnego cyklu SEC.',action:()=>{addHistory('SEC','Rezygnujesz z eliminacji SEC i tym samym z drogi do pełnego cyklu w tym sezonie.');closeModal();save();finish()}}
    ]);return;
   }
-  showModal('SPEEDWAY EURO CHAMPIONSHIP','SGP + SEC?','Nie masz bezpośredniego miejsca w SEC. Możesz przejść przez eliminacje albo odpuścić kwalifikacje i liczyć na stałą dziką kartę.',[
+  showModal('SPEEDWAY EURO CHAMPIONSHIP','SGP + SEC?','Nie masz bezpośredniego miejsca w SEC. Możesz przejść przez eliminacje albo zrezygnować z pełnego cyklu w tym sezonie.',[
    {title:'Podchodzę do eliminacji SEC',desc:'Najpierw eliminacje, następnie ewentualny SEC Challenge.',action:()=>{closeModal();secQualifierFlowHot(basePph,{finish,enterCycle})}},
-   {title:'Liczę na stałą dziką kartę',desc:'Rezygnujesz z eliminacji i czekasz na decyzję organizatorów.',action:()=>{closeModal();trySecPermanentWildcardHot({finish,enterCycle})}},
-   {title:'Odpuść SEC w tym sezonie',desc:'Skupiasz się na SGP i pozostałych rozgrywkach.',action:()=>{addHistory('SEC','Jako uczestnik SGP rezygnujesz z drogi do SEC w tym sezonie.');closeModal();save();finish()}}
+   {title:'Odpuść SEC w tym sezonie',desc:'Rezygnujesz z eliminacji i skupiasz się na pozostałych rozgrywkach.',action:()=>{addHistory('SEC','Rezygnujesz z eliminacji SEC i z pełnego cyklu w tym sezonie.');closeModal();save();finish()}}
   ]);
  };
 
@@ -14480,4 +14706,394 @@ function formatSeasonInjuries1041(injuries=[]){
   S.pss1044.features={foreignClubHomeNationRosters:true,foreignPoolsExcludeHomeNation:true,polishRidersAllowedAsForeignAbroad:true};
   save();render();
  }
+})();
+
+
+// ============================================================================
+// Polish Speedway Simulator 1.05.0 — duży pakiet stabilizacji i różnorodności
+// 16.09.2026
+// ============================================================================
+(()=>{
+ const VERSION='1.05.0';
+ const PLAYER_COUNTRY='POL';
+ function state1050(){
+  S.pss1050??={};
+  S.pss1050.version=VERSION;
+  S.pss1050.cycleForm??={};
+  S.pss1050.majorCyclesByYear??={};
+  S.pss1050.impWildcards??={};
+  return S.pss1050;
+ }
+
+ // -------------------------------------------------------------------------
+ // 1. KLUBY ZAGRANICZNE — POLAK TYLKO JAKO OBCOKRAJOWIEC
+ // -------------------------------------------------------------------------
+ function foreignClubContext1050(club,league){
+  const roster=globalThis.PSS1040ClubRoster?.(club,league)||[];
+  const home=roster.find(r=>r.homeNation)?.homeNation||'POL';
+  return {roster,home,isForeign:home!==PLAYER_COUNTRY};
+ }
+ function foreignSlotRows1050(roster,home,status){
+  const foreign=roster.filter(r=>r.code!==home);
+  if(status==='junior')return foreign.filter(r=>r.category==='junior');
+  if(status==='u24')return foreign.filter(r=>r.category==='u24'||(r.category==='reserve'&&Number(r.age||99)<=24));
+  return foreign.filter(r=>r.category==='senior'||r.category==='u24');
+ }
+ function domesticFallbackRows1050(roster,status){
+  if(status==='junior')return roster.filter(r=>r.category==='junior');
+  if(status==='u24')return roster.filter(r=>r.category==='u24'||(r.category==='reserve'&&Number(r.age||99)<=24));
+  return roster.filter(r=>r.category==='senior'||r.category==='u24');
+ }
+ function foreignSlotThreshold1050(club,league){
+  const {roster,home}=foreignClubContext1050(club,league),status=rosterStatusForAge();
+  let rows=foreignSlotRows1050(roster,home,status).map(r=>r.rating).sort((a,b)=>b-a);
+  if(rows.length){
+   if(status==='junior')return rows[Math.min(1,rows.length-1)];
+   if(status==='u24')return rows[0];
+   return rows[Math.min(3,rows.length-1)];
+  }
+  rows=domesticFallbackRows1050(roster,status).map(r=>r.rating).sort((a,b)=>b-a);
+  const fallback=status==='junior'?(rows[Math.min(1,rows.length-1)]??55):status==='u24'?(rows[0]??68):(rows[Math.min(4,rows.length-1)]??70);
+  return fallback+2;
+ }
+ function foreignRecruitmentIntent1050(club,league){
+  const ctx=foreignClubContext1050(club,league);if(!ctx.isForeign)return true;
+  const status=rosterStatusForAge(),threshold=foreignSlotThreshold1050(club,league),delta=overall()-threshold;
+  // Stabilny w obrębie sezonu zamiar transferowy klubu. Nie każda luka lokalna
+  // generuje ofertę dla Polaka; klub musi faktycznie szukać obcokrajowca.
+  const h=stableTextHash(`${S.year}|${clubBaseName(club)}|${status}|foreign-recruit-1050`)%1000/1000;
+  const pool=foreignSlotRows1050(ctx.roster,ctx.home,status);
+  let chance=status==='junior'?.34:status==='u24'?.44:.50;
+  if(pool.length===0)chance+=.12;
+  if(delta>=4)chance+=.23;else if(delta>=0)chance+=.13;else if(delta<=-6)chance-=.24;else if(delta<=-3)chance-=.12;
+  return h<clamp(chance,.08,.88);
+ }
+ const projectedLineupChance1050Base=projectedLineupChance;
+ projectedLineupChance=function(club,leagueName,opts={}){
+  const ctx=foreignClubContext1050(club,leagueName);
+  if(!ctx.isForeign)return projectedLineupChance1050Base(club,leagueName,opts);
+  const status=rosterStatusForAge(),threshold=foreignSlotThreshold1050(club,leagueName),formValue=opts.form===null||opts.form===undefined?currentFormRating():opts.form;
+  const roleText=String(opts.role||'').toLowerCase();
+  let chance=42+(overall()-threshold)*(status==='junior'?5.0:status==='u24'?4.6:4.2)+(formValue-overall())*.60+(S.reputation-35)*.025;
+  if(roleText.includes('regularna'))chance+=7;else if(roleText.includes('podstawowy'))chance+=6;else if(roleText.includes('rotacja'))chance+=2;else if(roleText.includes('rezerw'))chance-=10;else if(roleText.includes('walka')||roleText.includes('rywalizacja'))chance-=2;
+  if(opts.stay)chance+=(S.clubRelation-50)*.10+(S.loyalty-50)*.04;
+  return clamp(chance,3,96);
+ };
+ const marketRoleForClub1050Base=marketRoleForClub;
+ marketRoleForClub=function(club,league,currentLevel){
+  const ctx=foreignClubContext1050(club,league);if(!ctx.isForeign)return marketRoleForClub1050Base(club,league,currentLevel);
+  const status=rosterStatusForAge(),threshold=foreignSlotThreshold1050(club,league),gap=overall()-threshold;
+  if(status==='junior')return gap>=-2?'Zagraniczny junior — regularna jazda':'Zagraniczny junior — rywalizacja o skład';
+  if(status==='u24')return gap>=-1?'Zagraniczny U24 — regularna jazda':'Zagraniczny U24 — walka o skład';
+  return gap>=0?'Zagraniczny senior — podstawowy zawodnik':gap>=-4?'Zagraniczny senior — rotacja':'Zagraniczny senior — walka o skład';
+ };
+ const evaluatedMarketCandidates1050Base=evaluatedMarketCandidates;
+ evaluatedMarketCandidates=function(pph,current,currentLevel){
+  return evaluatedMarketCandidates1050Base(pph,current,currentLevel).filter(c=>{
+   const ctx=foreignClubContext1050(c.name,c.league);if(!ctx.isForeign)return true;
+   if(!foreignRecruitmentIntent1050(c.name,c.league))return false;
+   c.role=marketRoleForClub(c.name,c.league,currentLevel);
+   c.projected=projectedLineupChance(c.name,c.league,{stay:false,role:c.role});
+   c.fitScore=(c.fitScore||0)+(c.projected-50)*.35;
+   return c.projected>=16;
+  });
+ };
+ const selectMarketCandidates1050Base=selectMarketCandidates;
+ selectMarketCandidates=function(pph,current,currentLevel,count=3){
+  return selectMarketCandidates1050Base(pph,current,currentLevel,count).filter(c=>{
+   const ctx=foreignClubContext1050(c.name,c.league);if(!ctx.isForeign)return true;
+   if(!foreignRecruitmentIntent1050(c.name,c.league))return false;
+   c.role=marketRoleForClub(c.name,c.league,currentLevel);
+   c.projected=projectedLineupChance(c.name,c.league,{stay:false,role:c.role});
+   return true;
+  });
+ };
+
+ // -------------------------------------------------------------------------
+ // 2. JEDNA OBSADA = JEDEN OVR. DZIKA KARTA IMP JEST STAŁYM ZAWODNIKIEM RUNDY
+ // -------------------------------------------------------------------------
+ impRoundWildcardRider=function(round){
+  const st=ensureIMPSeasonState(),host=st.roundHosts[round-1]||'Polska',key=`${S.year}|${round}|${host}`;
+  const store=state1050().impWildcards;
+  if(store[key])return {...store[key]};
+  const rng=rng1041(`imp-wc-1050|${key}`),rating=clamp(70+Math.floor(rng()*14)+(rng()<.08?Math.floor(rng()*4):0),64,86);
+  const rider={id:`wc${S.year}-${round}`,name:`Dzika karta — ${host}`,rating,total:0,wins:0,rounds:[],wildcard:true,code:'POL',country:'POL',flag:'🇵🇱',description:'lokalna dzika karta'};
+  store[key]=rider;return {...rider};
+ };
+
+ // -------------------------------------------------------------------------
+ // 3. JUNIORZY / SGP2 — TOP ŚWIATA OK. 82–85, WYŻEJ TYLKO WYJĄTKOWO
+ // -------------------------------------------------------------------------
+ // Publiczny generator pól 1.04.x korzysta z tych funkcji i wag zmienionych
+ // wcześniej w źródle. Dodatkowo ścinamy jedynie sztuczny fallback; trwałych NPC
+ // nie hard-capujemy, więc realny fenomen świata gry nadal może mieć 86+.
+ const buildCompetitionField1050Base=buildCompetitionField;
+ buildCompetitionField=function(key,count=15,...rest){
+  const field=buildCompetitionField1050Base(key,count,...rest),junior=/SGP2/i.test(String(key||''));
+  if(!junior)return field;
+  return field.map(r=>{
+   if(/^npc-/.test(String(r.id||'')))return r; // realnie rozwinięty, trwały NPC
+   let rating=Number(r.rating||0);
+   if(rating>85){const h=stableTextHash(`${S.year}|${r.id||r.code}|${rating}|sgp2-tail`)%1000/1000;rating=h<.025?clamp(rating,86,88):82+stableTextHash(`${r.id}|cap`)%4;}
+   return {...r,rating};
+  });
+ };
+
+ // -------------------------------------------------------------------------
+ // 4. RÓŻNE TRAJEKTORIE KARIERY — WIĘKSZY PRAWY OGON NISKICH STARTÓW
+ // -------------------------------------------------------------------------
+ function careerArc1050(){
+  const dna=careerDNA();if(dna.arc1050)return dna.arc1050;
+  const profile=S.startProfile||'academy',u=Math.random();let type;
+  const rawLike=profile==='raw'||profile==='academy';
+  if(u<(rawLike?.045:.025))type='phenomenon';
+  else if(u<(rawLike?.18:.17))type='earlyBurst';
+  else if(u<(rawLike?.38:.34))type='lateBloom';
+  else if(u<(rawLike?.49:.47))type='plateau';
+  else if(u<(rawLike?.61:.59))type='volatile';
+  else type='standard';
+  const arc={type,createdYear:S.year};dna.arc1050=arc;
+  // Tylko nowa / bardzo wczesna kariera może dostać losowanie dodatkowego headroomu.
+  const seasons=S.careerStats?.seasons?.length||0;
+  if(seasons<=1){
+   if(type==='phenomenon'){
+    const boost=rawLike?rand(6,12):rand(2,6);dna.realizedPeak=clamp((dna.realizedPeak||dna.potential||80)+boost,62,98);dna.potential=Math.max(dna.potential||0,dna.realizedPeak);
+   }else if(type==='lateBloom'&&rawLike&&Math.random()<.28){dna.realizedPeak=clamp((dna.realizedPeak||dna.potential||80)+rand(3,7),62,96);}
+   // Talent ma wysoki floor, ale nie dostaje darmowego dodatkowego sufitu.
+   if(profile==='talent'&&type==='plateau')dna.realizedPeak=Math.max(72,(dna.realizedPeak||86)-rand(2,5));
+  }
+  return arc;
+ }
+ const careerCurveTargetOverall1050Base=careerCurveTargetOverall;
+ careerCurveTargetOverall=function(){
+  let t=careerCurveTargetOverall1050Base(),arc=careerArc1050(),age=S.age;
+  if(arc.type==='earlyBurst')t+=age<=20?3.0:age<=23?1.5:age<=27?-.4:0;
+  else if(arc.type==='lateBloom')t+=age<=21?-1.4:age<=25?-.4:age<=31?2.2:age<=35?1.0:0;
+  else if(arc.type==='plateau')t+=age<=20?1.0:age<=27?-1.6:-.6;
+  else if(arc.type==='volatile')t+=Number(careerDNA().developmentPulse1034||0)*.45;
+  else if(arc.type==='phenomenon')t+=age<=21?3.5:age<=27?1.8:.5;
+  if((S.startProfile==='raw'||S.startProfile==='academy')&&overall()+8<t&&age<=27)t+=.6;
+  if(S.startProfile==='talent'&&arc.type==='standard'&&age>=22)t-=.5;
+  return clamp(t,42,99);
+ };
+ const growthChanceForSkill1050Base=growthChanceForSkill;
+ growthChanceForSkill=function(value,key=null){
+  let p=growthChanceForSkill1050Base(value,key),arc=careerArc1050(),age=S.age,m=1;
+  if(arc.type==='earlyBurst')m=age<=20?1.22:age<=24?.93:.82;
+  else if(arc.type==='lateBloom')m=age<=21?.84:age<=25?.96:age<=32?1.22:1.02;
+  else if(arc.type==='plateau')m=age<=20?1.08:age<=28?.78:.88;
+  else if(arc.type==='phenomenon')m=age<=21?1.30:age<=27?1.08:.94;
+  else if(arc.type==='volatile')m=.88+Math.random()*.28;
+  if(S.startProfile==='talent'&&arc.type==='standard'&&age>=22)m*=.96;
+  return clamp(p*m,0,.98);
+ };
+ const skillSoftTarget1050Base=skillSoftTarget;
+ skillSoftTarget=function(key){
+  let cap=skillSoftTarget1050Base(key),arc=careerArc1050();
+  if(arc.type==='phenomenon'&&S.age<=24)cap+=2;
+  if(arc.type==='lateBloom'&&S.age>=24&&S.age<=33)cap+=1;
+  if(arc.type==='plateau'&&S.age>=22&&S.age<=29)cap-=1;
+  return clamp(cap,50,99);
+ };
+
+ // -------------------------------------------------------------------------
+ // 5. FORMA CYKLU IMP — MOŻLIWY „ROK KONIA”, ALE NIE DOMYŚLNA DOMINACJA
+ // -------------------------------------------------------------------------
+ function impCycleForm1050(){
+  const st=state1050(),key=String(S.year);if(Number.isFinite(st.cycleForm[key]))return st.cycleForm[key];
+  const r=Math.random();let v=0;
+  if(r<.04)v=-4;else if(r<.12)v=-3;else if(r<.27)v=-2;else if(r<.43)v=-1;else if(r<.62)v=0;else if(r<.79)v=1;else if(r<.91)v=2;else if(r<.975)v=3;else v=4;
+  st.cycleForm[key]=v;return v;
+ }
+ const elitePlayerRoundRating1050Base=elitePlayerRoundRating;
+ elitePlayerRoundRating=function(basePower,key,token,extra=0){
+  const bonus=String(key||'').toUpperCase()==='IMP'?impCycleForm1050():0;
+  return elitePlayerRoundRating1050Base(basePower,key,token,extra+bonus);
+ };
+
+ // -------------------------------------------------------------------------
+ // 6. KALENDARZ — RÓWNOLEGŁE CYKLE REALNIE ZWIĘKSZAJĄ OBCIĄŻENIE ZDROWOTNE
+ // -------------------------------------------------------------------------
+ function registerMajorCycle1050(key){
+  const k=String(key||'');if(!['IMP','SEC','SGP2','Speedway Grand Prix'].includes(k))return;
+  const y=String(S.year),st=state1050(),arr=st.majorCyclesByYear[y]??=[];
+  if(!arr.includes(k))arr.push(k);st.majorCyclesByYear[y]=arr;
+ }
+ function currentMajorLoad1050(){return state1050().majorCyclesByYear[String(S.year)]?.length||0}
+ const racingInjuryFromExposure1050Base=racingInjuryFromExposure;
+ racingInjuryFromExposure=function(heats,opts={}){
+  const n=currentMajorLoad1050();if(n<=1)return racingInjuryFromExposure1050Base(heats,opts);
+  const fitness=Number(S.skills?.fitness||60),rec=facilityLevel('recovery');
+  let extra=.075*(n-1)+.035*Math.max(0,n-2);
+  extra*=clamp(1.12-(fitness-60)*.004-rec*.045,.68,1.18);
+  return racingInjuryFromExposure1050Base(heats*(1+extra),opts);
+ };
+ const runMajorCompetition1050Base=runMajorCompetition;
+ runMajorCompetition=function(key,...args){registerMajorCycle1050(key);return runMajorCompetition1050Base(key,...args)};
+ const playInteractiveMajorCompetition1050Base=playInteractiveMajorCompetition;
+ playInteractiveMajorCompetition=function(event,...args){registerMajorCycle1050(event?.key);return playInteractiveMajorCompetition1050Base(event,...args)};
+
+ // -------------------------------------------------------------------------
+ // 7. SEC — REZYGNACJA Z ELIMINACJI = REZYGNACJA Z CYKLU. DZIKA KARTA TYLKO
+ //    JAKO NIEGWARANTOWANE ROZSTRZYGNIĘCIE PO NIEUDANEJ ELIMINACJI.
+ // -------------------------------------------------------------------------
+ globalThis.PSS1050AfterFailedSECQualifier=function(result,{finish,enterCycle,html}={}){
+  const place=Number(result?.place||99),ovr=overall(),rep=Number(S.reputation||0);
+  let chance=0;
+  if(place<=9&&ovr>=78)chance=.04+(ovr-78)*.012+(rep-55)*.002+(place<=7?.05:0)+(place<=6?.04:0);
+  chance=clamp(chance,0,.32);
+  const got=chance>0&&Math.random()<chance;
+  if(got){
+   S.secActiveYear=S.year;addHistory('Stała dzika karta SEC',`Po nieudanych eliminacjach organizator przyznaje ci jedno z miejsc w cyklu SEC. Decydują wysoki poziom sportowy i dotychczasowa pozycja międzynarodowa.`);save();
+   if(typeof enterCycle==='function'){
+    showModal('SPEEDWAY EURO CHAMPIONSHIP','Stała dzika karta SEC',`Nie wywalczyłeś awansu w eliminacjach, ale po zamknięciu kwalifikacji organizatorzy przyznają ci jedno z trzech stałych miejsc w cyklu. To niezależna decyzja organizatorów, a nie skutek rezygnacji z eliminacji.${html||''}`,[{title:'Wejdź do cyklu SEC',desc:'Przejdź do standardowego ekranu Speedway Euro Championship.',action:()=>{closeModal();enterCycle('Stała dzika karta SEC po nieudanych eliminacjach.')}}]);
+    return true;
+   }
+  }
+  if(typeof finish==='function'){finish(result);return false}
+  return got;
+ };
+
+ // -------------------------------------------------------------------------
+ // 8. INCYDENTY W BIEGU — DEFEKT / UPADEK / REALNA KONTUZJA + BRAK DUBLI
+ // -------------------------------------------------------------------------
+ const NEGATIVE_NON_TERMINAL_1050=[
+  {key:'rut',weight:20,text:'Wpadasz w głęboką koleinę. Motocykl staje dęba i musisz gwałtownie odjąć gaz.',loss:[1,2]},
+  {key:'nearFence',weight:17,text:'Motocykl wynosi cię pod bandę. Ratujesz się przed uderzeniem i tracisz bardzo dużo prędkości.',loss:[1,3]},
+  {key:'contact',weight:15,text:'Dochodzi do kontaktu kierownicami. Utrzymujesz się na motocyklu, ale tracisz rytm.',loss:[1,2]},
+  {key:'slide',weight:15,text:'Tylne koło ucieka na wyjściu z łuku. Opanowujesz motocykl, lecz tracisz pozycję.',loss:[1,2]},
+  {key:'stone',weight:8,text:'Dostajesz bryłą nawierzchni spod koła rywala. Przez moment nic nie widzisz i musisz odjąć.',loss:[0,1]},
+  {key:'chain',weight:8,text:'Motocykl zaczyna szarpać — problem z przeniesieniem napędu odbiera ci tempo.',loss:[1,3]},
+  {key:'ignition',weight:7,text:'Silnik przerywa na wyjściu z łuku. Tracisz prędkość i pozycje.',loss:[1,3]}
+ ];
+ function weighted1050(items){let total=items.reduce((s,x)=>s+(x.weight||1),0),r=Math.random()*total;for(const x of items){r-=x.weight||1;if(r<=0)return x}return items.at(-1)}
+ function nonTerminalIncident1050(position){const x=weighted1050(NEGATIVE_NON_TERMINAL_1050),loss=rand(x.loss[0],x.loss[1]);return {...x,targetPosition:clamp(position+loss,1,4),injury:false,serious:false}}
+ function fallInjury1050(){
+  const r=Math.random();
+  if(r<.62)return null;
+  if(r<.88){const x=pick(MINOR_INJURIES),d=recordInjury(x.name,rand(x.weeks[0],x.weeks[1]),'drobny');return d}
+  if(r<.97){const x=pick(MODERATE_INJURIES),d=recordInjury(x.name,rand(x.weeks[0],x.weeks[1]),'umiarkowany');return d}
+  if(r<.997){const x=pick(SERIOUS_INJURIES);return applySeriousInjury(x,injuryTreatmentOptions(x)[1])}
+  const x=pick(CATASTROPHIC_INJURIES);return applySeriousInjury(x,injuryTreatmentOptions(x)[1]);
+ }
+ function lateIncident1050(position){
+  const r=Math.random();
+  if(r<.15)return {key:'defect',type:'defect',text:'Motocykl traci moc i staje. Defekt kończy twój bieg.',targetPosition:4,injury:false,serious:false,defect:true};
+  if(r<.42){
+   const injuryData=fallInjury1050(),suffix=injuryData?(injuryData.weeks?` Badanie wykazuje: ${injuryData.name}. Czeka cię ${injuryData.weeks} tyg. przerwy.`:` Badanie wykazuje: ${injuryData.name}, ale bez konieczności przerwy w startach.`):' Wstajesz o własnych siłach i badanie nie wykazuje urazu.';
+   return {key:'fall',type:'fall',text:`Tracisz kontrolę nad motocyklem i upadasz.${suffix}`,targetPosition:4,injury:true,injuryData,withdrawEvent:!!injuryData?.weeks,serious:!!injuryData?.weeks};
+  }
+  return nonTerminalIncident1050(position);
+ }
+ resolveRaceDecision=function(mode,{phase='distance',rivals=[],teammate=null,context={},position=4,teamRace=false,probOverride=null}={}){
+  const prob=probOverride||raceOutcomeProbabilities(mode,{phase,rivals,teammate,context,position}),outcome=rollOutcome(prob);
+  if(outcome==='incident'){
+   const incident=phase==='late'?lateIncident1050(position):nonTerminalIncident1050(position);
+   return {prob,outcome,narrative:incident.text,targetPosition:incident.targetPosition,incident,sport:null};
+  }
+  const sport=resolveSportEffect(mode,outcome,{phase,rivals,context,position});
+  return {prob,outcome,narrative:sport.narrative,targetPosition:sport.targetPosition,incident:null,sport};
+ };
+
+ // -------------------------------------------------------------------------
+ // 9. „OBUSTRONNY WALKOWER” — KAŻDA GAŁĄŹ KOŃCZY SIĘ KONKRETNYM SKUTKIEM
+ // -------------------------------------------------------------------------
+ const doubleWalkover=EVENTS.find(e=>e?.[5]?.id==='double_walkover');
+ if(doubleWalkover){
+  doubleWalkover[4]=[
+   ['Złożyć wspólny protest z drugim klubem','45% decyzja zostaje cofnięta • 35% protest zostaje odrzucony • 20% kara proceduralna pozostaje',[
+    [45,{reputation:6,professionalism:5,clubRelation:3}],[35,{professionalism:2,morale:-2}],[20,{budget:-14000,media:4,reputation:-2}]
+   ]],
+   ['Nie angażować się i czekać na decyzję władz','100% czekasz na oficjalne rozstrzygnięcie bez eskalowania sporu',[[100,{professionalism:2,morale:-1}]]],
+   ['Zażądać zabezpieczenia nagrań i raportu sędziego','35% nagrania potwierdzają gotowość drużyn • 45% materiał nie daje podstaw do zmiany decyzji • 20% raport potwierdza protokół sędziego',[
+    [35,{reputation:6,professionalism:4,media:4}],[45,{professionalism:2,morale:-2}],[20,{professionalism:1,morale:-3}]
+   ]]
+  ];
+ }
+
+ // -------------------------------------------------------------------------
+ // 10. CECHY / MIGRACJA
+ // -------------------------------------------------------------------------
+ if(S){
+  state1050().features={foreignOffersUseForeignSlots:true,facilityLevel4:true,fixedTournamentRivals:true,sgp2JuniorRebalance:true,careerArcs:true,impCycleForm:true,calendarLoad:true,secWildcardAfterFailedQualifierOnly:true,realRaceFallsAndDefects:true,expandedInjuries:true,doubleWalkoverRewrite:true};
+  save();render();
+ }
+})();
+
+
+// 1.05.0 — końcowe dopięcie prezentacji ofert klubów zagranicznych.
+(()=>{
+ const clubOffer1050Base=clubOffer;
+ clubOffer=function(club,league,interest,role,salary,fee,years,stay=false){
+  const o=clubOffer1050Base(club,league,interest,role,salary,fee,years,stay);
+  try{
+   const roster=globalThis.PSS1040ClubRoster?.(club,league)||[],home=roster.find(r=>r.homeNation)?.homeNation||'POL';
+   if(home!=='POL'){
+    const status=rosterStatusForAge(),foreign=roster.filter(r=>r.code!==home),eligible=status==='junior'?foreign.filter(r=>r.category==='junior'):status==='u24'?foreign.filter(r=>r.category==='u24'||(r.category==='reserve'&&Number(r.age||99)<=24)):foreign.filter(r=>r.category==='senior'||r.category==='u24');
+    const values=eligible.map(r=>r.rating).sort((a,b)=>b-a),all=(status==='junior'?roster.filter(r=>r.category==='junior'):status==='u24'?roster.filter(r=>r.category==='u24'||(r.category==='reserve'&&Number(r.age||99)<=24)):roster.filter(r=>r.category==='senior'||r.category==='u24')).map(r=>r.rating).sort((a,b)=>b-a);
+    let threshold;
+    if(values.length)threshold=status==='junior'?values[Math.min(1,values.length-1)]:status==='u24'?values[0]:values[Math.min(3,values.length-1)];
+    else threshold=(status==='junior'?(all[Math.min(1,all.length-1)]??55):status==='u24'?(all[0]??68):(all[Math.min(4,all.length-1)]??70))+2;
+    o.desc=String(o.desc||'').replace(/Orientacyjny próg konkurencji na twojej pozycji:\s*<b>OVR \d+<\/b>\./i,`Orientacyjny próg konkurencji w puli zagranicznej: <b>OVR ${threshold}</b>.`);
+   }
+  }catch(err){console.warn('Oferta zagraniczna 1.05.0:',err)}
+  return o;
+ };
+})();
+
+
+// ============================================================================
+// Polish Speedway Simulator 1.05.1 — NAZWY KLUBÓW + START KARIERY + #20
+// ============================================================================
+(() => {
+ if(!S)return;
+ // Wymusza migrację niezmienionych nazw startowych z 1.05.0 (np. Moonfin -> Moonfin Magnus)
+ // oraz przenosi wcześniej nierozpoznane człony sponsorskie do czystej tożsamości klubu.
+ ensureClubIdentity();
+ S.pss1051??={};
+ S.pss1051.version="1.05.1";
+ S.pss1051.features={
+  verified2026TitleSponsorBlocks:true,
+  moonfinMagnusAsSingleSponsorBlock:true,
+  ultrapurOmegaGniezno:true,
+  fourSelectableStartProfiles:true,
+  gollob20EasterEgg:true
+ };
+ save();
+ render();
+})();
+
+// ============================================================================
+// Polish Speedway Simulator 1.05.2 — DOMYŚLNY START + BIOGRAFIA #20 + ODMIANA KLUBÓW
+// ============================================================================
+(() => {
+ if(!S)return;
+ // Teksty zapisywane do historii i wyświetlane w modalach dostają poprawne przypadki
+ // nazw klubów. Dzięki temu działa to również dla przyszłych zmian sponsorów tytularnych.
+ const addHistory1052=addHistory;
+ addHistory=function(title,text){return addHistory1052(applyClubGrammarToText(title),applyClubGrammarToText(text))};
+ const showModal1052=showModal;
+ showModal=function(kicker,title,text,options){
+  const fix=value=>typeof value==="string"?applyClubGrammarToText(value):value;
+  const fixedOptions=Array.isArray(options)?options.map(option=>option&&typeof option==="object"?{...option,title:fix(option.title),desc:fix(option.desc)}:option):options;
+  return showModal1052(kicker,fix(title),fix(text),fixedOptions);
+ };
+ const render1052=render;
+ render=function(){
+  const result=render1052();
+  // Elementy tekstowe ustawiane poza showModal/addHistory (np. status kontraktu)
+  // również są korygowane po każdym renderze.
+  const root=document.getElementById("gameScreen");
+  if(root&&typeof document.createTreeWalker==="function"){
+   const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);let node;
+   while((node=walker.nextNode())){const fixed=applyClubGrammarToText(node.nodeValue);if(fixed!==node.nodeValue)node.nodeValue=fixed}
+  }
+  return result;
+ };
+ ensureClubIdentity();
+ S.pss1052??={};
+ S.pss1052.version="1.05.2";
+ S.pss1052.features={defaultAdvancedAdept:true,gollob20BiographyVariants:4,clubNameDeclension:true};
+ save();
+ render();
 })();

@@ -1,5 +1,57 @@
 # Polish Speedway Simulator
 
+## Wersja 1.05.2 — domyślny start, Gollob #20 i odmiana klubów
+
+1.05.2 dopracowuje ekran początku kariery i warstwę językową nazw klubów.
+
+### Najważniejsze zmiany 1.05.2
+
+- **Domyślny poziom startowy:** po otwarciu nowej kariery zaznaczony jest teraz **„Zaawansowany adept”** (16 lat, OVR ok. 46–54). Pozostałe cztery poziomy startowe i ich balans nie zostały zmienione.
+- **Tomasz Gollob #20:** easter egg ma teraz **4 losowane historie przedlicencyjne** inspirowane prawdziwym początkiem kariery — wpływem ojca Władysława i rodzinnego warsztatu, wcześniejszym treningiem piłkarskim, próbami innych sportów oraz doświadczeniem motocrossowym przed wejściem na tor żużlowy. Parametry profilu pozostają jak w 1.05.1.
+- **Odmiana nazw klubów:** dodano centralny system przypadków gramatycznych dla wszystkich aktualnych klubów oraz klubów mogących dołączyć do ligi. Teksty typu „do Abramczyk Polonii Bydgoszcz”, „w Cellfast Wilkach Krosno”, „kontrakt z Betard Spartą Wrocław”, „przeciwko Moonfin Magnus Ostrowowi Wielkopolskiemu” i „zwycięstwo GEZET Stali Gorzów” są generowane automatycznie.
+- **Sponsorzy tytularni:** przy odmianie zachowywany jest aktualny człon sponsorski. System korzysta z bazowej tożsamości sportowej klubu, więc działa także po zmianie sponsora w trakcie kariery i dla historycznych nazw zapisanych w archiwach sezonów.
+- **Zapis gry:** nowy klucz `pss_v1052`; zapis z `pss_v1051` jest automatycznie przejmowany bez resetu kariery.
+
+---
+
+## Wersja 1.05.1 — nazwy klubów, poziomy startowe i easter egg #20
+
+1.05.1 porządkuje system nazw sponsorskich na starcie sezonu 2026, upraszcza wybór początku kariery i dodaje kolejny ukryty profil zawodnika.
+
+### Najważniejsze zmiany 1.05.1
+
+- **Pełny audyt nazw drużyn 2026:** człony sponsorów są teraz oddzielone od sportowej tożsamości klubu we wszystkich bieżących zespołach ligowych. Dzięki temu późniejsza zmiana sponsora nie ucina fragmentu aktualnej nazwy. Dotyczy to m.in. PRES Grupa Deweloperska, BAYERSYSTEM, Stelmet, FOGO i OK, których wcześniej system nie rozpoznawał jako osobnych członów sponsorskich.
+- **Ostrów Wielkopolski:** pełny startowy człon sponsorski to **Moonfin Magnus**. Gra nie skraca już nazwy do „Moonfin Ostrów Wielkopolski”.
+- **Gniezno:** aktualna nazwa startowa to **ULTRAPUR OMEGA Gniezno**; ULTRAPUR i OMEGA są traktowane jako jeden bieżący blok dwóch sponsorów tytularnych. Zachowano zgodność zapisów z wcześniejszym „ULTRAPUR Start Gniezno”.
+- **Dokładne nazwy startowe:** system przechowuje osobno sportową tożsamość klubu, aktualny blok sponsorski oraz pełną nazwę wyświetlaną. To obsługuje także przypadki, w których nazwa ligowa nie jest prostym schematem „sponsor + pełna nazwa klubu”.
+- **Poziomy startowe:** usunięto z wyboru „Rezerwowego juniora”. „Szkółka od zera” została zastąpiona nazwą **„Najniższy potencjał, najdłuższa droga”**, a „Po licencji Ż” przez **„Zaawansowany adept”** — zawodnik nadal przechodzi później właściwy egzamin licencyjny. Domyślnym wyborem pozostaje **„Zwykły adept”**.
+- **Easter egg — Tomasz Gollob #20:** wpisanie imienia i nazwiska `Tomasz Gollob` oraz numeru `20` uruchamia specjalny profil związany z Bydgoszczą. Potencjał i tempo rozwoju są ustawione pomiędzy profilami Jakuba Woźnika i Bartosza Zmarzlika, z naciskiem na jazdę na dystansie, wyprzedzanie i czytanie toru.
+- **Zapis gry:** nowy klucz `pss_v1051`; zapis z `pss_v1050` jest automatycznie przejmowany. Niezmienione startowe nazwy sponsorskie z 1.05.0 są naprawiane przy migracji bez resetowania kariery.
+
+---
+
+## Wersja 1.05.0 — rozwój, SGP2, zdrowie i późna kariera
+
+1.05.0 to duża aktualizacja stabilizująca mechanikę kariery po testach 1.04.x. Najważniejszym celem było zwiększenie liczby wiarygodnych scenariuszy rozwoju bez prostego przyspieszania każdej kariery, uporządkowanie obsad i interaktywnych turniejów oraz dodanie sensownego sposobu wydawania dużej nadwyżki gotówki.
+
+### Najważniejsze zmiany 1.05.0
+
+- **IV poziom bazy teamu:** wszystkie cztery gałęzie można rozbudować do poziomu 4. Pełny pakiet 3→4 kosztuje ok. 7,14 mln zł. Poziom 4 daje głównie elitarną niezawodność, regenerację, logistykę i utrzymanie poziomu; nie jest kolejnym dużym dopalaczem OVR.
+- **Bardziej różne trajektorie kariery:** dodano dodatkową warstwę profili rozwoju — wczesny wystrzał z późniejszym plateau, późny rozkwit, rozwój falami, standardowy przebieg oraz bardzo rzadki fenomen. Niższy start ma teraz grubszy prawy ogon i może wyjątkowo doprowadzić nawet do światowej klasy; Talent szkółki nie dostaje automatycznego dalszego przyspieszenia.
+- **SGP2 i juniorzy:** ścisła czołówka juniorska jest skupiona głównie w okolicach 82–85 OVR. 86–87 to wyjątki, a wyższe wartości mają wynikać z realnego, rzadkiego rozwoju trwałego NPC, a nie z losowego podbijania stawki.
+- **Spójne OVR w turniejach:** ręcznie rozgrywane pięć biegów korzysta z tego samego 16-osobowego pola i klasycznego programu 20-biegowego. Gracz spotyka wszystkich 15 rywali dokładnie raz. Dotyczy również IMP, SEC, SGP2 i kwalifikacji.
+- **Trwałe dzikie karty w rundzie:** dzika karta IMP ma stały OVR i tożsamość w obrębie konkretnej rundy, więc podgląd obsady, biegi i wynik końcowy korzystają z tego samego zawodnika.
+- **IMP i dyspozycja cyklu:** dodano sezonową formę turniejową IMP. Zawodnik może trafić „rok konia” albo słabszy cykl, dzięki czemu OVR nie determinuje wyniku zbyt sztywno.
+- **Kluby zagraniczne:** Polak dostaje ofertę od Landshut, Daugavpils, Wittstock, Pardubic itd. wyłącznie jako zawodnik zagraniczny. Oferta pojawia się tylko wtedy, gdy klub faktycznie szuka obcokrajowca, a prognoza jazdy i próg konkurencji odnoszą się do zagranicznych miejsc w kadrze.
+- **SEC:** rezygnacja z eliminacji oznacza rezygnację z pełnego cyklu w danym sezonie. Stała dzika karta nie jest automatyczna; może wyjątkowo trafić do mocnego zawodnika po nieudanych eliminacjach.
+- **Przeciążenie kalendarza:** równoległa jazda w kilku dużych cyklach zwiększa skumulowane obciążenie zdrowotne. Kondycja i rozwinięta regeneracja ograniczają ten efekt.
+- **Incydenty w biegu:** czerwony wynik może teraz oznaczać realny defekt albo upadek. Upadek najczęściej kończy się bez urazu, ale może wywołać kontuzję i — jeśli wymaga pauzy — natychmiast zakończyć udział w zawodach. Korzystne błędy rywali nie są już klasyfikowane jako czerwony incydent.
+- **Kontuzje:** poszerzono katalog urazów i zakresy pauz. Uraz barku: 2–8 tyg.; obojczyk bez przemieszczenia: 3–5 tyg.; z przemieszczeniem/wieloodłamowy: 5–10 tyg. Dodano m.in. złamania łopatki, promieniowej, nadgarstka, łokcia, żeber, podudzia, kości udowej, miednicy, urazy więzadeł, kręgosłupa i obrażenia wielonarządowe.
+- **Obustronny walkower:** przebudowano niejednoznaczne odpowiedzi. Każda gałąź protestu/nagrań kończy się konkretnym proceduralnym rezultatem.
+- **Zapis gry:** nowy klucz `pss_v1050`; zapis z 1.04.4 i starszych obsługiwanych wersji jest automatycznie przejmowany.
+
+---
+
 ## Wersja 1.04.4 — narodowości kadr klubów zagranicznych
 
 1.04.4 porządkuje generator kadr klubów zagranicznych startujących lub mogących wystartować w polskich rozgrywkach. „Krajowy” oznacza teraz zawodnika z kraju siedziby klubu, a nie automatycznie Polaka.

@@ -9,7 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@400;500;600;700;800&family=Roboto+Condensed:wght@600;700;800&display=swap" rel="stylesheet">
   <meta name="theme-color" content="#173d3a">
   <link rel="icon" type="image/png" href="speedway-emblem.png">
-  <meta name="description" content="Polish Speedway Simulator 1.04.4 — tekstowa gra żużlowa o drodze od szkółki do światowego żużla.">
+  <meta name="description" content="Polish Speedway Simulator 1.05.2 — tekstowa gra żużlowa o drodze od szkółki do światowego żużla.">
   <meta property="og:type" content="website">
   <meta property="og:title" content="Polish Speedway Simulator">
   <meta property="og:description" content="Tekstowy symulator kariery polskiego żużlowca — od szkółki aż po walkę o największe trofea.">
@@ -23,7 +23,7 @@
   <meta name="twitter:description" content="Tekstowy symulator kariery polskiego żużlowca — od szkółki aż po walkę o największe trofea.">
   <meta name="twitter:image" content="https://polishspeedway.vercel.app/social-preview.jpg">
   <meta name="twitter:image:alt" content="Polish Speedway Simulator — tekstowa gra żużlowa">
-  <link rel="stylesheet" href="style.css?v=1.04.4">
+  <link rel="stylesheet" href="style.css?v=1.05.2">
 </head>
 <body>
 <div class="app">
@@ -38,7 +38,7 @@
       </div>
     </div>
     <div class="header-actions">
-      <span class="version-badge" title="Polish Speedway Simulator 1.04.4">V 1.04.4</span>
+      <span class="version-badge" title="Polish Speedway Simulator 1.05.2">V 1.05.2</span>
       <button id="guideBtn" class="btn secondary header-btn" type="button">PRZEWODNIK</button>
       <div class="save-actions" aria-label="Obsługa zapisu gry">
         <button id="exportBtn" class="btn secondary header-btn hidden" type="button" title="Eksportuj zapis gry">EKSPORT</button>
@@ -91,22 +91,19 @@
 
         <section class="form-section">
           <div class="form-section-title"><span>02</span><h3>Poziom startowy</h3></div>
-          <input type="hidden" id="startPoint" value="academy">
+          <input type="hidden" id="startPoint" value="license">
           <div class="choice-grid start-choice-grid" data-choice-for="startPoint">
             <button class="choice-card" type="button" data-value="raw">
-              <strong>Szkółka od zera</strong><small>15 lat • OVR ok. 36–43 • najmniej pieniędzy, najdłuższa droga</small>
+              <strong>Najniższy potencjał, najdłuższa droga</strong><small>15 lat • OVR ok. 36–43 • najmniej pieniędzy na start</small>
             </button>
-            <button class="choice-card active" type="button" data-value="academy">
+            <button class="choice-card" type="button" data-value="academy">
               <strong>Zwykły adept</strong><small>15 lat • OVR ok. 40–48 • najbardziej naturalny początek</small>
             </button>
-            <button class="choice-card" type="button" data-value="license">
-              <strong>Po licencji Ż</strong><small>16 lat • OVR ok. 46–54 • jesteś bliżej pierwszych zawodów</small>
+            <button class="choice-card active" type="button" data-value="license">
+              <strong>Zaawansowany adept</strong><small>16 lat • OVR ok. 46–54 • jesteś blisko egzaminu licencyjnego</small>
             </button>
             <button class="choice-card" type="button" data-value="talent">
               <strong>Talent szkółki</strong><small>16 lat • OVR ok. 53–61 • większe oczekiwania i zainteresowanie</small>
-            </button>
-            <button class="choice-card" type="button" data-value="reserve">
-              <strong>Rezerwowy junior</strong><small>17 lat • OVR ok. 49–57 • od razu trafiasz do kadry ligowej</small>
             </button>
           </div>
           <p class="start-background-note">Początkowy poziom jest lekko losowany. Po rozpoczęciu kariery poznasz też historię zawodnika sprzed egzaminu licencyjnego.</p>
@@ -307,6 +304,6 @@
     <div id="modalOptions" class="modal-options"></div>
   </div>
 </div>
-<script src="app.js?v=1.04.4"></script>
+<script src="app.js?v=1.05.2"></script>
 </body>
 </html>
