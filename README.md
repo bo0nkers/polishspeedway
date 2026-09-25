@@ -1,5 +1,21 @@
 # Polish Speedway Simulator
 
+## Wersja 1.05.3 — taktyka biegu, mentor i linie toru
+
+1.05.3 porządkuje interaktywne biegi: decyzje są czytelniejsze, mentor rozumie aktualny układ punktowy biegu, a krawężnik i zewnętrzna są stałymi, realnie różniącymi się opcjami.
+
+### Najważniejsze zmiany 1.05.3
+- poprawiono narrację „wyjątkowego sukcesu”: lider nie dostaje już komunikatu, że „awansuje na 1. miejsce”; najpierw ustalana jest realna pozycja, potem dobierany tekst,
+- mentor analizuje aktualny wynik biegu (m.in. 1:5, 3:3, 5:1); przy przegrywanym biegu nie sugeruje już bronienia niekorzystnego układu,
+- w decyzjach na dystansie i w końcówce zawsze są dostępne osobno: **krawężnik** i **zewnętrzna**,
+- wariant ofensywny jest wyraźnie oznaczony jako **wysokie ryzyko**; krawężnik / zewnętrzna jako umiarkowane, a obrona pozycji jako niskie,
+- „Wszystko albo nic” / zdecydowany atak ma niższą regularność, większe ryzyko incydentu i wyższą szansę wyjątkowego sukcesu; wyjątkowy sukces może dać większy awans, więc opcja nie jest zdominowana przez bezpieczniejszą linię,
+- profil toru oraz zmiany nawierzchni realnie wpływają na skuteczność krawężnika i zewnętrznej; informacja o zachowaniu toru jest pokazywana razem z podpowiedzią,
+- na 4. miejscu bezpieczna opcja nie udaje już „dowiezienia punktu” — to **Czekaj na błąd**,
+- zachowano ręczne zmiany ekranu startowego użytkownika (domyślny **Zaawansowany adept** i nowe opisy),
+- zachowano ręcznie podmienione cztery teksty easter egga **Tomasz Gollob #20** oraz trzy teksty `woznik`,
+- zapis gry korzysta z klucza `pss_v1053`; zapis 1.05.2 jest automatycznie przenoszony do nowej wersji.
+
 ## Wersja 1.05.2 — domyślny start, Gollob #20 i odmiana klubów
 
 1.05.2 dopracowuje ekran początku kariery i warstwę językową nazw klubów.

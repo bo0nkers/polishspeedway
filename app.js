@@ -2248,9 +2248,10 @@ function createPlayer(){
  $("newsBox").innerHTML=`<p class="eyebrow">PRZED LICENCJĄ</p><h3>${background.title.toUpperCase()}</h3><p>${background.text}</p><p><b>Zaplecze:</b> ${support.title}. Budżet początkowy: ${money(S.budget)}.</p>${openingReport?`<div class="guidance-report"><span>RAPORT SZKÓŁKI</span><p>${openingReport.text}</p></div>`:""}`;
  save();
 }
-function save(){localStorage.setItem("pss_v1052",JSON.stringify(S))}
+function save(){localStorage.setItem("pss_v1053",JSON.stringify(S))}
 function load(){
  try{
+  const newest1053=localStorage.getItem("pss_v1053");
   const newest1052=localStorage.getItem("pss_v1052");
   const newest1051=localStorage.getItem("pss_v1051");
   const newest1050=localStorage.getItem("pss_v1050");
@@ -2274,29 +2275,30 @@ function load(){
   const previousV101=localStorage.getItem("pss_v101");
   const previousVersion=localStorage.getItem("pss_v100");
   const previousBrand=localStorage.getItem("pzs_v200");
-  if(newest1052)return JSON.parse(newest1052);
-  if(newest1051){localStorage.setItem("pss_v1052",newest1051);return JSON.parse(newest1051);}
-  if(newest1050){localStorage.setItem("pss_v1052",newest1050);return JSON.parse(newest1050);}
-  if(newest){localStorage.setItem("pss_v1052",newest);return JSON.parse(newest);}
-  if(previousV1043){localStorage.setItem("pss_v1052",previousV1043); return JSON.parse(previousV1043);}
-  if(previousV1042){localStorage.setItem("pss_v1052",previousV1042); return JSON.parse(previousV1042);}
-  if(previousV1041){localStorage.setItem("pss_v1052",previousV1041); return JSON.parse(previousV1041);}
-  if(previousV1040){localStorage.setItem("pss_v1052",previousV1040); return JSON.parse(previousV1040);}
-  if(previousV1034){localStorage.setItem("pss_v1052",previousV1034); return JSON.parse(previousV1034);}
-  if(previousV1033){localStorage.setItem("pss_v1052",previousV1033); return JSON.parse(previousV1033);}
-  if(previousV1032){localStorage.setItem("pss_v1052",previousV1032); return JSON.parse(previousV1032);}
-  if(previousV1031){localStorage.setItem("pss_v1052",previousV1031); return JSON.parse(previousV1031);}
-  if(previousV1030){localStorage.setItem("pss_v1052",previousV1030); return JSON.parse(previousV1030);}
-  if(previousV1026Test){localStorage.setItem("pss_v1052",previousV1026Test); return JSON.parse(previousV1026Test);}
-  if(previousV1025){localStorage.setItem("pss_v1052",previousV1025); return JSON.parse(previousV1025);}
-  if(previousV1024){localStorage.setItem("pss_v1052",previousV1024); return JSON.parse(previousV1024);}
-  if(previousV1023){localStorage.setItem("pss_v1052",previousV1023); return JSON.parse(previousV1023);}
-  if(previousV1022){localStorage.setItem("pss_v1052",previousV1022); return JSON.parse(previousV1022);}
-  if(previousV1021){localStorage.setItem("pss_v1052",previousV1021); return JSON.parse(previousV1021);}
-  if(previousV102){localStorage.setItem("pss_v1052",previousV102); return JSON.parse(previousV102);}
-  if(previousV101){localStorage.setItem("pss_v1052",previousV101); return JSON.parse(previousV101);}
-  if(previousVersion){localStorage.setItem("pss_v1052",previousVersion); return JSON.parse(previousVersion);}
-  if(previousBrand){localStorage.setItem("pss_v1052",previousBrand); return JSON.parse(previousBrand);}
+  if(newest1053)return JSON.parse(newest1053);
+  if(newest1052){localStorage.setItem("pss_v1053",newest1052);return JSON.parse(newest1052);}
+  if(newest1051){localStorage.setItem("pss_v1053",newest1051);return JSON.parse(newest1051);}
+  if(newest1050){localStorage.setItem("pss_v1053",newest1050);return JSON.parse(newest1050);}
+  if(newest){localStorage.setItem("pss_v1053",newest);return JSON.parse(newest);}
+  if(previousV1043){localStorage.setItem("pss_v1053",previousV1043); return JSON.parse(previousV1043);}
+  if(previousV1042){localStorage.setItem("pss_v1053",previousV1042); return JSON.parse(previousV1042);}
+  if(previousV1041){localStorage.setItem("pss_v1053",previousV1041); return JSON.parse(previousV1041);}
+  if(previousV1040){localStorage.setItem("pss_v1053",previousV1040); return JSON.parse(previousV1040);}
+  if(previousV1034){localStorage.setItem("pss_v1053",previousV1034); return JSON.parse(previousV1034);}
+  if(previousV1033){localStorage.setItem("pss_v1053",previousV1033); return JSON.parse(previousV1033);}
+  if(previousV1032){localStorage.setItem("pss_v1053",previousV1032); return JSON.parse(previousV1032);}
+  if(previousV1031){localStorage.setItem("pss_v1053",previousV1031); return JSON.parse(previousV1031);}
+  if(previousV1030){localStorage.setItem("pss_v1053",previousV1030); return JSON.parse(previousV1030);}
+  if(previousV1026Test){localStorage.setItem("pss_v1053",previousV1026Test); return JSON.parse(previousV1026Test);}
+  if(previousV1025){localStorage.setItem("pss_v1053",previousV1025); return JSON.parse(previousV1025);}
+  if(previousV1024){localStorage.setItem("pss_v1053",previousV1024); return JSON.parse(previousV1024);}
+  if(previousV1023){localStorage.setItem("pss_v1053",previousV1023); return JSON.parse(previousV1023);}
+  if(previousV1022){localStorage.setItem("pss_v1053",previousV1022); return JSON.parse(previousV1022);}
+  if(previousV1021){localStorage.setItem("pss_v1053",previousV1021); return JSON.parse(previousV1021);}
+  if(previousV102){localStorage.setItem("pss_v1053",previousV102); return JSON.parse(previousV102);}
+  if(previousV101){localStorage.setItem("pss_v1053",previousV101); return JSON.parse(previousV101);}
+  if(previousVersion){localStorage.setItem("pss_v1053",previousVersion); return JSON.parse(previousVersion);}
+  if(previousBrand){localStorage.setItem("pss_v1053",previousBrand); return JSON.parse(previousBrand);}
   const v1361=localStorage.getItem("pzs_v1361");
   if(v1361)return JSON.parse(v1361);
   const v136=localStorage.getItem("pzs_v136");
@@ -8967,7 +8969,7 @@ createPlayer=function(){
 };
 
 function clearCareerSavesAndReload(){
- const keys=["pss_v1052","pss_v1051","pss_v1050","pss_v1044","pss_v1043","pss_v1042","pss_v1041","pss_v1040","pss_v1034","pss_v1033","pss_v1032","pss_v1031","pss_v1030","pss_v1026test","pss_v1025","pss_v1024","pss_v1023","pss_v1022","pss_v1021","pss_v102","pss_v101","pss_v100","pzs_v200","pzs_v1361","pzs_v136","pzs_v135","pzs_v134","pzs_v1331","pzs_v133","pzs_v132","pzs_v131","pzs_v1301","pzs_v130","pzs_v129","pzs_v128","pzs_v127","pzs_v126","pzs_v1252","pzs_v1251","pzs_v125","pzs_v124","pzs_v123","pzs_v122","pzs_v121","pzs_v120","pzs_v119","pzs_v118","pzs_v117","pzs_v116","pzs_v115","pzs_v114","pzs_v113","pzs_v112","pzs_v111","pzs_v110","pzs_v109","pzs_v108","pzs_v107","pzs_v106","pzs_v105","pzs_v104","pzs_v103","pzs_v102","pzs_v101","pzs_v100","pzs_v305","pzs_v304","pzs_v303","pzs_v302","pzs_v301","pzs_final30","pzs_v30","pzs_v29","pzs_v28","pzs_v27","pzs_v26","pzs_v25","pzs_v24","pzs_v23","pzs_v22","pzs_v2"];
+ const keys=["pss_v1053","pss_v1052","pss_v1051","pss_v1050","pss_v1044","pss_v1043","pss_v1042","pss_v1041","pss_v1040","pss_v1034","pss_v1033","pss_v1032","pss_v1031","pss_v1030","pss_v1026test","pss_v1025","pss_v1024","pss_v1023","pss_v1022","pss_v1021","pss_v102","pss_v101","pss_v100","pzs_v200","pzs_v1361","pzs_v136","pzs_v135","pzs_v134","pzs_v1331","pzs_v133","pzs_v132","pzs_v131","pzs_v1301","pzs_v130","pzs_v129","pzs_v128","pzs_v127","pzs_v126","pzs_v1252","pzs_v1251","pzs_v125","pzs_v124","pzs_v123","pzs_v122","pzs_v121","pzs_v120","pzs_v119","pzs_v118","pzs_v117","pzs_v116","pzs_v115","pzs_v114","pzs_v113","pzs_v112","pzs_v111","pzs_v110","pzs_v109","pzs_v108","pzs_v107","pzs_v106","pzs_v105","pzs_v104","pzs_v103","pzs_v102","pzs_v101","pzs_v100","pzs_v305","pzs_v304","pzs_v303","pzs_v302","pzs_v301","pzs_final30","pzs_v30","pzs_v29","pzs_v28","pzs_v27","pzs_v26","pzs_v25","pzs_v24","pzs_v23","pzs_v22","pzs_v2"];
  keys.forEach(k=>localStorage.removeItem(k));location.reload();
 }
 function showCareerEndSupportPopup(){
@@ -10342,10 +10344,15 @@ const saved=load();if(saved){S=saved;S.seasonFlowActive=false;normalize();repair
    {title:"OCZEKIWANIA ROSNĄ BARDZO SZYBKO",text:"Mechanicy patrzą po sobie, trenerzy zapisują kolejne czasy, a przy bandzie słychać, że czegoś takiego dawno nie widziano. Kariera dopiero się zaczyna, ale w Gorzowie już wiedzą, że mają do czynienia z niezwykłym talentem."}
   ],
   gollob20:[
+
    {title:"WSZYSTKO ZACZĘŁO SIĘ W WARSZTACIE OJCA",text:"Od najmłodszych lat motocykle były blisko ciebie. Twój ojciec prowadzi własny warsztat i to właśnie on wprowadza cię w świat dwóch kółek. Zanim naprawdę zaczynasz ścigać się na żużlu, potrafisz już słuchać silnika, rozumiesz sprzęt i godzinami podpatrujesz pracę przy motocyklach."},
+
    {title:"PIŁKA, HOKEJ, MOTOCROSS... I W KOŃCU ŻUŻEL",text:"Długo nie ograniczasz się do jednej dyscypliny. Trenujesz piłkę nożną w juniorskich zespołach Polonii i Zawiszy Bydgoszcz, próbujesz też hokeja, ale największą frajdę daje ci ściganie na motocyklu. Motocross szybko pokazuje, że masz wyjątkowe czucie maszyny i odwagę potrzebną do walki koło w koło."},
+
    {title:"Z MOTOCROSSU NA BYDGOSKI OWAL",text:"Zanim na dobre trafiasz na tor żużlowy, masz za sobą starty motocrossowe i wyścigi motocyklowe. Jazda w trudnych warunkach uczy cię panowania nad motocyklem, szukania przyczepności i reagowania wtedy, gdy maszyna zaczyna żyć własnym życiem. W Bydgoszczy szybko zauważają, że tych nawyków nie da się nauczyć na kilku treningach."},
+
    {title:"OJCIEC WYBIERA MOTOCYKL. TY RESZTĘ ROBISZ SAM",text:"Ojciec od początku mocno popycha cię w stronę sportów motocyklowych. To dzięki niemu dostajesz pierwsze prawdziwe możliwości jazdy, ale na torze nikt nie daje ci taryfy ulgowej. Łączysz mechaniczne obycie wyniesione z rodzinnego warsztatu z doświadczeniem z innych sportów i coraz wyraźniej widać, że możesz w tym sporcie znaczyć coś wyjątkowego."}
+
   ],
   woznik:[
    {title:"A W SUMIE TO NIE WIEM",text:"Żużel zawsze kręcił cię bardziej, niż rozsądek podpowiadał. Problem w tym, że ostatnio niemal wszystko działało przeciwko tobie. Pewnego dnia człowiek od marketingu zapytał: „Po co ci to?”. Odpowiedziałeś: „A w sumie to nie wiem”. Wróciłeś do domu, poszedłeś spać, a rano obudziłeś się z przekonaniem, że właśnie teraz wszystko zaczyna się od nowa."},
@@ -15096,4 +15103,316 @@ function formatSeasonInjuries1041(injuries=[]){
  S.pss1052.features={defaultAdvancedAdept:true,gollob20BiographyVariants:4,clubNameDeclension:true};
  save();
  render();
+})();
+
+
+// ============================================================================
+// Polish Speedway Simulator 1.05.3 — TAKTYKA BIEGU / MENTOR / LINIE TORU
+// ============================================================================
+(() => {
+ if(!S)return;
+ const VERSION="1.05.3";
+
+ function heatSituation1053(context={}){
+  const order=Array.isArray(context.order)?context.order:[];
+  const meIndex=order.findIndex(x=>x?.player),mateIndex=order.findIndex(x=>x?.side==="own"&&!x?.player);
+  const ownPositions=order.map((x,i)=>x?.side==="own"?i+1:null).filter(Boolean);
+  const isSoN=/\bSoN\b|Speedway of Nations/i.test(String(context.competitionKey||""));
+  const points=isSoN?[4,3,2,0]:[3,2,1,0];
+  let ownPoints=0,awayPoints=0;
+  order.forEach((r,i)=>{const p=points[i]||0;if(r?.side==="own")ownPoints+=p;else if(r?.side==="away")awayPoints+=p;});
+  const valid=order.length===4&&ownPositions.length===2;
+  const teamOneTwo=valid&&ownPositions.includes(1)&&ownPositions.includes(2);
+  const playerPosition=meIndex>=0?meIndex+1:null,matePosition=mateIndex>=0?mateIndex+1:null;
+  return {
+   meIndex,mateIndex,playerPosition,matePosition,ownPoints,awayPoints,valid,isSoN,
+   scoreText:valid?`${ownPoints}:${awayPoints}`:"",
+   teammateAhead:meIndex>0&&mateIndex===meIndex-1,
+   teammateBehind:meIndex>=0&&mateIndex===meIndex+1,
+   teamOneTwo,
+   losingHeat:valid&&ownPoints<awayPoints,
+   drawingHeat:valid&&ownPoints===awayPoints,
+   winningHeat:valid&&ownPoints>awayPoints
+  };
+ }
+ globalThis.PSS1053HeatSituation=heatSituation1053;
+
+ teamRaceSituation=function(context={}){return heatSituation1053(context)};
+
+ function trackLineState1053(context={}){
+  ensureRacePreparationContext(context);
+  const shift=context.trackShift||null;
+  if(shift){
+   if(shift.favored==="inside")return {favored:"inside",strength:10,text:shift.text,source:"shift"};
+   if(shift.favored==="outside")return {favored:"outside",strength:10,text:shift.text,source:"shift"};
+   return {favored:null,strength:0,text:shift.text,source:"shift"};
+  }
+  const track=context.track||trackProfileForClub(S.club);
+  if(!track)return {favored:null,strength:0,text:"Tor nie daje wyraźnej przewagi jednej ścieżce.",source:"none"};
+  const map={
+   distance:{favored:"outside",strength:6,text:`${track.label}. Zewnętrzna zwykle pozwala tu lepiej zbudować prędkość.`},
+   overtaking:{favored:"outside",strength:4,text:`${track.label}. Tor daje miejsce do ścigania, a szeroka często otwiera możliwość ataku.`},
+   technique:{favored:"inside",strength:5,text:`${track.label}. Krótsza, precyzyjna linia przy krawężniku bywa tu szczególnie skuteczna.`},
+   corner:{favored:"inside",strength:4,text:`${track.label}. Dobre wejście przy krawężniku pomaga ustawić wyjście z łuku.`},
+   starts:{favored:"inside",strength:2,text:`${track.label}. Po starcie wewnętrzna daje nieco łatwiejszą kontrolę nad pierwszą fazą biegu.`},
+   setup:{favored:null,strength:0,text:`${track.label}. Dużo zależy od spasowania motocykla; żadna linia nie ma stałej przewagi.`}
+  };
+  return map[track.skill]||{favored:null,strength:0,text:`${track.label}. Obie linie pozostają realną opcją.`,source:"profile"};
+ }
+ globalThis.PSS1053TrackLineState=trackLineState1053;
+
+ function trackInfoHtml1053(context={},phase="distance"){
+  if(context.trackShift)return "";
+  if(phase==="late")return "";
+  const line=trackLineState1053(context);
+  const read=Number(context.trackReadModifier||0);
+  const uncertainty=read<=-1.4?" <em>Twój odczyt toru jest jednak niepewny.</em>":"";
+  return `<p class="race-track-change"><b>Tor:</b> ${line.text}${uncertainty}</p>`;
+ }
+
+ const contextChoiceAdjustment1053Base=contextChoiceAdjustment;
+ contextChoiceAdjustment=function(mode,context,position){
+  const out={...contextChoiceAdjustment1053Base(mode,context,position)};
+  // Zmiana warunków ma już własny, mocniejszy wpływ w bazowym modelu. Tutaj dokładamy
+  // tylko charakter stałego profilu toru, żeby krawężnik / szeroka nie były kosmetyką.
+  if(!context.trackShift&&(mode==="inside"||mode==="outside")){
+   const line=trackLineState1053(context);
+   if(line.favored===mode){out.success+=line.strength;out.superAdj+=line.strength*.22;}
+   else if(line.favored&&line.favored!==mode){out.success-=Math.max(1.5,line.strength*.45);}
+  }
+  if(context.teamRace){
+   const sit=heatSituation1053(context);
+   if(sit.losingHeat){
+    if(mode==="safe"||mode==="team")out.success-=14;
+    else out.success+=2;
+   }
+   if(sit.teamOneTwo){
+    if(mode==="attack"){out.success-=14;out.incident+=.8;}
+    if(mode==="team"||mode==="safe")out.success+=5;
+   }
+  }
+  return out;
+ };
+
+ mentorAllowedAdviceKeys=function(phase="distance",teammate=null,context={}){
+  if(phase==="start")return ["attack","inside","outside","safe"];
+  const team=!!(context.teamRace||teammate),sit=team?heatSituation1053(context):null;
+  const pos=sit?.playerPosition||Math.max(1,(context.order||[]).findIndex(x=>x?.player)+1||2);
+  if(team&&sit?.teamOneTwo)return ["team","inside","outside","safe"];
+  if(team&&sit?.losingHeat)return ["attack","inside","outside"];
+  if(pos===4)return ["attack","inside","outside"];
+  return ["attack","inside","outside","safe"];
+ };
+
+ suggestedRaceOption=function(rivals,phase="start",teammate=null,context={}){
+  const allowed=mentorAllowedAdviceKeys(phase,teammate,context),avgRival=(rivals||[]).reduce((s,r)=>s+Number(r?.rating||80),0)/Math.max(1,(rivals||[]).length);
+  const line=trackLineState1053(context),sit=(context.teamRace||teammate)?heatSituation1053(context):null;
+  let best=allowed[0]||"safe",bestValue=-Infinity;
+  for(const choice of allowed){
+   let val=0;
+   if(phase==="start"){
+    if(choice==="attack")val=S.skills.starts*.52+S.skills.corner*.27+S.skills.mental*.12+S.equipment*.05;
+    if(choice==="inside")val=S.skills.corner*.40+S.skills.technique*.28+S.skills.starts*.22+S.skills.mental*.08;
+    if(choice==="outside")val=S.skills.distance*.28+S.skills.corner*.24+S.skills.technique*.24+S.skills.overtaking*.16;
+    if(choice==="safe")val=S.skills.mental*.38+S.skills.starts*.22+S.skills.technique*.20+S.skills.setup*.12;
+   }else{
+    if(choice==="attack")val=S.skills.overtaking*.38+S.skills.distance*.26+S.skills.mental*.18+S.skills.technique*.10-3;
+    if(choice==="inside")val=S.skills.technique*.35+S.skills.corner*.30+S.skills.overtaking*.18+S.skills.setup*.10;
+    if(choice==="outside")val=S.skills.distance*.36+S.skills.overtaking*.30+S.skills.technique*.18+S.skills.corner*.08;
+    if(choice==="team")val=teammate?S.skills.mental*.28+S.skills.technique*.22+S.professionalism*.18+Number(teammate.rating||70)*.20:-999;
+    if(choice==="safe")val=S.skills.mental*.40+S.skills.technique*.24+S.skills.distance*.14+S.skills.setup*.12+4;
+   }
+   if(line.favored===choice)val+=8+line.strength*.45;
+   else if((choice==="inside"||choice==="outside")&&line.favored&&line.favored!==choice)val-=3+line.strength*.20;
+   if(context.trackShift?.hurt===choice)val-=9;
+   if(context.trackShift?.favored===choice)val+=7;
+   if(sit?.losingHeat){
+    if(choice==="attack")val+=8;
+    if(choice==="inside"||choice==="outside")val+=5;
+    if(choice==="safe"||choice==="team")val-=40;
+   }else if(sit?.teamOneTwo){
+    if(choice==="team")val+=14;
+    if(choice==="safe")val+=8;
+    if(choice==="attack")val-=35;
+   }else if(sit?.winningHeat&&choice==="safe")val+=5;
+   if(avgRival>overall()+6&&choice==="safe"&&!sit?.losingHeat)val+=2;
+   if(avgRival<overall()-5&&choice==="attack")val+=2;
+   if(val>bestValue){bestValue=val;best=choice;}
+  }
+  return best;
+ };
+
+ mentorAdviceLabel=function(key,phase="distance",context={}){
+  const sit=heatSituation1053(context),losing=context.teamRace&&sit.losingHeat;
+  if(losing){
+   if(key==="attack")return "rzucić więcej na szalę i szukać zdecydowanego ataku na rywali przed wami";
+   if(key==="inside")return "szukać ataku przy krawężniku i spróbować skrócić drogę do rywali";
+   if(key==="outside")return "budować prędkość po szerokiej i szukać ataku na rywali";
+  }
+  if(sit.teamOneTwo){
+   if(key==="team")return "utrzymać jazdę parową i dowieźć podwójne prowadzenie";
+   if(key==="inside")return "pilnować krawężnika bez otwierania rywalowi drogi do ataku";
+   if(key==="outside")return "kontrolować zewnętrzną i zachować przewagę nad rywalami";
+   if(key==="safe")return "ograniczyć ryzyko i nie atakować kolegi na prowadzeniu";
+  }
+  return {
+   attack:phase==="start"?"mocno postawić na start":"zaatakować zdecydowanie — to wariant o najwyższym ryzyku",
+   inside:"wykorzystać krótszą linię przy krawężniku",
+   outside:"budować prędkość po zewnętrznej",
+   team:"wykorzystać jazdę parową i osłonę kolegi",
+   safe:"ograniczyć ryzyko i zabezpieczyć obecną pozycję"
+  }[key]||"jechać bezpiecznie";
+ };
+
+ function tacticalAdvicePrefix1053(context={}){
+  if(!context.teamRace)return "";
+  const sit=heatSituation1053(context);if(!sit.valid)return "";
+  if(sit.losingHeat)return `Przy ${sit.scoreText} nie masz czego bronić. `;
+  if(sit.teamOneTwo)return `Macie ${sit.scoreText} i podwójne prowadzenie. `;
+  if(sit.drawingHeat)return `Przy ${sit.scoreText} bieg pozostaje otwarty. `;
+  return `Prowadzicie w biegu ${sit.scoreText}. `;
+ }
+
+ raceAdviceText=function(rivals,phase="start",teammate=null,context={}){
+  if(context.advice?.phase===phase&&context.advice?.html)return `${trackInfoHtml1053(context,phase)}${context.advice.html}`;
+  const q=mentorAdviceQuality(),allowed=mentorAllowedAdviceKeys(phase,teammate,context);
+  let correct=suggestedRaceOption(rivals,phase,teammate,context);
+  if(!allowed.includes(correct))correct=allowed[0]||"safe";
+  const alternatives=allowed.filter(x=>x!==correct),suggested=Math.random()<q.accuracy||!alternatives.length?correct:pick(alternatives);
+  const precision=q.accuracy>=.90?"Jest niemal pewien, że warto":q.accuracy>=.82?"Wyraźnie sugeruje, by":q.accuracy>=.70?"Podpowiada, by":"Sugeruje, by";
+  const html=`<p class="race-advice"><b>${q.source}:</b> ${tacticalAdvicePrefix1053(context)}${precision} ${mentorAdviceLabel(suggested,phase,context)}.</p>`;
+  context.advice={suggested,correct,quality:q,phase,html};
+  return `${trackInfoHtml1053(context,phase)}${context.trackReadLabel?`<p class="race-prep-note">${context.trackReadLabel}</p>`:""}${html}`;
+ };
+
+ trackShiftAdvice=function(context={}){
+  const x=context.trackShift;if(!x)return "";
+  const phase=context.advice?.phase==="late"?"late":"distance",q=mentorAdviceQuality(),allowed=mentorAllowedAdviceKeys(phase,null,context);
+  let correct=allowed.includes(x.favored)?x.favored:suggestedRaceOption([],phase,null,context);
+  if(!allowed.includes(correct))correct=allowed[0]||"inside";
+  const alternatives=allowed.filter(k=>k!==correct),selected=Math.random()<q.accuracy||!alternatives.length?correct:pick(alternatives);
+  const certainty=q.accuracy>=.86?"jest przekonany, że warto":q.accuracy>=.74?"wyraźnie sugeruje, by":"zwraca uwagę, by";
+  const html=`<p class="race-track-change"><b>Zmiana warunków:</b> ${x.text}</p><p class="race-advice"><b>${q.source} — korekta wskazówki:</b> ${tacticalAdvicePrefix1053(context)}${certainty} ${mentorAdviceLabel(selected,phase,context)}.</p>`;
+  context.trackShiftAdviceHtml=html;context.advice={suggested:selected,correct,quality:q,phase,html};context.mentorAccuracyBonus=selected===correct?(q.bonus||2):-1.3;
+  return html;
+ };
+
+ currentRaceAdvice=function(rivals,phase="start",teammate=null,context={}){
+  if(context.trackShift){context.advice={...(context.advice||{}),phase};context.trackShiftAdviceHtml=null;return `${context.trackReadLabel?`<p class="race-prep-note">${context.trackReadLabel}</p>`:""}${trackShiftAdvice(context)}`;}
+  return raceAdviceText(rivals,phase,teammate,context);
+ };
+
+ const raceSituationNarrative1053Base=raceSituationNarrative;
+ raceSituationNarrative=function(snapshot,{teamRace=false}={}){
+  const base=raceSituationNarrative1053Base(snapshot,{teamRace});
+  if(!teamRace)return base;
+  const context=snapshot?.context||{};context.order=snapshot?.order||snapshot?.scores||context.order||[];context.teamRace=true;
+  const sit=heatSituation1053(context);
+  if(!sit.valid||String(base).includes(sit.scoreText))return base;
+  return `${base} Układ biegu: ${sit.scoreText}.`;
+ };
+
+ function lineDesc1053(mode,context={},position=2){
+  const line=trackLineState1053(context),fav=line.favored===mode,hurt=line.favored&&line.favored!==mode;
+  const base=mode==="inside"?(position===1?"Trzymaj krótszą linię i utrudnij rywalowi wejście pod łokieć.":"Skróć tor i spróbuj znaleźć miejsce po wewnętrznej."):(position===1?"Kontroluj zewnętrzną i nie pozwól rywalowi zbudować większej prędkości.":"Rozpędź motocykl na zewnętrznej i spróbuj zaatakować z większą prędkością.");
+  const track=fav?" Tor sprzyja teraz tej linii.":hurt?` Aktualnie więcej daje ${line.favored==="inside"?"krawężnik":"zewnętrzna"}.`:"";
+  return `${base}${track}`;
+ }
+ function safeChoice1053(position,phase){
+  if(position===1)return {key:"safe",title:"Kontroluj prowadzenie · niskie ryzyko",desc:"Jedź płynnie, ogranicz ryzyko błędu i broń pierwszej pozycji."};
+  if(position===2)return {key:"safe",title:"Broń 2. miejsca · niskie ryzyko",desc:"Skup się na utrzymaniu dwóch punktów zamiast wymuszać atak."};
+  if(position===3)return {key:"safe",title:"Dowieź punkt · niskie ryzyko",desc:"Broń trzeciego miejsca i ogranicz ryzyko utraty punktu."};
+  return {key:"safe",title:"Czekaj na błąd · niskie ryzyko",desc:"Masz zero punktów. Zachowaj kontakt i licz na błąd rywala zamiast wymuszać manewr."};
+ }
+ function attackChoice1053(position,phase){
+  const title=position===1?"Podkręć tempo · wysokie ryzyko":phase==="late"?(position===4?"Wszystko albo nic · wysokie ryzyko":"Ostatni atak · wysokie ryzyko"):"Zdecydowany atak · wysokie ryzyko";
+  const desc=position===1?"Spróbuj odjechać rywalom. Błąd może jednak szybko zniwelować przewagę.":"Najtrudniejsza opcja: niższa szansa powodzenia i większe ryzyko, ale wyjątkowy sukces może dać większy awans.";
+  return {key:"attack",title,desc};
+ }
+
+ raceChoiceTemplate=function(key,phase="distance",position=2){
+  if(key==="attack")return attackChoice1053(position,phase);
+  if(key==="inside")return {key:"inside",title:position===1?"Pilnuj krawężnika · umiarkowane ryzyko":"Atak przy krawężniku · umiarkowane ryzyko",desc:lineDesc1053("inside",{},position)};
+  if(key==="outside")return {key:"outside",title:position===1?"Kontroluj zewnętrzną · umiarkowane ryzyko":"Atak po szerokiej · umiarkowane ryzyko",desc:lineDesc1053("outside",{},position)};
+  if(key==="team")return {key:"team",title:"Jedźcie po 5:1 · niskie ryzyko",desc:"Nie atakuj partnera. Utrzymaj podwójne prowadzenie i pilnuj rywali za wami."};
+  return safeChoice1053(position,phase);
+ };
+
+ raceDecisionChoices=function(snapshot,{teamRace=false,phase="distance"}={}){
+  const position=Number(snapshot?.position||2),context=snapshot?.context||{};context.order=snapshot?.order||snapshot?.scores||context.order||[];context.teamRace=!!teamRace;
+  ensureRacePreparationContext(context);
+  const sit=teamRace?heatSituation1053(context):null;
+  const inside={key:"inside",title:position===1?"Pilnuj krawężnika · umiarkowane ryzyko":"Atak przy krawężniku · umiarkowane ryzyko",desc:lineDesc1053("inside",context,position)};
+  const outside={key:"outside",title:position===1?"Kontroluj zewnętrzną · umiarkowane ryzyko":"Atak po szerokiej · umiarkowane ryzyko",desc:lineDesc1053("outside",context,position)};
+  let choices;
+  if(teamRace&&sit?.teamOneTwo){
+   choices=[
+    {key:"team",title:"Jedźcie po 5:1 · niskie ryzyko",desc:"Nie atakuj partnera na prowadzeniu. Pilnuj rywali i dowieź podwójne zwycięstwo."},
+    inside,outside,safeChoice1053(position,phase)
+   ];
+  }else{
+   choices=[attackChoice1053(position,phase),inside,outside,safeChoice1053(position,phase)];
+  }
+  return choices;
+ };
+
+ const raceOutcomeProbabilities1053Base=raceOutcomeProbabilities;
+ raceOutcomeProbabilities=function(mode,args={}){
+  const p={...raceOutcomeProbabilities1053Base(mode,args)};
+  if((args.phase||"distance")==="start")return p;
+  let total=(p.super||0)+(p.success||0),superP=p.super||0,incident=p.incident||0;
+  if(mode==="attack"){
+   total=clamp(total-2,10,88);
+   superP=clamp(superP+4.5,8,18);
+   incident=clamp(incident+1.0,1.5,7);
+  }else if(mode==="outside"){
+   total=clamp(total-1,12,91);
+   superP=clamp(superP+1.5,4,14);
+   incident=clamp(incident+.35,.5,5);
+  }else if(mode==="inside"){
+   superP=clamp(superP,3,12);
+   incident=clamp(incident,.35,3.5);
+  }else if(mode==="safe"||mode==="team"){
+   total=clamp(total+3,18,97);
+   superP=clamp(superP,1,5);
+   incident=clamp(incident,.2,1.5);
+  }
+  superP=Math.min(superP,Math.max(1,total-1));
+  const success=Math.max(1,total-superP),fail=Math.max(1,100-success-superP-incident),sum=success+superP+incident+fail;
+  return {super:superP/sum*100,success:success/sum*100,fail:fail/sum*100,incident:incident/sum*100};
+ };
+
+ const resolveSportEffect1053Base=resolveSportEffect;
+ resolveSportEffect=function(mode,execution,args={}){
+  const before=clamp(Number(args.position||4),1,4),res=resolveSportEffect1053Base(mode,execution,args),context=args.context||{},phase=args.phase||"distance";
+  if(phase!=="start"){
+   // Lider nie może „awansować na 1. miejsce”. Każdy skutek najpierw ustala realną pozycję,
+   // a dopiero potem generuje komunikat.
+   if(before===1)res.targetPosition=1;
+   const sit=context.teamRace?heatSituation1053(context):null;
+   if(execution==="super"&&mode==="attack"&&before>1&&!sit?.teamOneTwo){
+    const gain=before>=3?2:1;
+    res.targetPosition=Math.max(1,before-gain);
+   }
+   if(execution==="success"&&mode==="attack"&&before>1&&res.targetPosition>=before)res.targetPosition=Math.max(1,before-1);
+   res.targetPosition=clamp(Number(res.targetPosition||before),1,4);
+   res.narrative=contextualRaceNarrative(mode,execution,before,res.targetPosition,context);
+  }
+  return res;
+ };
+
+ // Znacznik wersji / migracji. Ręczne zmiany ekranu startowego i tekstów #20 są zachowane.
+ S.pss1053??={};
+ S.pss1053.version=VERSION;
+ S.pss1053.features={
+  positionSafeRaceNarratives:true,
+  heatScoreAwareMentor:true,
+  alwaysInsideOutsideChoices:true,
+  explicitRiskLabels:true,
+  attackRiskRewardRebalance:true,
+  trackLinesAffectProbabilities:true,
+  manualStartCopyPreserved:true,
+  manualGollobCopyPreserved:true
+ };
+ save();render();
 })();
